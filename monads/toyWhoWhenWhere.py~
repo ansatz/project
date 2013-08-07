@@ -1,0 +1,153 @@
+#[what]
+class blah(object):
+	def fn1(self,d,anInst): return d+3
+#[how]
+class booh(blah):
+	def fn1(self,dd,anInst): 
+		print "hello ",dd
+		dd2=dd+1
+		return dd2
+#[who][api][cmd-receiver]
+class beeh(object):
+	def __init__(self,anInst):
+		self.who = anInst
+	
+	def api(self, dd):
+		return self.who.fn1(dd, self)
+
+
+
+#"""CMD-PATTERN[rcv,invk,client]
+#api/subject/rcv =>bind-> monad-adj/verb/invoker ->return=> noun/client	
+#bind: take rcv-type; return instance of MonadType
+#
+#@parserMonad: 'jordie' conduit-type
+#@sequenceMonad 'whorf' synchronous
+#@observerMonad 'ensen' 
+#@visitorMonad 'data'
+#
+##_api/Subject/Pronoun/rcv_|_';/adj/@decrtr'##_verb/invkr##>>signature_|_client/noun##
+#
+#{2:'b'} : function-map
+#2->'string'/context/signature : monad 
+#{input=rcv : output=client}
+#{in : signature/type/context} : monad decorator, take fnc-obj-arg return func-obj-val
+#def dec(fnc):
+#	def wrp()
+#		return fnc()+decoration
+#	return wrp
+#
+#callback: call f( 'signature'() )
+#				returns CMD fnc-object
+#1. strategy -> api/rcv
+#2. write decorators+> where-visitorMonad; when-observer/continutationMonad; sequenceMonad
+#3. cmd class/lambda-functions so:1494442
+#
+#"""
+ #
+#
+#
+#from monadclass import *
+
+
+
+
+
+
+
+
+
+
+##[WHEN-events]
+##observer pattern as continuation monad
+def continuation_monad_example():
+     from collections import deque
+     
+     class Mailbox:
+	def __init__(self):
+	    self.messages = deque()
+	    self.handlers = deque()
+
+	def send(self, message):
+	    if self.handlers:
+		handler = self.handlers.popleft()
+		handler(message)()
+	    else:
+		self.messages.append(message)
+
+	def receive(self):
+	    return callcc(self.react)
+
+	@do(ContinuationMonad)
+	def react(self, handler):
+	    if self.messages:
+		message = self.messages.popleft()
+		yield handler(message)
+	    else:
+		self.handlers.append(handler)
+		done(ContinuationMonad.zero())
+
+   
+
+    
+    @do(ContinuationMonad)
+    def insert(mb, values):
+	for val in values:
+	    mb.send(val)
+
+    
+    @do(ContinuationMonad)
+    
+    def multiply(mbin, mbout, factor):
+	while True:
+	    val = (yield mbin.receive())
+	    mbout.send(val * factor)
+
+    
+    @do(ContinuationMonad)
+    
+    def print_all(mb):
+	while True:
+	    print (yield mb.receive())
+
+    original   = Mailbox()
+    FP = Mailbox();	rnkCI = Mailbox(); RC = Mailbox()
+    multiplied = Mailbox() #director
+
+    print_all(multiplied)()
+    multiply(original, multiplied, 2)()
+    insert(original, [1, 2, 3])()
+
+
+#[WHERE-database]
+#visitor pattern as reader monad
+#defines computation that get a read-only state
+#http://progandprog.blogspot.com/2009/10/databases-in-haskell-or-release-power.html
+
+###monadVal is a function of environment
+
+from monadclass import *
+def unit(v): return lambda env: v
+
+#return function of environment
+  #invoke with env, return val
+	#apply next func, with new val/same env
+def bind(mv, mf):
+	def _(env):
+		val= mv(env)
+		return mf(val)(env)
+	return_
+
+#read val from environment, return a function of environment,invoke with env, looks up key in the env
+
+def read(key):
+	def _(env):
+		return env[key]
+	return _
+
+
+if __name__ == "__main__":
+	foo = beeh(booh())
+	a=foo.api(1)
+	print a
+	continuation_monad_example()

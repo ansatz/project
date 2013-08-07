@@ -1,0 +1,108 @@
+observer pattern
+
+src
+http://www.konstantinsolomatov.com/monads-and-applicatives-in-ui-programming
+http://www.youtube.com/watch?v=OSGv2VnC0go  transform code
+
+
+with use it to set and breakdown!
+
+so pattern is event-occurs-director-makes-call
+
+##UI-Code in application: messy!
+
+{large no. listeners, 
+  complex update logic,
+  prone to mem-leaks,
+  usually quite buggy}
+
+jet-brains-> webUI using gwt
+{rich txt-edit, diagram-edit, web-frm, proj-edit, 
+		+ mix-of-all-in-one}
+
+?Q how properties + data binding = monads, applicatives
+
+1.model,views bind to each other
+1A.can represent properties as traits.
+trait readProperty[+T] {
+		def apply(): T
+		def addListnr(l: PrptEvnt[T] => unit) : regstr
+		}
+
+trait writeProperty[-T]{
+	def apply(value: T)
+			}
+1B. bind An read-prop to An write-prop, and The properts to each other
+object Properties {
+	type Property[T] = AnyREf with ReadableProperty[T] with WriteProp[T]
+
+	def bind[ S <: D, D] (from: ReadableProperty[S], to: WriteableProperty([D]) : 
+		REgistration = {
+			from.AddListener({e => to(e.newVal)})
+			}
+	def bind[T](from: ReadableProperty[T], to: WriteableProperty[T] 
+		+ bind(to : ReadableProperty[T], from : WriteablProperty[T])
+		}
+~so bind trait(s) to properties, set properties as group/trait-label...events~+ all references to properties is the sum of traits
+
+~then bind the traits(props-lbl) to each other ,ie R->W, and W->R
+
+2. _features_needed_
+2a. utility_properties:visible, enabled, background color-> indicate error-types
+2b. aggregate a prop from multi-props vals, and show in UI
+2c. validate UI-vals, reflect in model only if UI-vals-valid
+
+--2a,2b bind UI property to property-derived from several model-properties(possibly in diff_objects)
+example: invoice_line=item_price*item_quant [are both properties]
+generalized: 
+	-have a function with n_args: fun(x1,x2,..xn: Xn):R
+	-want a function over properties from it:
+	fun(p1: Property<X1>...pn: Property<Xn>): Property<R>
+	**so its like binding properties to trait-labels
+	(lift a function from n properties (X1...XN) TO a function from (Property<X1>...Property<X2>)... ie mapping the labels of the properties over subsets,
+		==>> functor applicative, not just sticking on a tag
+		==>> we are saying for this group which consists of these Properties,
+		this is the meta-label (functor)
+
+--what is structure of functor?--
+
+pure : X => ReadableProperty[X]
+and
+<*> : ReadableProperty[X => Y] => ReadableProperty[X] => ReadableProperty[Y]
+
+--ie--
+def pure[T](t:T) : ReadableProperty[T] = {
+	new ReadableProperty[T] {
+		def apply(): T=t
+		def addListener(1: (propertyEvent[T] => Unit): 
+			Registration = Registration.EMPTY
+			}
+		}
+def ap[X,Y](f:ReadableProperty[X=>Y], p : ReadableProperty[X]): ReadableProperty[Y] =
+	{
+		new ReadableProperty[Y] {
+			def apply(): Y = f()(p())
+			def addListener(1: (PropertyEvent[Y])=>Unit): Registration = {
+				var lastVAl: Y = this()
+
+				val handler: PropertyEvent[Y] => Unit = {e  =>
+					val newValue = this()
+					if (lastVal != newVal) {
+						l(new PropertyEvent[Y](lastVAl,newVAl))
+						lastVAl=newVAl
+						}
+					}
+				f.addListener(handler) + p.addListener(handler)
+				}
+			}
+		}
+
+--utility-fncs--
+def lift[P,R] = [P,R](f:P=>R)(p: ReadableProperty[P]): ReadableProperty[R] = ap(pure(f), p)
+def lift[P1,P2,R](f:(P1,P2) => R)(p1: ReadableProperty[P1], p2: ReadableProperty[P2]): ReadableProperty[R]: ap(ap(pure(f.curried),p1), p2)
+
+
+
+
+
+

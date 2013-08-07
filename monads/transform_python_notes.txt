@@ -1,0 +1,244 @@
+1. LOOP
+for i in range(6):
+    print i**2
+
+>>xrange
+
+>>reverse  vs range(len(colors)-1,-1,-1)
+
+>>enumerate
+
+>>loop over 2 collections
+for n,c in zip(ns,cs):
+    print n,c
+
+>>for color in sorted(color, Reverse=True)
+
+2. KEY-FUNCTIONS
+_old
+blocks=[]
+while T:
+    blocks = f.read(32)
+    if block== ":
+        break
+    blocks.append(block)
+
+_new
+blocks=[]
+for block in iter(partial(f.read,32), "):
+    --iter takes 0 args, partial reduce 1->0args, read(1 arg)
+
+3. GOTO
+_multiple exits
+all for loops have else/GOTO embedded
+def fnc(seq,target):
+   for i, val in enumerate(seq):
+       if value==tgt:
+           break
+       else:
+           return -1    (NO BREAK)
+   return 1
+
+
+4. DICTIONARY: RELATIONSHIP, LINKS, COUNTING, GROUP
+d={'m':'b', 'r':'g'}
+for k in d:
+    print k
+>> loop over keys 
+while mutate dict, cannot iterate over it
+for k in d.keys():
+    if k.startwith('v'):
+        delete d[k]
+for k in d:
+    print k, d[k]
+
+for k,v in d.items():
+    print k,v
+
+for k,v in d.iter.items():
+    print k,v
+
+>> construct dict from pairs
+ns = ['a','b','c']
+cs = ['r','b','g']
+d = dict(izip(names,colors))  << built without second tuple, no second calls to accumulator
+
+>> count with dict
+-colors =[a,b,c]
+d=[]
+for color in colors:
+    if color not in d:
+        d[color]=0
+    d[color]+=1
+
+-{'b':1,'g':2,'b':3}
+d={}
+for color in colors:
+    d[color]=d.get(color,0)+1
+
+>>d = defaultdict(int)
+for c in cs:
+    d[c]+=1  <<or collection counter
+
+>> group with dict
+-ns = []
+for name in ns:
+    key=len(name)
+    if key not in d:
+        d[key]=[]
+    d[key].append(name)
+{5:{a,b}}
+
+-SET DEFAULT  <<LIKE GET + SIDE-EFFECT
+d.setdefault(key,[]).append(name)
+
+-d=defaultdict(list)
+for n in names:
+    key=len(name)
+    d[key].append(name)
+
+>> LS DICT, POPITEM() *ATOMIC*
+l=['m','n','o']
+while d:
+	k,v=d.popitem()
+	print key,value
+
+>> LINK DICTIONARY
+default = ['c':'r','A','ab']
+parser = argparse.ArgumentParser()
+parse.add_arg(.. ?)
+
+this is ChainMap(command-line-args, os.env )
+
+5. CLARITY
+keywords in function
+twtr_srch('@bma',False,20,True)
+twtr_srch('@bma',retwt=F,numtwt=20,pop=T)
+
+>> NAMED TUPLES
+doctest.testmod()
+(0,4)
+docktest.testmod()
+TestRes(fast=0,alt=4)
+TestRes=namedtuple('test1'['fuer','attemps']
+
+6. UNPACK SEQUENCES
+p = 'R','Hett',0x30,pl@example.com
+fname=p[0]
+lname=p[1]
+...=p[2]
+
+fname,lname,hex,email=p
+
+>> update mutated stat var
+def fib(n):
+	x=0,y=1
+	for i in range(n):
+		print x
+		t = y
+		y = x+y **mismatch**
+		x=t
+
+ -update mutated stat var
+ def fib(n):
+ 	x=0,y=1
+	for i in range(n):
+		print x
+		t = y
+		y = x+y **mismatch**
+		x=t
+
+ -update mutated stat var
+ def fib(n):
+ 	x=0,y=1
+	for i in range(n):
+		print x
+		t = y
+		y = x+y **mismatch**
+		x=t
+
+ -tuple pack/unpack (chunk)
+update state var @ same time, it eliminats out-of-order update
+think -> 'chunk'
+	
+ - simulation state update
+ (plot orbits of planets)
+ x,y,dx,dy = (x + dx*t
+ 	      y + dy*t
+	      influence (m,x,y,dx,dy,partial='x'),
+	      influence (m,x,y,dx,dy,partial='y'))
+ >>people can get diffEq right in excel, because row-based
+   but in python need to chunck ?
+
+7. EFFICIENCY
+--cancat strings
+ print','.join(string)
+
+--update sequence
+del mass[0]:
+	names.pop(0)
+	.incrs(0,'rmk')
+
+8. with
+--@decorator/context mngr
+	sepearate bus-logic from admin-logic
+  
+--@cache decorator
+def web.lookup(url):
+	return.urlib.urlopen(url).read()
+	
+--contexts
+0=getcontext().copy()
+ getcontext.prec=50
+ setcontext(0)
+
+  with localcontext(Context(prec=50)):
+ 	print Decimal(355)/Decimal(133)
+
+--open/close
+with open('d.txt') as f:
+	data=f.read()
+
+8.USE LOCKS
+lock = threads.lock()
+lock.('??
+	try: print 'c'
+	finally: lock.release() <<if forget bad**
+
+with lock:
+	print 'c'
+
+
+9. FACTOR OUT TEMP CONTEXT
+(old) try:
+	os.remove('file.txt')
+	except os.error: pass
+
+(new) with ignored(os.errror):
+	os.remove('file.tmp')
+
+@context mngr
+def redect_stdout
+
+help to std output
+with
+	try: help
+	finally: sys.atdnt
+
+10.ONE-LINER
+balance too much - too little
+one logical line-of-code = one english statement??
+lsit completeion, gnrtr
+result=[]
+for i in range(10):
+	s=i*2
+	result.append(s)
+-print sum(int)
+print sum([i**2 for i in sum])
+-- generator with else
+print(i**2 for i in xrange(1):
+
+
+
+
+

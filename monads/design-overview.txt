@@ -1,0 +1,41 @@
+---
+[what]: str
+1.boost: contexts - stump,tree,bandits
+2.labels: static, dynamic, human* 
+3.
+
+ [how]:
+
+
+
+---
+[who]: lmdb-cmdr
+ API: [HOW]
+ DATA: json/sql
+ WHEN: events{hover, mark-label, scroll, pause, drag-drop} 
+
+---
+[why]: UI
+1.display graphs
+
+2.human*
+draw
+draw_time_series
+
+d3.json(  ,cb=layout() ) gets file
+layout(data) define where on page stuff drawn all 6 graphs, calls draw within it
+draw(data,param,dimensions) figure out scales, calls draw_timeseries
+draw_timeseries: draws line, draws the points		
+
+enter,data,append,exit
+
+
+
+js:
+func() {
+	var=func()
+
+}
+
+
+

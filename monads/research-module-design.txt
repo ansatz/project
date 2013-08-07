@@ -1,0 +1,55 @@
+contexts{ thesis-job-career; topical[science, healthIT, sports] ;    }
+research module:
+read r : monitor
+write w : record-instructions
+execute x : exectue
+
+design as monad that bind r(w,x,r) ie show some progress(r) over read,write,do
+usage would be readShow(read), ie i just read something, what is summary, progress, what can i show
+readShow(write), took notes, how can i show that as progress
+readShow(do), ok whats the output, how do i make it easy to display what i did
+readShow(write-do), again did something, logged it, how show  ... write-do = log 
+readShow(do-write), take notes, try a toy model, how show?... do-write = toy-model
+
+[what]- A=show daily progress!!!
+		thesis: 1. topics-blog 2. sphinx-latex-pdf 3. version-control 4. progress
+			papers: 1. sections 2. writeup 3.	
+		   	grant: 1. links 2. writeup 3. revisions
+	   
+	   
+class research_learn(object):
+	def library(self, link_list):
+		return list,bib,latex
+	def hypothesis(self, summary):
+		return aggregate #history
+	def research(self, linksNotes):
+		pass
+	def learn(self, topic):
+		pass
+	def test(self, list-calendar):
+		return schedule
+		
+[how]
+class thesis(research_learn):
+	def 
+
+
+1.lib return links
+2.hypothesis , ..versions
+3.learn, revise, schedule, flashcards.py:
+
+[how]
+
+[api]
+
+
+
+
+[who]
+[where]
+[when]
+
+[why]
+1.learn
+2.get bib
+3.revise

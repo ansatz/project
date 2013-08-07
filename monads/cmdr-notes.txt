@@ -1,0 +1,37 @@
+
+# COMMANDER (parameter-less fnc-calls)
+# encapsulate the api(client), set objects(injection, receiver), 
+# observer-pattern:TIME
+	#invoke event-handler
+# visitor-pattern:DATA
+  # space: set traversal {LIFO, priority}
+  # data: data-handler/queries.
+# decorator : a callable, take function as argument, returns different function
+
+
+#cmd as monad
+
+return instance of invoke
+
+1.cmd (bind)
+expression wrapped in cmd-obj
+obj has execute fnc, that exposed and called wrapped
+so statements, first-class objects, can be passed and executed at will
+
+2.invoker(monad) using as adj/decorator(take fnc-obj-arg return func-obj-val
+different invokers can apply different logic to how commands execute
+invoker, separate object, invokes the commands
+
+3.receiver(statements)
+
+
+--client -pronoun
+--invoker-adj/monad/decorator-->take func-Obj as arg, [return func_call + wrapped-effects] ,return func-Obj as return value 
+--recvr -api the functions
+
+
+monad vs decorator vs closure
+closure more like block of code that treat like data and pass to other functino (ie data return to code)
+monad is more like the context in which functions can be chained, controls how data passes from one functino to next
+think of object(pronoun) as defined paths of how functions pass to another(propositions)
+the adjective can change the frames and the paths through them

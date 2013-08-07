@@ -1,0 +1,77 @@
+#fuqit web python
+#NOTES: from threshold import dataMine # just import the api
+#check the tornado/twisted server
+#requests through header... check old code on hd
+#api functions available: fpCurve() rankedCI() recurrence()
+
+#CODE:
+from threshold import *
+
+#create context instances/switches
+context = [dataMine( bayes_bin() ) , dataMine( hashKern() ), dataMine( kde() )]
+bayes, hash, density = context
+
+#CMD-pattern: 
+#remove args, enable undo * leave for now *
+#have a switch (if => and) else or
+
+#cmdr_utility-fncs
+readyroom = lambda strtg: dataMine(strtg())
+engage    = lambda f: f()
+shields	= lambda f: f() #event incoming
+photon		= lambda f: f() #event response
+bridge		= lambda f: f() #get data
+cmdr_
+
+strategy = [bayes_bin, hashKern, kde]
+api = [fpCurve,rankedCI,reccurrence]
+
+context = map(readyroom, strategy)
+picard = lambda s: (s==context[0] and s.engage(api[0]) \
+				or (s==context[1] and s.engage(api[1]) \
+				or (s==context[2] and s.engage(api[2])
+				or print "captains quarters"
+				
+map(engage, api)
+(context[0] and picard(
+
+
+
+
+
+
+#call like this
+if __name__ = "__main__":
+#event-handler
+events=[]
+events.append(hdr-context) #*need to figure out how to receive hdr
+
+#response 
+events=[] and map( evt_fp(context=hdr-context, entropy=Val, size=N), events )
+
+bigmuls = lambda xs,ys: filter(lambda (x,y):x*y > 25, combine(xs,ys))
+combine = lambda xs,ys: map(None, xs*len(ys), dupelms(ys,len(xs)))
+dupelms = lambda lst,n: reduce(lambda s,t:s+t, map(lambda l,n=n: [l]*n, lst))
+print bigmuls((1,2,3,4),(10,15,3,22))
+
+
+
+
+
+
+
+def evt_FP(x,*args): map(lambda x: context[x], fpCurve(*args) )
+
+def evt_CI(x,*args): map(lambda x: context[x], rankedCI(*args) )
+
+def evt_RC(x): map(lambda x: context[x], fpCurve(*args) )
+
+
+
+
+
+
+
+
+
+

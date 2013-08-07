@@ -1,0 +1,11 @@
+#this should be thresholdII.py
+[WHO] threshold.py api
+
+[WHEN] events
+[WHERE] mysql
+
+monad 
+;bind g(f(x))
+f(x);
+g
+STATE-MONAD as event-cmd pattern

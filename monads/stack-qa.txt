@@ -1,0 +1,6 @@
+
+Tue Jul 23 09:26:38 CDT 2013
+(:read !date) S-V
+ok so dict,array,dict
+so map key, then index, then key
+unwind via ['key'][index=0,1,...iteritems()]['key']

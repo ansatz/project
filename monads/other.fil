@@ -1,0 +1,44 @@
+S-adj-V-N
+SUBJECT:
+adj(monad, obsv,vst,)
+CMD
+api
+
+monads made difficult diehl
+fuquit, quokka
+bottle.py shiny.r 
+
+
+
+# COMMANDER (parameter-less fnc-calls)
+# encapsulate the api(client), set objects(injection, receiver), 
+# observer-pattern:TIME
+	#invoke event-handler
+# visitor-pattern:DATA
+  # space: set traversal {LIFO, priority}
+  # data: data-handler/queries.
+# decorator : a callable, take function as argument, returns different function
+
+***
+#cmd as monad-interface
+monad 1.take param-type 2.return instance of monad-type
+S-V-(adj)-N
+(receiver-subject)-(invoker-verb)-(adj-monad)-(client-noun-CMD)
+1.call-back(imperative-sequential)
+promise-functional-asynchronous
+2.
+
+
+RCV--bind--> [{jordy,ensen,whorf}] -> --ret--> ( invoker() )
+
+picard = cmd()
+picard.engage 
+picard.fire #respond
+picard.hail #observer
+
+unit():return instance of invoke
+
+class cmd(obj):
+	def __init__(self):
+
+

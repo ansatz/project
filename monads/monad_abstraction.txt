@@ -1,0 +1,46 @@
+_function:_ 
+def f(a): return b
+>>map a to b with f
+
+_functor:_ 
+>>container: 
+def f(a=[]): return [a]
+>>computation: 
+def ftr(a,b): return a+b
+>>unbox,apply f, rebox
+
+_monad:_ {lists,file-hndl,db-query,timer-countdown}
+>>infix fnc, swap args
+>>does not rebox, that done by fnc(return)
+>>fnc can change context (same kind, diff.shape)
+def monad-mybe(f1,v=None): return v and f(v) 
+
+_arrow:_
+>>context kept around function (monad kept context around vals)
+>>can be opaque(call other fncs), input/output types all user need;
+>>happen if needed: db-hndl(query()) query()->db-hndl()
+>>repeated: callee(db-hndl,query) OR readerMonad.bind(query), but query must return monad-val, ie rewrite query
+>>BEST: bundle(db-hndl,query) -> create enriched query-fnc, knows itself which-dB to talk to
+>>rich composition over arrows: arrow1,arrow2->arrow3..compsed arrow+composed context
+
+https://news.ycombinator.com/item?id=957820
+Also, a Monad is not a "thing", it's a property of a thing. "Monad" is a typeclass, not a type.
+What follows is that Monads are not containers; you don't store a value in your Monad, you store it in your List. The List just happens to be a monad. (Similarly, you can't store a ball inside your "Red", but you can store it in a "Red Box". The fact that the box is red has nothing to do with its ability to be a container. If you paint a piece of paper red, it does not suddenly become a container.)
+(Side note: it happens that Monads are Functors, and Functors are logically containers... but remember, the Monad or Functor instance is not what makes something a container; something is a container because of its underlying type. "Monad" is a property possessed by certain containers, just as "Red" is a property possessed by certain other containers. Oh, and please don't make me insert a joke about Red/Black trees here...)
+Put simply; Monad = adjective, not Monad = noun. It took me like two years to come to terms with this, but now that I have, Haskell is one of the easiest-to-use programming languages I know.
+ 
+http://stackoverflow.com/questions/2704652/monad-in-plain-english-for-the-oop-programmer-with-no-fp-background
+monad is an amplifier of types: obey certain rules, has certain operations provided
+1.(adj)amplifier of type= take type and turn into more special type
+2.(rules) 
+  a. take value of an unamplified type, get value of an amplified type
+  b. transform ops on umaplified type, to ops in amplified type {compose with identity function, result in original, this is associative}
+  c. get unamplified back out of amplified* (not always)
+  
+>>how use?
+1.need new capabilities of type, whilst retain old
+2.capture a bunch of operations on types, represent those as composable(bind)... series, then get results
+3.repr side-effects cleanly in language that hates side-effects
+
+>>closest OO analogy to monads is the command pattern
+ 
