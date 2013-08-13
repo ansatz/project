@@ -1,5 +1,5 @@
-#<script type="text/javascript" src="jquery-latest.min.js"></script> 
-#<link href="knowlstyle.css" rel="stylesheet" type="text/css" /> 
+#<script type="text/javascript" src="jquery-latest.min.js"></script>
+#<link href="knowlstyle.css" rel="stylesheet" type="text/css" />
 #<script type="text/javascript" src="knowl.js"></script>
 
 #** TODO: **	<br>
@@ -26,7 +26,11 @@ diff ~/project/scikit-learn-master/sklearn/ensemble/singh-project-dynboos/entrof
 has xrange(0,1,1/1000)
 => no error  ** i believe it is this one
 
+#** modules **
+cd ~/project/scikit-learn-master
+python -m sklearn/ensemble/sdbw2.py
 
-
-
-
+#** tuple **- index out of range
+fit()
+fit_depr()
+s3.py may be the newest file, but having trouble with modules

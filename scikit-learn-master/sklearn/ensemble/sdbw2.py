@@ -1,4 +1,5 @@
 #from weight_boosting.py
+#from sklearn.ensemble import *
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.utils import array2d,check_arrays, check_random_state, column_or_1d
@@ -25,27 +26,27 @@ def _boost_real(BWB, iboost, X, y, sample_weight):
 	estimator.fit(X, y, sample_weight=sample_weight)
 
 	y_predict_proba = estimator.predict_proba(X)
-    
+
 	if iboost == 0:
             BWB.classes_ = getattr(estimator, 'classes_', None)
             BWB.n_classes_ = len(BWB.classes_)
 
-    
+
 	y_predict = BWB.classes_.take(np.argmax(y_predict_proba, axis=1),
                                        axis=0)
 
-    
+
 	# Instances incorrectly classified
-    
+
 	incorrect = y_predict != y
 
     # Error fraction
-    
+
 	estimator_error = np.mean(
             np.average(incorrect, weights=sample_weight, axis=0))
 
     # Stop if classification is perfect
-    
+
 	if estimator_error <= 0:
             return sample_weight, 1., 0.
 
@@ -56,29 +57,29 @@ def _boost_real(BWB, iboost, X, y, sample_weight):
     # where K == n_classes_ and c, k in [0, K) are indices along the second
     # axis of the y coding with c being the index corresponding to the true
     # class label.
-    
+
 	n_classes = BWB.n_classes_
-    
+
 	classes = BWB.classes_
-    
+
 	y_codes = np.array([-1. / (n_classes - 1), 1.])
-    
+
 	y_coding = y_codes.take(classes == y[:, np.newaxis])
 
     # Displace zero probabilities so the log is defined.
     # Also fix negative elements which may occur with
     # negative sample weights.
-    
+
 	y_predict_proba[y_predict_proba <= 0] = 1e-5
 
     # Boost weight using multi-class AdaBoost SAMME.R alg
-    
+
 	estimator_weight = (-1. * BWB.learning_rate
                                 * (((n_classes - 1.) / n_classes) *
                                    inner1d(y_coding, np.log(y_predict_proba))))
 
     # Only boost the weights if it will fit again
-    
+
 	if not iboost == BWB.n_estimators - 1:
             # Only boost positive weights
             sample_weight *= np.exp(estimator_weight *
@@ -170,7 +171,7 @@ def fit(BWB, X, y, sample_weight=None):
 
         return BWB
 def _boost_real_depr(BWB, iboost, X, y, sample_weight): #, X_argsorted=None):
- 
+
 	"""Implement a single boost using the SAMME.R real algorithm."""
     	#global INC
     	INC = np.zeros((BWB.n_estimators, X.shape[0]),'f')
@@ -388,14 +389,14 @@ print("l262, patdat pattar", patData.shape, patTarg.shape)
 bwb=AdaBoostClassifier()
 fit(bwb,patData,patTarg)
 print 'error: ', bwb.estimator_errors_
-#print 'itr ', bwb.n_estimators
+print 'itr ', bwb.n_estimators
 
 ##ENTROPY BWB.n_estimators x sample-features
-#print 'sample_weight ', bwb.estimator_weights_ , len(bwb.estimator_weights_)
-entFeatures = np.array( (bwb.n_estimators , bstRows), 'float64' )
-print 'est-weights ', entFeatures.shape, bwb.estimator_weights_.shape
-entFeatures = WTS.copy()
-print 'entFeat (wts-copy)' , entFeatures.shape
+print 'sample_weight ', bwb.estimator_weights_ , len(bwb.estimator_weights_)
+#entFeatures = np.array( (bwb.n_estimators , bstRows), 'float64' )
+#print 'est-weights ', entFeatures.shape, bwb.estimator_weights_.shape
+entFeatures = np.asarray( WTS.copy() , dtype=np.float64)
+print 'entFeat (wts-copy)' , entFeatures.shape[0], entFeatures
 
 entVal=np.array
 #get the unique  weight vals and number
@@ -403,13 +404,14 @@ from collections import Counter
 c = Counter()
 for e in set(entFeatures.flat):
         c[e]+=1
-#print 'counts ', c
+print 'counts ', c
 #print 'weight counts ',c[0:2]
 print 'T_counts ', c.most_common(10), ' ', sum( c.values() )
 #for i in c:
 #        if i ==
-
-ent = np.zeros( entFeatures.shape[1] , 'float64' )
+entFeatures.flat
+print entFeatures.shape[0]
+#if entFeatures.shape[1] and ent = np.zeros( entFeatures.shape[1] , 'float64' )
 for i in xrange( entFeatures.shape[1] ):
        #ent[i]= entroNumpy( entFeatures[:,i] )
        ent[i]= entCnt( entFeatures[:,i] )
