@@ -140,6 +140,8 @@ def fit(BWB, X, y, sample_weight=None):
         BWB.estimators_ = []
         BWB.estimator_weights_ = np.zeros(BWB.n_estimators, dtype=np.float)
         BWB.estimator_errors_ = np.ones(BWB.n_estimators, dtype=np.float)
+        global WTS
+        WTS = np.zeros((BWB.n_estimators, X.shape[0]),'f')
 
         for iboost in xrange(BWB.n_estimators):
             # Boosting step
@@ -154,13 +156,13 @@ def fit(BWB, X, y, sample_weight=None):
 
             BWB.estimator_weights_[iboost] = estimator_weight
             BWB.estimator_errors_[iboost] = estimator_error
+            WTS[iboost]=sample_weight
 
             # Stop if error is zero
             if estimator_error == 0:
                 break
 
             sample_weight_sum = np.sum(sample_weight)
-
             # Stop if the sum of sample weights has become non-positive
             if sample_weight_sum <= 0:
                 break
@@ -389,14 +391,14 @@ print("l262, patdat pattar", patData.shape, patTarg.shape)
 bwb=AdaBoostClassifier()
 fit(bwb,patData,patTarg)
 print 'error: ', bwb.estimator_errors_
-print 'itr ', bwb.n_estimators
+#print 'itr ', bwb.n_estimators
 
 ##ENTROPY BWB.n_estimators x sample-features
 print 'sample_weight ', bwb.estimator_weights_ , len(bwb.estimator_weights_)
 #entFeatures = np.array( (bwb.n_estimators , bstRows), 'float64' )
 #print 'est-weights ', entFeatures.shape, bwb.estimator_weights_.shape
 entFeatures = np.asarray( WTS.copy() , dtype=np.float64)
-print 'entFeat (wts-copy)' , entFeatures.shape[0], entFeatures
+#print 'entFeat (wts-copy)' , entFeatures.shape[0] #, entFeatures
 
 entVal=np.array
 #get the unique  weight vals and number
@@ -404,26 +406,32 @@ from collections import Counter
 c = Counter()
 for e in set(entFeatures.flat):
         c[e]+=1
-print 'counts ', c
+#print 'counts ', c
 #print 'weight counts ',c[0:2]
 print 'T_counts ', c.most_common(10), ' ', sum( c.values() )
 #for i in c:
 #        if i ==
-entFeatures.flat
-print entFeatures.shape[0]
+#entFeatures.flat
+#print entFeatures.shape[0]
+
 #if entFeatures.shape[1] and ent = np.zeros( entFeatures.shape[1] , 'float64' )
-for i in xrange( entFeatures.shape[1] ):
-       #ent[i]= entroNumpy( entFeatures[:,i] )
-       ent[i]= entCnt( entFeatures[:,i] )
-print 'ent ',ent, len(ent)
+#when using xrange... road to debugging error
+#for i in xrange( entFeatures.shape[1] ):
+#       #ent[i]= entroNumpy( entFeatures[:,i] )
+#       ent[i]= entCnt( entFeatures[:,i] )
+#zip(*matrix) transposes the matrix row<=>col
+entT = map(list, zip(*entFeatures))
+ent = [entCnt( e ) for e in entT  ]
+#print ent[0:100]
+#print 'ent ',ent, len(ent)
 #print 'wht-row-test ', entFeatures[0,:]
-ent2 = np.zeros( entFeatures.shape[0] , 'float64' )
-for j in xrange( entFeatures.shape[0] ):
-        ent2[j] = entroNumpy( entFeatures[j,:])
+#ent2 = np.zeros( entFeatures.shape[0] , 'float64' )
+#for j in xrange( entFeatures.shape[0] ):
+#        ent2[j] = entroNumpy( entFeatures[j,:])
 #print 'ent2 ',ent2,len(ent2)
 
-entCnt=[]
-entCnt = Counter(ent)
+#entCnt=[]
+#entCnt = Counter(ent)
 #print 'entropy counts ', entCnt
 #print 'entropy row-wise counts ', Counter(ent2)
 #entVal=np.bincount(ent)
@@ -469,7 +477,7 @@ ax2 = fig.add_subplot(122)
 ax2.hist(ent, bins=1000, histtype='stepfilled', alpha=0.2, normed=True)
 ax2.set_xlabel('entropy')
 ax2.set_ylabel('P(entropy)')
-
+plt.show()
 #------------------------------------------------------------
 # Second & Third figure: Knuth bins & Bayesian Blocks
 fig = plt.figure(figsize=(10, 4))

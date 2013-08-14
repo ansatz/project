@@ -26,11 +26,26 @@ diff ~/project/scikit-learn-master/sklearn/ensemble/singh-project-dynboos/entrof
 has xrange(0,1,1/1000)
 => no error  ** i believe it is this one
 
-#** modules **
+#*** modules ***
 cd ~/project/scikit-learn-master
 python -m sklearn/ensemble/sdbw2.py
 
-#** tuple **- index out of range
+#*** tuple ***- index out of range
 fit()
 fit_depr()
 s3.py may be the newest file, but having trouble with modules
+
+#*** git ***-  <br>
+#created <dev> branch
+#<master> branch should contain no print statements<br>
+#create new branch <br>
+'
+git branch ***name***
+git checkout <branch-ptr>
+#switch branch<br>
+#check
+git branch
+
+
+#virtualenv
+http://docs.python-guide.org/en/latest/dev/virtualenvs.html
