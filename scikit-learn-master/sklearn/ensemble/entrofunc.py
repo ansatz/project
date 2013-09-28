@@ -27,7 +27,7 @@ def entCnt( *args ):
                         arln+=arln
                         #print 'subji ', arln
         #print 'frc ', frc[0:10]
-        etr = -np.sum([ ((p * np.log2(p)) ,0.0) for p in frc if p>0.0])
+        etr = np.sum([ ((p * np.log2(p)) ,0.0) for p in frc if p>0.0])
         #print 'entropy ', etr
         return etr
 

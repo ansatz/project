@@ -72,16 +72,6 @@ function knowl_click_handler($el) {
      $el.parent().parent().parent().after(knowl);
     }
  
-//else {
-//      // $el.parent().after(knowl);
-//      var theparents=$el.parents();
-//      var ct=0;
-//     while (theparents[ct] != "block" && ct<2) 
-//       ct++;
-//      ct=0;
-//      //$el.parents().eq(ct).after(knowl);
-//      $el.parents().eq(ct).after(theparents[1]);
-//    }
    
     // "select" where the output is and get a hold of it 
     var $output = $(output_id);
@@ -146,4 +136,24 @@ $(function() {
 //    }
   });
 });
+
+                   
+//http://jsbin.com/ateze5/2/edit
+$(function(){
+	$('.octothorpe').on({
+		click:function(e){
+			e.preventDefault();
+			var $pfold = $(this).closest('.octowrap').siblings('p');
+			var $cfold = $(this).closest('.docs').siblings('.code');
+			var $sector = $(this).closest('.section');
+			var $h2 = $sector.nextUntil('.section:has(h2)').slice(0,-1);
+			
+			$pfold.toggleClass('fold');
+			$cfold.toggleClass('fold');
+			$h2.toggleClass('fold');
+
+		}});
+});
+
+
 

@@ -106,3 +106,5 @@ class dataMine(object):
 
    	 def recurrence(self,state):
      		   return texture()
+
+if __name__ == "__main__":

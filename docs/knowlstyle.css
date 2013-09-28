@@ -106,3 +106,8 @@ div > *[knowl], p > *[knowl] {
 }
 
 /* end knowl */
+
+
+.fold {
+	display: none;
+}
