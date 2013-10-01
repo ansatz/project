@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>sdbw2.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>sdbw2.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p><strong>modules</strong> <br>
+<code>cd ~/project/scikit-learn-master</code> <br>
+ <code>python -m sklearn.ensemble.sdbw2.py</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">AdaBoostClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">AdaBoostRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">array2d</span><span class="p">,</span><span class="n">check_arrays</span><span class="p">,</span> <span class="n">check_random_state</span><span class="p">,</span> <span class="n">column_or_1d</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span><span class="p">,</span> <span class="n">DecisionTreeRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree.tree</span> <span class="kn">import</span> <span class="n">BaseDecisionTree</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">ClassifierMixin</span><span class="p">,</span> <span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree._tree</span> <span class="kn">import</span> <span class="n">DTYPE</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">astroML.plotting</span> <span class="kn">import</span> <span class="n">hist</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">entrofunc</span> <span class="kn">import</span> <span class="o">*</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Global variables to track the dynamic weights and correct/incorrect classifier</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">WTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]);</span> <span class="n">INCC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]);</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>!#- boost fit functions <br>
+Implement a single boost using the SAMME.R real algorithm.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">_boost_real</span><span class="p">(</span><span class="n">BWB</span><span class="p">,</span> <span class="n">iboost</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="n">INC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="s">&#39;f&#39;</span><span class="p">)</span>
+	<span class="n">estimator</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">_make_estimator</span><span class="p">()</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">estimator</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">BWB</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+		<span class="k">pass</span>
+
+	<span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+
+	<span class="n">y_predict_proba</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">iboost</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="s">&#39;classes_&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">BWB</span><span class="o">.</span><span class="n">n_classes_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+
+
+	<span class="n">y_predict</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_predict_proba</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                       <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <ul>
+<li>Instances incorrectly classified</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="n">incorrect</span> <span class="o">=</span> <span class="n">y_predict</span> <span class="o">!=</span> <span class="n">y</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <ul>
+<li>Error fraction</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="n">estimator_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">incorrect</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <ul>
+<li>Stop if classification is perfect</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">if</span> <span class="n">estimator_error</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <ul>
+<li>Construct y coding as described in Zhu et al [2]:</li>
+</ul>
+<p>y_k = 1 if c == k else -1 / (K - 1)</p>
+<p>where K == n_classes_ and c, k in [0, K) are indices along the second
+axis of the y coding with c being the index corresponding to the true
+class label.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="n">n_classes</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">n_classes_</span>
+
+	<span class="n">classes</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span>
+
+	<span class="n">y_codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_classes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.</span><span class="p">])</span>
+
+	<span class="n">y_coding</span> <span class="o">=</span> <span class="n">y_codes</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">classes</span> <span class="o">==</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <ul>
+<li>Displace zero probabilities so the log is defined.
+Also fix negative elements which may occur with
+negative sample weights.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="n">y_predict_proba</span><span class="p">[</span><span class="n">y_predict_proba</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-5</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <ul>
+<li>Boost weight using multi-class AdaBoost SAMME.R alg</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="n">estimator_weight</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">BWB</span><span class="o">.</span><span class="n">learning_rate</span>
+                                <span class="o">*</span> <span class="p">(((</span><span class="n">n_classes</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_classes</span><span class="p">)</span> <span class="o">*</span>
+                                   <span class="n">inner1d</span><span class="p">(</span><span class="n">y_coding</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_predict_proba</span><span class="p">))))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <ul>
+<li>Only boost the weights if it will fit again</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">if</span> <span class="ow">not</span> <span class="n">iboost</span> <span class="o">==</span> <span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>Only boost positive weights</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">sample_weight</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">estimator_weight</span> <span class="o">*</span>
+                                    <span class="p">((</span><span class="n">sample_weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span>
+                                     <span class="p">(</span><span class="n">estimator_weight</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)))</span>
+	<span class="k">return</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">estimator_error</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>!#- <strong>IN-USAGE</strong> boost fit  <br>
+Build a boosted classifier/regressor from the training set (X, y).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">BWB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <h2>Parameters</h2>
+<p>X : array-like of shape = [n_samples, n_features]
+    The training input samples.</p>
+<p>y : array-like of shape = [n_samples]
+    The target values (integers that correspond to classes in
+    classification, real numbers in regression).</p>
+<p>sample_weight : array-like of shape = [n_samples], optional
+    Sample weights. If None, the sample weights are initialized to
+    1 / n_samples.</p>
+<h2>Returns</h2>
+<p>self : object
+    Returns self.</p>
+<ul>
+<li>Check parameters</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">BWB</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;learning_rate must be greater than zero&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <ul>
+<li>Check data</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">)</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">column_or_1d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="nb">getattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">&quot;dtype&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">!=</span> <span class="n">DTYPE</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">X</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">contiguous</span><span class="p">)):</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">array2d</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">DTYPE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <ul>
+<li>Initialize weights to 1 / n_samples</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="n">sample_weight</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <ul>
+<li>Normalize existing weights</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span> <span class="o">/</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <ul>
+<li>Check that the sample weights sum is positive</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s">&quot;Attempting to fit with a non-positive &quot;</span>
+                    <span class="s">&quot;weighted number of samples.&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <ul>
+<li>Clear any previous fit results</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">BWB</span><span class="o">.</span><span class="n">estimators_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_weights_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_errors_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="k">global</span> <span class="n">WTS</span>
+        <span class="n">WTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="s">&#39;f&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">iboost</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <ul>
+<li>Boosting step</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">sample_weight</span><span class="p">,</span> <span class="n">estimator_weight</span><span class="p">,</span> <span class="n">estimator_error</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">_boost</span><span class="p">(</span>
+                <span class="n">iboost</span><span class="p">,</span>
+                <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                <span class="n">sample_weight</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <ul>
+<li>Early termination</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_weights_</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator_weight</span>
+            <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_errors_</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator_error</span>
+            <span class="n">WTS</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span><span class="o">=</span><span class="n">sample_weight</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <ul>
+<li>Stop if error is zero</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="n">estimator_error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">sample_weight_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <ul>
+<li>Stop if the sum of sample weights has become non-positive</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="k">if</span> <span class="n">sample_weight_sum</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">iboost</span> <span class="o">&lt;</span> <span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <ul>
+<li>Normalize</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>                <span class="n">sample_weight</span> <span class="o">/=</span> <span class="n">sample_weight_sum</span>
+
+        <span class="k">return</span> <span class="n">BWB</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p>Implement a single boost using the SAMME.R real algorithm.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">_boost_real_depr</span><span class="p">(</span><span class="n">BWB</span><span class="p">,</span> <span class="n">iboost</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">):</span> <span class="c">#, X_argsorted=None):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <ul>
+<li>global INC</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    	<span class="n">INC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="s">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">_make_estimator</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">X_argsorted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
+                          <span class="n">X_argsorted</span><span class="o">=</span><span class="n">X_argsorted</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+
+        <span class="n">y_predict_proba</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">iboost</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="s">&#39;classes_&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">BWB</span><span class="o">.</span><span class="n">n_classes_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">)</span>
+
+        <span class="n">y_predict</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_predict_proba</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                       <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <ul>
+<li>Instances incorrectly classified</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">incorrect</span> <span class="o">=</span> <span class="n">y_predict</span> <span class="o">!=</span> <span class="n">y</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <ul>
+<li>Error fraction</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">estimator_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">incorrect</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <ul>
+<li>Stop if classification is perfect</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">estimator_error</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <ul>
+<li>Construct y coding as described in Zhu et al [2]:</li>
+</ul>
+<p>y_k = 1 if c == k else -1 / (K - 1)</p>
+<p>where K == n_classes_ and c, k in [0, K) are indices along the second
+axis of the y coding with c being the index corresponding to the true
+class label.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">n_classes</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">n_classes_</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">classes_</span>
+        <span class="n">y_codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_classes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.</span><span class="p">])</span>
+        <span class="n">y_coding</span> <span class="o">=</span> <span class="n">y_codes</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">classes</span> <span class="o">==</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <ul>
+<li>Displace zero probabilities so the log is defined.
+Also fix negative elements which may occur with
+negative sample weights.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">y_predict_proba</span><span class="p">[</span><span class="n">y_predict_proba</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-5</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <ul>
+<li>Boost weight using multi-class AdaBoost SAMME.R alg</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">estimator_weight</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">BWB</span><span class="o">.</span><span class="n">learning_rate</span>
+                                <span class="o">*</span> <span class="p">(((</span><span class="n">n_classes</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_classes</span><span class="p">)</span> <span class="o">*</span>
+                                   <span class="n">inner1d</span><span class="p">(</span><span class="n">y_coding</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_predict_proba</span><span class="p">))))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <ul>
+<li>Only boost the weights if it will fit again</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="ow">not</span> <span class="n">iboost</span> <span class="o">==</span> <span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>Only boost positive weights</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">sample_weight</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">estimator_weight</span> <span class="o">*</span>
+                                    <span class="p">((</span><span class="n">sample_weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span>
+                                     <span class="p">(</span><span class="n">estimator_weight</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">estimator_error</span><span class="p">,</span> <span class="n">incorrect</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      <p>Build a boosted classifier/regressor from the training set (X, y).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">fit_depr</span><span class="p">(</span><span class="n">BWB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      <h2>Parameters</h2>
+<p>X : array-like of shape = [n_samples, n_features]
+The training input samples.</p>
+<p>y : array-like of shape = [n_samples]
+The target values (integers that correspond to classes in
+classification, real numbers in regression).</p>
+<p>sample_weight : array-like of shape = [n_samples], optional
+Sample weights. If None, the sample weights are initialized to
+1 / n_samples.</p>
+<h2>Returns</h2>
+<p>BWB : object
+Returns BWB.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      <ul>
+<li>Check that the base estimator is a classifier</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">base_estimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;base_estimator must be a &quot;</span>
+                            <span class="s">&quot;subclass of ClassifierMixin&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      <ul>
+<li>Check that algorithm is supported</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">BWB</span><span class="o">.</span><span class="n">algorithm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;SAMME&#39;</span><span class="p">,</span> <span class="s">&#39;SAMME.R&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;algorithm </span><span class="si">%s</span><span class="s"> is not supported&quot;</span>
+                         <span class="o">%</span> <span class="n">BWB</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      <ul>
+<li>SAMME-R requires predict_proba-enabled base estimators</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">BWB</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">==</span> <span class="s">&#39;SAMME.R&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">base_estimator</span><span class="p">,</span> <span class="s">&#39;predict_proba&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s">&quot;AdaBoostClassifier with algorithm=&#39;SAMME.R&#39; requires &quot;</span>
+                <span class="s">&quot;that the weak learner supports the calculation of class &quot;</span>
+                <span class="s">&quot;probabilities with a predict_proba method.</span><span class="se">\n</span><span class="s">&quot;</span>
+                <span class="s">&quot;Please change the base estimator or set &quot;</span>
+                <span class="s">&quot;algorithm=&#39;SAMME&#39; instead.&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-39'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-39'>#</a>
+      </div>
+      <ul>
+<li>Check parameters</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">BWB</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;learning_rate must be greater than zero&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-40'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-40'>#</a>
+      </div>
+      <ul>
+<li>Check data</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-41'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-41'>#</a>
+      </div>
+      <ul>
+<li>Initialize weights to 1 / n_samples</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">sample_weight</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-42'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-42'>#</a>
+      </div>
+      <ul>
+<li>Normalize existing weights</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span> <span class="o">/</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-43'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <ul>
+<li>Check that the sample weights sum is positive</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s">&quot;Attempting to fit with a non-positive &quot;</span>
+                <span class="s">&quot;weighted number of samples.&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      <ul>
+<li>Clear any previous fit results</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">BWB</span><span class="o">.</span><span class="n">estimators_</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_weights_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_errors_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
+      </div>
+      <ul>
+<li>Create argsorted X for fast tree induction</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">X_argsorted</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">base_estimator</span><span class="p">,</span> <span class="n">BaseDecisionTree</span><span class="p">):</span>
+        <span class="n">X_argsorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asfortranarray</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">X_argsorted2</span><span class="o">=</span><span class="n">X_argsorted</span>
+    <span class="k">global</span> <span class="n">WTS</span>
+    <span class="n">WTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="s">&#39;f&#39;</span><span class="p">)</span>
+
+    <span class="k">global</span> <span class="n">INCC</span>
+    <span class="n">INCC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;f&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">iboost</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-46'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-46'>#</a>
+      </div>
+      <ul>
+<li>Boosting step</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">sample_weight</span><span class="p">,</span> <span class="n">estimator_weight</span><span class="p">,</span> <span class="n">estimator_error</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">_boost</span><span class="p">(</span>
+            <span class="n">iboost</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+            <span class="n">sample_weight</span><span class="p">,</span>
+            <span class="n">X_argsorted</span><span class="o">=</span><span class="n">X_argsorted</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-47'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-47'>#</a>
+      </div>
+      <p>t=[sample_weight2, val1float, estimator_error2, INCC]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">t</span> <span class="o">=</span> <span class="n">BWB</span><span class="o">.</span><span class="n">_boost_real</span><span class="p">(</span>
+            <span class="n">iboost</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+            <span class="n">sample_weight</span><span class="p">,</span>
+            <span class="n">X_argsorted</span><span class="o">=</span><span class="n">X_argsorted2</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-48'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-48'>#</a>
+      </div>
+      <ul>
+<li>Early termination</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_weights_</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator_weight</span>
+        <span class="n">BWB</span><span class="o">.</span><span class="n">estimator_errors_</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator_error</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-49'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-49'>#</a>
+      </div>
+      <ul>
+<li>Stop if error is zero</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">estimator_error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">sample_weight_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-50'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-50'>#</a>
+      </div>
+      <p>WTS[i,:] = sample_weight</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">WTS</span><span class="p">[</span><span class="n">iboost</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
+                <span class="n">INCC</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+                <span class="n">INCC</span><span class="p">[</span><span class="n">iboost</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-51'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-51'>#</a>
+      </div>
+      <ul>
+<li>Stop if the sum of sample weights has become non-positive</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="k">if</span> <span class="n">sample_weight_sum</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">iboost</span> <span class="o">&lt;</span> <span class="n">BWB</span><span class="o">.</span><span class="n">n_estimators</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-52'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-52'>#</a>
+      </div>
+      <ul>
+<li>Normalize</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">sample_weight</span> <span class="o">/=</span> <span class="n">sample_weight_sum</span>
+
+
+    <span class="k">return</span> <span class="n">BWB</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-53'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-53'>#</a>
+      </div>
+      <p><strong> Data INPUT </strong><br>
+need to extend this with ponyORM</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">parseNum</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">xx</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
+
+<span class="n">dd</span><span class="o">=</span><span class="p">[(</span><span class="s">&#39;SYS&#39;</span><span class="p">,</span> <span class="s">&#39;float64&#39;</span><span class="p">),(</span><span class="s">&#39;DIA&#39;</span><span class="p">,</span><span class="s">&#39;float64&#39;</span><span class="p">),(</span><span class="s">&#39;HR1&#39;</span><span class="p">,</span><span class="s">&#39;float64&#39;</span><span class="p">),(</span><span class="s">&#39;OX&#39;</span><span class="p">,</span><span class="s">&#39;float64&#39;</span><span class="p">),(</span><span class="s">&#39;HR2&#39;</span><span class="p">,</span><span class="s">&#39;float64&#39;</span><span class="p">),(</span><span class="s">&#39;WHT&#39;</span><span class="p">,</span><span class="s">&#39;float64&#39;</span><span class="p">),(</span><span class="s">&#39;Label&#39;</span><span class="p">,</span><span class="nb">int</span><span class="p">)]</span>
+<span class="n">tele_raw_dta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">recfromcsv</span><span class="p">(</span><span class="s">&quot;/home/solver/data/raw-labeled-th/all.csv&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dd</span><span class="p">)</span>
+<span class="n">mimic_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">recfromcsv</span><span class="p">(</span><span class="s">&quot;/home/solver/Desktop/data/raw-labled-mimic/all.csv&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dd</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="nb">map</span><span class="p">(</span><span class="n">parseNum</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;/home/solver/Desktop/data/raw-labled-mimic/all.csv&quot;</span><span class="p">))]</span>
+<span class="n">bst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">bstRows</span> <span class="o">=</span> <span class="n">bst</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">bstCol</span> <span class="o">=</span> <span class="n">bst</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="c">#print bstCol</span>
+<span class="n">patData</span> <span class="o">=</span> <span class="n">bst</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">bstCol</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c">#everything but last column(labels)</span>
+<span class="n">patTarg</span> <span class="o">=</span> <span class="n">bst</span><span class="p">[:,</span> <span class="n">bstCol</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;l262, patdat pattar&quot;</span><span class="p">,</span> <span class="n">patData</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">patTarg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-54'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-54'>#</a>
+      </div>
+      <p>BOOST <br></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">bwb</span><span class="o">=</span><span class="n">AdaBoostClassifier</span><span class="p">()</span>
+<span class="n">fit</span><span class="p">(</span><span class="n">bwb</span><span class="p">,</span><span class="n">patData</span><span class="p">,</span><span class="n">patTarg</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;error: &#39;</span><span class="p">,</span> <span class="n">bwb</span><span class="o">.</span><span class="n">estimator_errors_</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-55'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-55'>#</a>
+      </div>
+      <p><strong>ENTROPY</strong> <br>
+BWB.n_estimators x sample-features <br></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span> <span class="s">&#39;sample_weight &#39;</span><span class="p">,</span> <span class="n">bwb</span><span class="o">.</span><span class="n">estimator_weights_</span> <span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bwb</span><span class="o">.</span><span class="n">estimator_weights_</span><span class="p">)</span>
+<span class="n">entFeatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">WTS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+<span class="n">entVal</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-56'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-56'>#</a>
+      </div>
+      <p>get the unique  weight vals and number</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">entFeatures</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span>
+<span class="k">print</span> <span class="s">&#39;T_counts &#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s">&#39; &#39;</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">c</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-57'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-57'>#</a>
+      </div>
+      <p>map, dont use xrange!<br>
+zip(*matrix) transposes the matrix row&lt;=&gt;col<br>
+entCnt returns the count based entropy<br></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">entT</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">entFeatures</span><span class="p">))</span>
+<span class="n">ent</span> <span class="o">=</span> <span class="p">[</span><span class="n">entCnt</span><span class="p">(</span> <span class="n">e</span> <span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entT</span>  <span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-58'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-58'>#</a>
+      </div>
+      <p>numInc=[]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">numInc</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">INCC</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">numberIncorrect</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numInc</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;INCC &#39;</span> <span class="p">,</span> <span class="n">INCC</span><span class="p">,</span> <span class="n">numberIncorrect</span>
+<span class="k">print</span> <span class="s">&#39;WTS &#39;</span> <span class="p">,</span> <span class="n">WTS</span><span class="o">.</span><span class="n">shape</span>
+<span class="k">print</span> <span class="n">entFeatures</span><span class="o">.</span><span class="n">shape</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-59'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-59'>#</a>
+      </div>
+      <p>** BAYESBLOCK binned-histogram
+http://www.astroml.org/examples/algorithms/plot_bayesian_blocks.html</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-60'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-60'>#</a>
+      </div>
+      <h2>PLOTS</h2>
+<p>First figure: show normal histogram binning <br>
+bins=15 + bins=1000
+<IMG SRC="kn_by.png" ALT="img" WIDTH=500 HEIGHT=270></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-61'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-61'>#</a>
+      </div>
+      <p>fig = plt.figure(figsize=(10, 4))
+fig.subplots_adjust(left=0.1, right=0.95, bottom=0.15)</p>
+<p>ax1 = fig.add_subplot(121)
+ax1.hist(ent, bins=15, histtype='stepfilled', alpha=0.2, normed=True)
+ax1.set_xlabel('entropy')
+ax1.set_ylabel('P(entropy)')</p>
+<p>ax2 = fig.add_subplot(122)
+ax2.hist(ent, bins=1000, histtype='stepfilled', alpha=0.2, normed=True)
+ax2.set_xlabel('entropy')
+ax2.set_ylabel('P(entropy)')</p>
+<h1>plt.show()</h1>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-62'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-62'>#</a>
+      </div>
+      <hr />
+<p>Second &amp; Third figure: Knuth bins &amp; Bayesian Blocks</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">bins</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">subplot</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s">&#39;knuth&#39;</span><span class="p">,</span> <span class="s">&#39;blocks&#39;</span><span class="p">],</span>
+                                <span class="p">[</span><span class="s">&quot;Knuth&#39;s rule&quot;</span><span class="p">,</span> <span class="s">&#39;Bayesian blocks&#39;</span><span class="p">],</span>
+                                <span class="p">[</span><span class="mi">121</span><span class="p">,</span> <span class="mi">122</span><span class="p">]):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">subplot</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-63'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-63'>#</a>
+      </div>
+      <p>plot a standard histogram in the background, with alpha transparency</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">hist</span><span class="p">(</span><span class="n">ent</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">,</span>
+         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;standard histogram&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-64'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-64'>#</a>
+      </div>
+      <p>plot an adaptive-width histogram on top</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">hist</span><span class="p">(</span><span class="n">ent</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">,</span>
+         <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;step&#39;</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;entropy&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;P(entropy)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

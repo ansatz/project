@@ -1,0 +1,35 @@
+#<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script> 
+#<link href="knowlstyle.css" rel="stylesheet" type="text/css" /> 
+#<script type="text/javascript" src="http://aimath.org/knowl.js"></script>
+
+
+#=== FILES ===
+#(same file diffs == as backup/HP v100w/ensemble/singh-project-dynboos/entrofunc.py)
+'
+project/scikit-learn-master/sklearn/ensemble/singh-project-dynboos/entrofunc.py
+project/threshold.py
+project/scikit-learn-master/sklearn/ensemble/sdbw2.py
+
+#<a knowl="k1.html ">diff</a>
+<#***2 files to diff***>
+<#1.~/repo1/boost./scikit-learn/sklearn/ensemble/tests/eclrun/entrofunc.py<br>>
+<#2.~/project/scikit-learn-master/sklearn/ensemble/singh-project-dynboos/entrofunc.py>
+
+<#DATES:<br>>
+<<#2 is newer but that could be meaningless>>
+<<#1.jul 22>>
+<#2.jul 30>
+
+#diff
+diff ~/project/scikit-learn-master/sklearn/ensemble/singh-project-dynboos/entrofunc.py entrofunc.py
+~/repo1/boost./scikit-learn/sklearn/ensemble/tests/eclrun[adaboost]$
+#output:<br>
+#1. repo1 has unique sorted =>has error on run
+#2.project has entro-tstr
+has xrange(0,1,1/1000)
+=> no error  ** i believe it is this one
+
+
+
+
+

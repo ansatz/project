@@ -11,8 +11,8 @@
 
 ### modules
 # `cd ~/project/scikit-learn-master` <br>
-#  `python -m sklearn.ensemble.sdbw2.py`
-# TODO astroML does not seem to work.	2013-09-26 13:03
+#  `python -m sklearn.ensemble.sdbw2.py`	<br>
+# DONE astroML does not seem to work.	2013-09-26 13:03
 
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import AdaBoostRegressor
@@ -21,8 +21,10 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.tree.tree import BaseDecisionTree
 from sklearn.base import ClassifierMixin, RegressorMixin, BaseEstimator
 from sklearn.tree._tree import DTYPE
+from .weight_boosting import _samme_proba
+
 import numpy as np
-import csv
+import csv, pprint
 from scipy import stats
 from matplotlib import pyplot as plt
 from astroML.plotting import hist
@@ -196,7 +198,46 @@ def fit(BWB, X, y, sample_weight=None):
                 sample_weight /= sample_weight_sum
 
         return BWB
+### decision function from ensemble/weight_boosting.py
+def decision_function(BWB, X):
+     """Compute the decision function of ``X``.
 
+     Parameters
+     ----------
+     X : array-like of shape = [n_samples, n_features]
+         The input samples.
+
+     Returns
+     -------
+     score : array, shape = [n_samples, k]
+         The decision function of the input samples. The order of
+         outputs is the same of that of the `classes_` attribute.
+         Binary classification is a special cases with ``k == 1``,
+         otherwise ``k==n_classes``. For binary classification,
+         values closer to -1 or 1 mean more like the first or second
+         class in ``classes_``, respectively.
+     """
+     BWB._check_fitted()
+     X = np.asarray(X)
+
+     n_classes = BWB.n_classes_
+     classes = BWB.classes_[:, np.newaxis]
+     pred = None
+
+     if BWB.algorithm == 'SAMME.R':
+         # The weights are all 1. for SAMME.R
+         pred = sum(_samme_proba(estimator, n_classes, X)
+                    for estimator in BWB.estimators_)
+     else:   # BWB.algorithm == "SAMME"
+         pred = sum((estimator.predict(X) == classes).T * w
+                    for estimator, w in zip(BWB.estimators_,
+                                            BWB.estimator_weights_))
+
+     pred /= BWB.estimator_weights_.sum()
+     if n_classes == 2:
+         pred[:, 0] *= -1
+         return pred.sum(axis=1)
+     return pred
 
 ### 3._boost_real_depr
 def _boost_real_depr(BWB, iboost, X, y, sample_weight): #, X_argsorted=None):
@@ -348,14 +389,14 @@ def fit_depr(BWB, X, y, sample_weight=None):
         sample_weight, estimator_weight, estimator_error = BWB._boost(
             iboost,
             X, y,
-            sample_weight,
-            X_argsorted=X_argsorted)
+            sample_weight)
+            #X_argsorted=X_argsorted)
         #t=[sample_weight2, val1float, estimator_error2, INCC]
         t = BWB._boost_real(
             iboost,
             X, y,
-            sample_weight,
-            X_argsorted=X_argsorted2)
+            sample_weight)
+            #X_argsorted=X_argsorted2)
 
         # - Early termination
         if sample_weight is None:
@@ -411,6 +452,27 @@ print("l262, patdat pattar", patData.shape, patTarg.shape)
 # BOOST <br>
 bwb=AdaBoostClassifier()
 fit(bwb,patData,patTarg)
+df=decision_function(bwb,patData)
+df[df>0]=1.0
+df[df<0]=-1.0
+def wrong(decision,label):
+	#returns true/false
+	mark = decision != label
+	incorrect = mark[mark==True]
+	return incorrect
+
+inc = wrong(df,patTarg)
+print 'number incorrect = ' , len(inc)
+print 'number correct = ' , len(patTarg) - len(inc)
+pprint.pprint(inc)
+pprint.pprint(df)
+
+#for i,j in enumerate(inc):
+#	if j==True:
+#		print 'inc-index', i, j, patTarg[i], df[i]
+
+#fit_depr(bwb,patData,patTarg)
+print 'inc:' , INCC
 print 'error: ', bwb.estimator_errors_
 
 #**ENTROPY** <br>
@@ -479,14 +541,13 @@ print 'hello'
 ### bayes adaptive binning
 # http://www.astroml.org/user_guide/density_estimation.html#bayesian-blocks-histograms-the-right-way
 # The entropy measure is based on frequency count within a given measure.  If the width of the measure changese, so does the entropy and subsequent alert classification.  How to smooth a histogram thus is an important problem in identifying events.  Bayesian blocks addresses this problem using a fitness function to optimize bin-width, which are not required to be equal.  A smaller variation in bin width is consistent with uniform data distribution.  The bayesian likelihood function depends on block width and the number of points within a block.  For n number of points, there exist 2^n number of possible configurations.  Bayesian Blocks perform quadratically using a dynamic programming approach; the optimal (k+1)-th configuration is based on one of the k-th configurations.
-#  Do deal with some error, small random number around 0 can be added to prevent width from going to zero which causes problems with the log function, throws divide by zero error. 
+#  To deal with some error, small random number around 0 can be added to prevent width from going to zero which causes problems with the log function, throws divide by zero error. 
 
 
 # First figure: show normal histogram binning <br>
 
 # bins=15 + bins=1000
 # <IMG SRC="kn_by.png" ALT="img" WIDTH=500 HEIGHT=270>
-print 'heythere'
 fig = plt.figure(figsize=(10, 4))
 fig.subplots_adjust(left=0.1, right=0.95, bottom=0.15)
 
@@ -529,6 +590,7 @@ for bins, title, subplot in zip(['knuth', 'blocks'],
 #print 'fig2'
 #plt.show()
 
+### hard vs easy:
 
 
 ### stat significance

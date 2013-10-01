@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>hashkernelalerts.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>hashkernelalerts.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script type="text/javascript" src="jquery-latest.min.js"></script>
+
+<p><link href="knowlstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="knowl.js"></script></p>
+
+<p><a knowl="refs.html">biblio-refs</a></p>
+<h2>hash-kernel  2013-09-27 14:38</h2>
+<p>Noisy input data is highly variable, containing mixed-types, and missing values.  For example, volume can be measured as cc or ml, or as ** find example .  Hash kernels can be used to transform real-world data to feature vectors that can be classified.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>A transforms such as bag-of-words is sparse and unwieldy, where all possible instances in a training set are incorporated.  A feature vector index is 1 for word present and 0 otherwise.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>A hash-kernel is a fixed size array; each feature is mapped to an index using a hash function.  The feature values are added to the array at their index.  This hash-kernel is now the fixed feature vector. 
+(knowl: The feature vector value is first added or subtracted to another hash-function)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Hash kernels are one-way functions.  An example of use of a one-way function comes from the McCarthy puzzle.  Imagine a scenario of two countries at war.  Spies are sent by one country, how can they be let back in?  A public key is given to border guards and private key to spies.  A one-way function is easy to compute in one direction, harder in the other.  This prevents what is publicly known by the guards to be used to figure out the private key.  For example, given a 100-digit number X_100, it is easy to square.  X_100 is now some 200 digit number X_200.  From X_200, take the middle 100, called Y.  If given X, you can easily calculate Y.  However, given Y, it is difficult to calculate X; with 50 unknowns on each side, the complexity is 10^100.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">feature_vector</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bits</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">input_text</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+  <span class="nb">hash</span> <span class="o">=</span> <span class="n">crc32</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>  <span class="c"># CRC-32 hash function, available in the zlib module</span>
+  <span class="n">index</span> <span class="o">=</span> <span class="nb">hash</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Use the nth bit, zero-indexed, to determine if we add or subtract
+one from the index.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="n">sign</span> <span class="o">=</span> <span class="p">(((</span><span class="nb">hash</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bits</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">bits</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="n">feature_vector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sign</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>birthday paradox 
+The hash function does not gurantee uniqueness.  There may be a large number of collisions, between any given feature.(see birthday paradox)  Meaning a single hash kernel element may contain information about more than one feature.  However, it is shown by Shi et al, that in one of their data sets, up to 94% of feature collision, only resulted in error rate of 6%.  If collision rates adversely affect classification, kernel size can be increased. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <h2>classification sequential label</h2>
+<p>Each feature vector is then labeled as alert (1), or not alert (0), based on the entropy measure threshold of the Adaboost algorithm.  Each instance is recursively searched.  Each path within the recursion is treated as a word in bag-of-words model.    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_add_feature_to_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">hashables</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">hashables</span> <span class="o">=</span> <span class="n">hashables</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s">&quot;__dict__&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">__dict__</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_feature_to_row</span><span class="p">(</span>
+                    <span class="n">row</span><span class="p">,</span>
+                    <span class="n">feature</span><span class="p">,</span>
+                    <span class="n">hashables</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;dict_key_</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_feature_to_row</span><span class="p">(</span>
+                    <span class="n">row</span><span class="p">,</span>
+                    <span class="n">feature</span><span class="p">,</span>
+                    <span class="n">hashables</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;list_index_</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">ix</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
+                <span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_categorical</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">hashables</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;word_</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">word</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">long</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_categorical</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">hashables</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;int_</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">instance</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_continuous</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">hashables</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <h2>MCMC sampling of the posterior distribution</h2>
+<p><IMG SRC="prb.png" ALT="img" WIDTH=500 HEIGHT=400>
+1.priors
+theta_1(prior alert) theta_2(no prior alert) are the probabilities of an alert, given the prior set of vital signs alerts or not, respectively.  Given the data_set of large-data and small-data we set the priors at 75% (30/30+10).  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">pymc</span><span class="o">.</span><span class="n">Beta</span><span class="p">(</span><span class="s">&#39;theta_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">thetas</span> <span class="o">=</span> <span class="p">[</span><span class="n">pymc</span><span class="o">.</span><span class="n">Beta</span><span class="p">(</span><span class="s">&#39;theta_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>These theta_i are what will be estimated.  Specifically, if theta_1 - theta_0 greater than 0, then there is a sequential alert.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>2.likelihood
+Likelihood distribution is calculated as bernoulli random variable, with probability theta_0 or theta_1, of alert or not, given the prior distribution.  These probabilities come directly from observation of the sequence data.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">p</span><span class="o">=</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">p</span><span class="o">=</span><span class="n">thetas</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">observed</span><span class="o">=</span><span class="bp">True</span>
+<span class="n">value</span><span class="o">=</span><span class="n">result</span>
+<span class="n">second_notalert</span> <span class="o">=</span> <span class="p">[</span><span class="n">pymc</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="s">&#39;shot0_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">observed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missed_first</span><span class="p">)]</span>
+
+<span class="n">second_alert</span>   <span class="o">=</span> <span class="p">[</span><span class="n">pymc</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="s">&#39;shot1_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">thetas</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">observed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> 
+                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">made_first</span><span class="p">)]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>3.pyMC model
+With the prior and likelihood distributions in hand, we can combine them to obtain our posterior probability distribution. This is the distribution of credibility for the various parameter values, namely θi, given the data we observed. The most credible values from this distribution then provide our estimates for θi. The components of the model and their relationships are compiled into a PyMC model, and we run a MCMC sampler to characterize the posterior distribution. In the mcmc.sample statement, iter is the number of samples to take, burn is the number of samples to discard from the beginning of the process, and thin tells the sampler to keep every nth sample.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">model</span> <span class="o">=</span> <span class="n">pymc</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">second_shot_missed_first</span><span class="p">,</span> <span class="n">second_shot_made_first</span><span class="p">)</span>
+<span class="n">mcmc</span> <span class="o">=</span> <span class="n">pymc</span><span class="o">.</span><span class="n">MCMC</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">mcmc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">iter</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Prior and likelihood distributions are combined, using theta_i components and their relationships into a pyMC model.  A MCMC sampler is run to characterize the posterior distribution.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">mcmc</span><span class="o">.</span><span class="n">sample</span> 
+<span class="nb">iter</span> <span class="c">#number of samples</span>
+<span class="n">burn</span> <span class="c">#number of samples to discard from beginning</span>
+<span class="n">thin</span> <span class="c">#keep every nth sample</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pymc</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">second_shot_missed_first</span><span class="p">,</span> <span class="n">second_shot_made_first</span><span class="p">)</span>
+<span class="n">mcmc</span> <span class="o">=</span> <span class="n">pymc</span><span class="o">.</span><span class="n">MCMC</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">mcmc</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">iter</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>4.traces, hdi, theta1-theta0
+The traces can be thought of as independent random samples from the posterior distribution we are interested in.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">theta_0_trace</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s">&#39;theta_0&#39;</span><span class="p">)[:]</span>
+<span class="n">theta_1_trace</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s">&#39;theta_1&#39;</span><span class="p">)[:]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>histogram of post.pr.distribution</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">for</span> <span class="n">trace</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">theta_0_trace</span><span class="p">,</span> <span class="n">theta_1_trace</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;miss first&#39;</span><span class="p">,</span> <span class="s">&#39;make first&#39;</span><span class="p">]):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">trace</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">c</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">player_str</span> <span class="o">=</span> <span class="s">&quot;Player: {player}, {team}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">player</span><span class="o">=</span><span class="n">player</span><span class="p">,</span> <span class="n">team</span><span class="o">=</span><span class="n">team</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Probability of making second free throw given first result</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">player_str</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;P(make second free throw)&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>The highest-density-interval(HDI) is analogous to a frequentist Confidence Interval, and can be thought of as a range of credible values.  A 95% HDI is the smallest width interval to contain 95% of the posterior probability.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">hdi</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">cred_mass</span><span class="o">=</span><span class="mf">0.95</span><span class="p">):</span>
+    <span class="n">hdi_min</span><span class="p">,</span> <span class="n">hdi_max</span> <span class="o">=</span> <span class="n">pymc</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">calc_min_interval</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">trace</span><span class="p">),</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">cred_mass</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hdi_min</span><span class="p">,</span> <span class="n">hdi_max</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>To determine if significance between distributions, look at sampled traces.  If the HDI does not contain zero(the mean), then theta_1 != theta_2</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">diff_trace</span> <span class="o">=</span> <span class="n">theta_1_trace</span> <span class="o">-</span> <span class="n">theta_0_trace</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">diff_trace</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">diff_trace</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">c</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+
+<span class="n">hdi_min</span><span class="p">,</span> <span class="n">hdi_max</span> <span class="o">=</span> <span class="n">hdi</span><span class="p">(</span><span class="n">diff_trace</span><span class="p">)</span>
+<span class="n">opts</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;c&#39;</span><span class="p">:</span><span class="s">&#39;green&#39;</span><span class="p">,</span> <span class="s">&#39;linestyle&#39;</span><span class="p">:</span><span class="s">&#39;--&#39;</span><span class="p">}</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">hdi_min</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">hdi_max</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Difference in posterior probabilities</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">player_str</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;Mean: {:0.3f}</span><span class="se">\n</span><span class="s">95% HDI: {:0.3f} - {:0.3f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">diff_trace</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">hdi_min</span><span class="p">,</span> <span class="n">hdi_max</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>A scatterplot of the MCMC traces for individual samples theta_0 and theta_1 can be used to visualize if the distributions of theta_i are equal.  Each trace plotted in a different color but they all come from the same posterior distribution.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">rainbow_r</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">theta_0_traces</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">t_1</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">theta_0_traces</span><span class="p">,</span> <span class="n">theta_1_traces</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">t_0</span><span class="p">,</span> <span class="n">t_1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">ax_lim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">()</span>
+<span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ax_lim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax_lim</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ax_lim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ax_lim</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">],</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;$\Theta_0$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;$\Theta_1$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&quot;Scatterplot of $\Theta_i$ estimates&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>If the prior is 50%, we define a sequential alert, if the second alerts 60% of the time, and 40% after the first reading does not alert. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

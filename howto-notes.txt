@@ -1,0 +1,4 @@
+#***TROUBLESHOOT***
+#I seem to be having alot of trouble with the modules and keeping the sys
+#up-to-date configured.  It will be alot of work to use auto-tools like chef,
+#puppet; therefore, I just have to be careful.  Easier said then done at this point.
