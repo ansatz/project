@@ -305,7 +305,7 @@ def _boost_real_depr(BWB, iboost, X, y, sample_weight): #, X_argsorted=None):
         return sample_weight, 1., estimator_error, incorrect
 
 
-### 4._fit_depr()
+### 4._fit_depr()	<br>
 def fit_depr(BWB, X, y, sample_weight=None):
     """Build a boosted classifier/regressor from the training set (X, y).
     Parameters
@@ -428,14 +428,11 @@ def fit_depr(BWB, X, y, sample_weight=None):
 
     return BWB
 
-### Data INPUT <br>
+### DATA paths, input, labels <br>
 # need to extend this with ponyORM
 def parseNum(x):
     xx = x.replace(",", "")
     return "." in xx and float(xx) or int(xx)
-
-### MAIN()
-#if __name__ == "__main__"():
 
 dd=[('SYS', 'float64'),('DIA','float64'),('HR1','float64'),('OX','float64'),('HR2','float64'),('WHT','float64'),('Label',int)]
 tele_raw_dta = np.recfromcsv("/home/solver/data/raw-labeled-th/all.csv", dtype=dd)
@@ -446,30 +443,31 @@ bst = np.asarray(x)
 bstRows = bst.shape[0]
 bstCol = bst.shape[1]; #print bstCol
 patData = bst[:, 0:bstCol-1].copy()  #everything but last column(labels)
+#labels
 patTarg = bst[:, bstCol-1].copy()
 print("l262, patdat pattar", patData.shape, patTarg.shape)
 
-# BOOST <br>
+### BOOST <br>
 bwb=AdaBoostClassifier()
 fit(bwb,patData,patTarg)
-df=decision_function(bwb,patData)
-df[df>0]=1.0
-df[df<0]=-1.0
+
+### Score
+# Determine correct incorrect calling decision function.
 def wrong(decision,label):
 	#returns true/false
 	mark = decision != label
 	incorrect = mark[mark==True]
 	return incorrect
 
+df=decision_function(bwb,patData)
+df[df>0]=1.0
+df[df<0]=-1.0
+
 inc = wrong(df,patTarg)
 print 'number incorrect = ' , len(inc)
 print 'number correct = ' , len(patTarg) - len(inc)
 pprint.pprint(inc)
 pprint.pprint(df)
-
-#for i,j in enumerate(inc):
-#	if j==True:
-#		print 'inc-index', i, j, patTarg[i], df[i]
 
 #fit_depr(bwb,patData,patTarg)
 print 'inc:' , INCC

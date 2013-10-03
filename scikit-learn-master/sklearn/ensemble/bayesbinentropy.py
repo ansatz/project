@@ -39,6 +39,7 @@ ax2.hist(ent2, bins=200, histtype='stepfilled', alpha=0.2, normed=True)
 ax2.set_xlabel('entropy bins=200')
 ax2.set_ylabel('Count(t)')
 
+#if dont set prior , then implicitly it is uniformative prior , uniform over all number P(beta)=1
 #------------------------------------------------------------
 # Second & Third figure: Knuth bins & Bayesian Blocks
 fig = plt.figure(figsize=(10, 4))

@@ -1,5 +1,1 @@
-# weak to strong learner
-find the paper that you wrote include here
-
-
-# hard vs easy
+scikit-learn-master/sklearn/ensemble/boosting.py
