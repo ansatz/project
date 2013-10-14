@@ -178,8 +178,9 @@ given a unknown probability p, a beta(_alpha, _beta) is assigned prior to p.  An
 ### bandits
 """
   Given N slot machines, with unkown winning probabilities, how to select best winning strategy?  Find the best bandit, and as quickly as possible.  However, these bandits are stochastic.  A poor bandit could give out winners by chance.  The best bandit could be underperforming, how long do you stay with him?  Finally, there is the exploration vs exploitation dilemna, if have a middle-alright bandit, do we stick with him, or try another in hopes of finding a better bandit.
-
 """
+# thompson sampling
+#http://en.wikipedia.org/wiki/Thompson_sampling
 
 
 ### bayes bandits

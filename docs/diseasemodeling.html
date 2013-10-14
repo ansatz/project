@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>diseasemodeling.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>diseasemodeling.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script type="text/javascript" src="jquery-latest.min.js"></script>
+
+<p><link href="knowlstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="knowl.js"></script></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h2>refs</h2>
+<p>http://snippyhollow.github.com/blog/2013/03/10/collapsed-gibbs-sampling-for-dirichlet-process-gaussian-mixture-models/
+snippyhollow.github.com/blog/2013/03/10/collapsed-gibbs-sampling-for-dirichlet-process-gaussian-mixture-models/
+http://blog.counsyl.com/2013/08/07/detecting-genetic-copy-number-with-gaussian-mixture-models/
+http://sociograph.blogspot.com/2011/11/clique-percolation-in-few-lines-of.html
+plots
+http://blog.revolutionanalytics.com/2009/11/charting-time-series-as-calendar-heat-maps-in-r.html
+http://sociograph.blogspot.com/2013/05/revealing-community-structure-with.html
+http://mindsknowledge.blogspot.com/2012/02/javascript-tools-for-neuroscience.html
+http://wwwold.fi.isc.cnr.it/users/thomas.kreuz/research/synchrony.html</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>class object that can classify clusters</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">score</span>
+<span class="kn">from</span>  <span class="nn">threshold</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">vitals</span><span class="p">(</span><span class="n">score</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">globls</span> <span class="o">=</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h2>Gaussian mixture model: fixed-clusters</h2>
+<p>reference, 1-alert, 2-alert, 3-alert    <br>
+Choose value on the y-axis which will be alert threshold.  Then use fitted curves to determine at which cycle the sample reaches threshold, and at which cycle the reference threshold reaches that cycle.  Then take difference of sample-reference pair.  Using deltas, normalizes effects of initial conditions and reaction efficiency.   </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>delta-reference pairing <br>
+take difference between ref and sample,(x-axis).  for which value x is equal to set threshold-y.  if y(threshold), what is x given by fit function.  Inverse, get x-value from y, where x is the weights and y is the entropy.  So look at delta of weights, between reference and alert.  Plot that as histogram.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>histo visual inspection of deltas.  <br>
+Can look at histogram and see different clusters.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>assign sample to to a cluster {hard, easy, static, seq-window } <br>
+Based on reference control data, see that clusters correspond to weight iteration. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>classification based on assignment  <br>
+The assumption is that each sampled data point come from a distribution over each cluster, which are normally(Gaussian) distributed.  These clusters are hard/easy, correct/incorrrect, and sequential/static.  Each cluster distribution has its own latent, unobserved variables: mean _mu, std deviation _sigma, and weight, where weight represents the amount of total data coming from a particular distribution.  Both the label variables, the label of a sample indicating from which distribution it came, and the unobserved variables must be fitted, using standard statistical method of EM.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>expectation-maximization    <br>
+Initially starts with guess of latent(unobserved) parameters, which is then iteratively improved upon.  During expectation step, use Gaussian parameter estimates to classify each sample.  During maximization step, adjust Gaussian parameter values based on current sample labels.  EM is guarenteed to converge to local max of likelihood, where labels and set of parameters are self-consistent.    </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <h2>Chinese Restaurant Process: generative-clusters</h2>
+<p>"""
+ Real world data signals can contain many data-types or states, but the observed data is limited, cannot detect all types of state.  Standard clustering like k-means or gaussian mixture assume finite states, even if fed with more data.  </p>
+<p>Nonparametric bayes class of techniques allow some parameters to change with the data.  Instead of fixing the number of clusters to be discovered, allow them to grow generatively with the data.</p>
+<p>An infinite set of latent groups is described by some set of parameters, such as a gaussian with specified mean _mu_i, and standard deviation, _sigma_i.  A group's parameters come from some base distribution (G_0), for each group.  </p>
+<p>Data is generated by 1.selecting a cluster 2.sampling from that cluster to generate a new point.
+{for example limited data of 10 friends, asked what they ate yesterday? When deciding alice, bob, etc..n-data chose a group{chinese, pizza}, and then sample from that group to generate a new data point.  How to assign a n-friend to a group?
+1.restaraunt empty
+2.aliceperson[0], select a group (table), order food for table(parameters), friends sit at table limited to food of table
+3.bob person[2], select group-table P_newtable[k=1]: $\alpha/1+\alpha$,  P_oldtable[k=0]: $\1/1+\alpha$
+4.person[n+1].  P_newtable[k+1]: $\alpha/n+\alpha$, P_oldtable[k]: $n_k/n+\alpha$ where n_k is number of people at table[k]</p>
+<p>Group-table with more people, n_k, more likely to have more people join
+always small probability someone will join new group
+\alpha is a dispersion parameter(prior): the probability of a new group depends on it.  lower \alpha tight clusters, hiher, more clusters in finite points</p>
+<p>Table selection similar to dirichlet process.
+"""
+Draw <code>num_balls</code> colored balls according to a Polya Urn Model
+with a specified base color distribution and dispersion parameter
+<code>alpha</code>.</p>
+<p>returns an array of ball colors</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">polya_urn_model</span><span class="p">(</span><span class="n">base_color_distribution</span><span class="p">,</span> <span class="n">num_balls</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+  <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">num_balls</span> <span class="o">&lt;=</span> <span class="mi">0</span>
+
+  <span class="n">balls_in_urn</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="mf">0.</span><span class="n">upto</span><span class="p">(</span><span class="n">num_balls</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+    <span class="k">if</span> <span class="n">rand</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="o">.</span><span class="n">to_f</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">balls_in_urn</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Draw a new color, put a ball of this color in the urn.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="n">new_color</span> <span class="o">=</span> <span class="n">base_color_distribution</span><span class="o">.</span><span class="n">call</span>      
+      <span class="n">balls_in_urn</span> <span class="o">&lt;&lt;</span> <span class="n">new_color</span>
+    <span class="k">else</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Draw a ball from the urn, add another ball of the same color.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="n">ball</span> <span class="o">=</span> <span class="n">balls_in_urn</span><span class="p">[</span><span class="n">rand</span><span class="p">(</span><span class="n">balls_in_urn</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+      <span class="n">balls_in_urn</span> <span class="o">&lt;&lt;</span> <span class="n">ball</span>
+    <span class="n">end</span>
+  <span class="n">end</span>
+
+  <span class="n">balls_in_urn</span>
+<span class="n">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <h2>polya urn</h2>
+<h1>balls = people = data</h1>
+<p>colors = tables = group
+alpha = dispersion parameter</p>
+<p>generative: draw ball from urn, return + new ball of same color</p>
+<h1>colors satisfy rich-get-richer</h1>
+<p>similar to dirichlet</p>
+<h1>crp vs polya</h1>
+<p>crp only specifiy table assignment, partition over groups, not group parameters
+polya does both, table assignment(colors), group parameters(urn- G_0 distribution)</p>
+<p>Draw <code>num_balls</code> colored balls according to a Polya Urn Model
+with a specified base color distribution and dispersion parameter
+<code>alpha</code>.</p>
+<p>returns an array of ball colors</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">polya_urn_model</span><span class="p">(</span><span class="n">base_color_distribution</span><span class="p">,</span> <span class="n">num_balls</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+  <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">num_balls</span> <span class="o">&lt;=</span> <span class="mi">0</span>
+
+  <span class="n">balls_in_urn</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="mf">0.</span><span class="n">upto</span><span class="p">(</span><span class="n">num_balls</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="n">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+    <span class="k">if</span> <span class="n">rand</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="o">.</span><span class="n">to_f</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">balls_in_urn</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Draw a new color, put a ball of this color in the urn.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="n">new_color</span> <span class="o">=</span> <span class="n">base_color_distribution</span><span class="o">.</span><span class="n">call</span>      
+      <span class="n">balls_in_urn</span> <span class="o">&lt;&lt;</span> <span class="n">new_color</span>
+    <span class="k">else</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Draw a ball from the urn, add another ball of the same color.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="n">ball</span> <span class="o">=</span> <span class="n">balls_in_urn</span><span class="p">[</span><span class="n">rand</span><span class="p">(</span><span class="n">balls_in_urn</span><span class="o">.</span><span class="n">size</span><span class="p">)]</span>
+      <span class="n">balls_in_urn</span> <span class="o">&lt;&lt;</span> <span class="n">ball</span>
+    <span class="n">end</span>
+  <span class="n">end</span>
+
+  <span class="n">balls_in_urn</span>
+<span class="n">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h2>stick-breaking process</h2>
+<p>CRP, or polya generate a weight of points that fall into a group, w_i.</p>
+<p>Rather than run generative, can calculate directly.</p>
+<p>1.stick l=1
+2.generate r.v. beta_1 Beta(1, alpha)
+  beta distribution r.v [0,1] by definition.
+  break stick at beta_1 == w_1
+3.take stick to right, genrate beta2 Beta(1, alpha)
+  break stick , w_2 == (1-beta_1)/beta_2</p>
+<p>assigning person-data to table-group is equiv. to probaility_[assign_table1] = w_1</p>
+<p>Return a vector of weights drawn from a stick-breaking process
+with dispersion <code>alpha</code>.</p>
+<p>Recall that the kth weight is
+  \beta_k = (1 - \beta_1) * (1 - \beta_2) * ... * (1 - \beta_{k-1}) * beta_k
+where each $\beta_i$ is drawn from a Beta distribution
+  \beta_i ~ Beta(1, \alpha)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">stick_breaking_process</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">num_weights</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">betas</span> <span class="o">=</span> <span class="n">rbeta</span><span class="p">(</span><span class="n">num_weights</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+  <span class="n">remaining_stick_lengths</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cumprod</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">betas</span><span class="p">))[</span><span class="mi">1</span><span class="p">:</span><span class="n">num_weights</span><span class="p">]</span>
+  <span class="n">weights</span> <span class="o">=</span> <span class="n">remaining_stick_lengths</span> <span class="o">*</span> <span class="n">betas</span>
+  <span class="n">weights</span>
+<span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Dirichlet Process Model</p>
+<p>http://en.wikipedia.org/wiki/Chinese_restaurant_process#The_Indian_buffet_process
+distribution over distribution</p>
+<p>Gibbs Sampling:
+1. take data set randomly initialize group assignment
+2. pick a point, fix the groups of all other points, and in CRP style assign picked point to a new group(existing, or new)
+3. will converge</p>
+<h1>the group size grows logarithmically</h1>
+<p>number of clusters converges -- see in histogram</p>
+<h1>can look at z-scaled value of each feature in a group</h1>
+<h1>crp,poly,stick are sequential, dirichlet is parallelizable, (de Finetti theorem)</h1>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <h2>z scoring mean 0 std 1</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <h2>indian buffet process</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p>http://ai-ml.blogspot.com/2009/04/more-on-indian-buffet-process.html
+http://metaoptimize.com/qa/questions/12397/indian-buffet-the-other-way-around
+each person sit at one table
+indian each person can sample from multiple tables (belong to multiple clusters)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <h2>network percolation theory</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <h2>cssr</h2>
+<p>http://vserver1.cscs.lsa.umich.edu/~crshalizi/CSSR/</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <h2>collapse gibbs dirichlet</h2>
+<p>http://snippyhollow.github.io/blog/2013/03/10/collapsed-gibbs-sampling-for-dirichlet-process-gaussian-mixture-models/</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">while</span> <span class="p">(</span><span class="ow">not</span> <span class="n">converged</span> <span class="n">on</span> <span class="n">mus</span> <span class="ow">and</span> <span class="n">sigmas</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">each</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">N</span> <span class="ow">in</span> <span class="n">random</span> <span class="n">order</span> <span class="n">do</span><span class="p">:</span>
+        <span class="n">remove</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="s">&#39;s sufficient statistics from old cluster z[i]</span>
+        <span class="k">if</span> <span class="nb">any</span> <span class="n">cluster</span> <span class="ow">is</span> <span class="n">empty</span><span class="p">,</span> <span class="n">remove</span> <span class="n">it</span> <span class="ow">and</span> <span class="n">decrease</span> <span class="n">K</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">K</span> <span class="n">do</span>
+            <span class="n">compute</span> <span class="n">P_k</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">=</span> <span class="n">P</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">|</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">N</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">compute</span> <span class="n">P</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">k</span> <span class="o">|</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">],</span> <span class="n">Data</span><span class="p">)</span> <span class="o">=</span> <span class="n">N</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">compute</span> <span class="n">P</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">=</span> <span class="n">P</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">|</span> <span class="k">lambda</span><span class="p">)</span>
+        <span class="n">compute</span> <span class="n">P</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=*</span> <span class="o">|</span> <span class="n">z</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">],</span> <span class="n">Data</span><span class="p">)</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">normalize</span> <span class="n">P</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">|</span> <span class="o">...</span><span class="p">)</span>
+        <span class="n">sample</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="kn">from</span> <span class="nn">P</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">|</span> <span class="o">...</span><span class="p">)</span>
+        <span class="n">add</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="s">&#39;s sufficient statistics to new cluster z[i]</span>
+        <span class="p">(</span><span class="n">possibly</span> <span class="n">increase</span> <span class="n">K</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <h2>notes</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <h1>hashkernel-master/hashkernelalerts.py</h1>
+<h1>mixed integer programming (probabilistic parsing)</h1>
+<h1>rubics cube</h1>
+<h1>alias method</h1>
+<p>http://www.astroml.org/book_figures/chapter10/fig_autocorrelation.html
+time-series
+roughly speaking, the term persistence in time series context is often related to the notion of memory properties of time series. to put it another way, you have a persistent time series process if the effect of infinitesimally (very) small shock will be influencing the future predictions of your time series for a very long time. thus the longer the time of influence the longer is the memory and the extremely persistence. you may consider an integrated process i(1) as an example of highly persistent process (information that comes from the shocks never dies out). though fractionally integrated (arfima) processes would be more interesting examples of persistent processes. probably it would be useful to read about measuring conditional persistence in time series in g.kapetanios article.</p>
+<h1>global</h1>
+<h1>decision theory</h1>
+<p>http://www.gwern.net/Prediction%20markets
+solomon puzzle
+cancer lesion puzzle
+overconfidence effect</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

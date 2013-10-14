@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>score.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>score.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script type="text/javascript" src="jquery-latest.min.js"></script>
+
+<p><link href="knowlstyle.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="knowl.js"></script></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>class score
+input:
+  data:[ [a,b,c], [],  ] (nx6)
+  entropy:[            ] (nx1)
+  kde:[                ] (nx1) if 1 is hard 0 easy
+  bin:[                ] (nx1) if 1 is hard 0 easy</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <h2></h2>
+<p>hard-easy 
+alerts over global 000, 001, 010, 100, 101
+kernel-hash</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="n">plot</span><span class="p">,</span><span class="n">show</span><span class="p">,</span><span class="n">hist</span><span class="p">,</span><span class="n">close</span>
+<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">imshow</span>
+
+<span class="kn">from</span> <span class="nn">astroML.plotting</span> <span class="kn">import</span> <span class="n">hist</span>
+<span class="kn">from</span> <span class="nn">astroML.density_estimation</span> <span class="kn">import</span> <span class="n">bayesian_blocks</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kde</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.mlab</span> <span class="kn">as</span> <span class="nn">mlab</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>from pylab import *</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">loadtxt</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">leastsq</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+<span class="kn">import</span> <span class="nn">os.path</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">score</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <h2>data</h2>
+<p>init</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weightpkl</span><span class="p">,</span> <span class="n">entrpkl</span><span class="p">,</span> <span class="n">incorrectpkl</span><span class="p">,</span> <span class="n">datapkl</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>entropy</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">entfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">entrpkl</span><span class="p">,</span><span class="s">&#39;rb&#39;</span><span class="p">)</span>
+		<span class="n">entpkl</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">entfile</span><span class="p">)</span>
+		<span class="n">entnp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">entpkl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="p">)</span>
+		<span class="n">entfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>weight</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">wtfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">weightpkl</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+		<span class="n">wtpkl</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">wtfile</span><span class="p">)</span>
+		<span class="n">wtnp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">wtpkl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="p">)</span>
+		<span class="n">wtfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>incorrect incorrect=1 correct=0</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">incfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span> <span class="n">incorrectpkl</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span> <span class="p">)</span>
+		<span class="n">incpkl</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">incfile</span><span class="p">)</span>
+		<span class="n">incnp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">incpkl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+		<span class="n">incfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>data vital-headers, readings
+dt = [ vitals, alerts, readings ]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">datafile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span> <span class="n">datapkl</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span> <span class="p">)</span>
+		<span class="n">dpkl</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
+		<span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">dpkl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+		<span class="n">da</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">dpkl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+		<span class="n">dr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">dpkl</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+		<span class="n">datafile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>class instance members</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="bp">self</span><span class="o">.</span><span class="n">wts</span> <span class="o">=</span> <span class="n">wtnp</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entnrm</span> <span class="o">=</span> <span class="n">entnp</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">inc</span> <span class="o">=</span> <span class="n">incnp</span> <span class="c">#full size 1=inc 0=corr</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="bp">None</span>	
+ 		<span class="bp">self</span><span class="o">.</span><span class="n">entbys</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="p">[]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>self.data[0] = dv; self.data[1]= da; self.data[2]=dr</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dv</span><span class="p">);</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">da</span><span class="p">);</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dr</span><span class="p">);</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>print 'vital-headers', self.data[0]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">pckle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selfdata</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+	  	<span class="n">pklfle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+		<span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">selfdata</span><span class="p">,</span><span class="n">pklfle</span><span class="p">)</span>
+	 	<span class="n">pklfle</span><span class="o">.</span><span class="n">close</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">pcklcsv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;pandacsv.csv&#39;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ofile</span><span class="p">:</span>
+			<span class="n">writeF</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>vitals alerts readings</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>			<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">):</span>
+				<span class="n">ll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> 
+				<span class="n">row2</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+				<span class="n">row2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+				<span class="n">writeF</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span> <span class="n">row2</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h2>utility function: data</h2>
+<p>pandas data frame</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">pnd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">dtf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="c">#[vitals,alerts,readings]</span>
+		<span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dtf</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">dtf</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>		
+		<span class="k">print</span> <span class="s">&#39;DATA**&#39;</span><span class="p">,</span> <span class="n">dataframe</span>	
+			
+	
+		<span class="k">print</span> <span class="n">pd</span><span class="o">.</span><span class="n">__version__</span>
+		<span class="k">return</span> <span class="n">dataframe</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">chckfile</span><span class="p">(</span> <span class="n">fle</span><span class="p">,</span> <span class="n">func</span> <span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p>pickle</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">fle</span> <span class="p">)</span> <span class="p">:</span>
+				<span class="n">bayesfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">fle</span> <span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+				<span class="n">bypkl</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">bayesfile</span><span class="p">)</span>
+				<span class="n">bynp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span> <span class="n">bypkl</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="p">)</span>
+				<span class="n">ab</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">bynp</span>
+				<span class="n">bayesfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>function</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="k">else</span> <span class="p">:</span>
+			<span class="n">ww</span> <span class="o">=</span> <span class="n">ab</span><span class="o">.</span><span class="n">wts</span><span class="o">.</span><span class="n">flat</span>
+			<span class="n">intervals</span> <span class="o">=</span>  <span class="n">bayesian_blocks</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span> <span class="c">#array of optimal bin_edges</span>
+			<span class="n">ab</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">intervals</span>
+			<span class="n">ab</span><span class="o">.</span><span class="n">pckle</span><span class="p">(</span><span class="n">ab</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span> <span class="n">fle</span> <span class="p">)</span> 
+			<span class="k">print</span> <span class="s">&#39;bins**&#39;</span><span class="p">,</span> <span class="n">ab</span><span class="o">.</span><span class="n">bins</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <h2>entropy</h2>
+<p>bayes binning</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">uniqueSrt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+	        <span class="n">c</span><span class="o">=</span><span class="n">Counter</span><span class="p">();</span> <span class="n">wht</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wts</span><span class="p">);</span> <span class="n">arln</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mi">4150</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p>dict key=weight : values=count-frequency</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wht</span><span class="p">:</span>
+	                <span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p>interval count
+ascending sort by key</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>			<span class="n">srt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">)</span>
+			<span class="k">return</span> <span class="n">srt</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">entCntBin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span> <span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>return scalar, entropy for one reading</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	 	<span class="n">c</span><span class="o">=</span><span class="n">Counter</span><span class="p">();</span> <span class="n">wht</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">);</span> <span class="n">arln</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mi">4150</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>dict key=weight : values=count-frequency</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wht</span><span class="p">:</span>
+			<span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>interval count</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">srt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">)</span> <span class="c">#ascending sort by key</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>list iterator next()
+i = iter(self.bins)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">i</span> <span class="o">=</span> <span class="p">[</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">nditer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">)]</span>
+		<span class="n">dbn</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p>count number of val in binned interval</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">frc</span><span class="o">=</span><span class="p">[]</span> <span class="p">;</span> <span class="n">tvr</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">trx</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>for x in np.nditer(self.bins, flags=['index']):</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">srt</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">trx</span><span class="p">]:</span>
+					<span class="n">tvr</span> <span class="o">+=</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">frc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tvr</span><span class="p">)</span>
+					<span class="n">tvr</span><span class="o">=</span><span class="mi">0</span>
+					<span class="n">trx</span><span class="o">+=</span><span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p>dbn = i.next()</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>calculate entropy over binned counts</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">etr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span> <span class="p">((</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="p">,</span><span class="mf">0.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">frc</span> <span class="k">if</span> <span class="n">p</span><span class="o">&gt;</span><span class="mf">0.0</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      <p>print 'entropy ', etr</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="k">return</span> <span class="n">etr</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-35'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-35'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-36'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-36'>#</a>
+      </div>
+      <p>return for all readings</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">entFeatures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wts</span>
+		<span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">entFeatures</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>      <span class="c">#get the unique  weight vals and number</span>
+			<span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span>
+		<span class="n">entT</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">entFeatures</span><span class="p">))</span>  <span class="c">#zip(*matrix) transposes the matrix row&lt;=&gt;col&lt;br&gt;</span>
+		<span class="n">ent</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entCntBin</span><span class="p">(</span> <span class="n">e</span> <span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entT</span>  <span class="p">]</span>  <span class="c">#entCnt returns the count based entropy&lt;br&gt;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entbys</span> <span class="o">=</span> <span class="n">ent</span>
+	 	<span class="k">return</span> <span class="n">ent</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-37'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-37'>#</a>
+      </div>
+      <h2>histogram</h2>
+<p>A histogram is discrete, count of number of values in a bin.   It is a frequency distribution of measurements, where the mean value can be seen directly(the highest bar).  Given a histogram the standard deviation, is the region centered at the mean value.  For a normal distribution, 68% of the measurements lie within one standard deviation on either side of the mean.  From a histogram, the width of the area which contains 68% of the measurements is 2stdv, or the width/2 for 1 stdv.  Histograms can be used to check theoretical distributions against observed data, comparing populatinos, or deriving particle velocity from time dilation (a proof of special relativity).  They answer the question of how many and where?  Viewing a histogram reveals whether the distribution is symmetric, left-skewed, or right-skewed, the number of modes, and any outliers.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-38'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-38'>#</a>
+      </div>
+      <p>What is the probability that a sample taken from the signal will be within a certain state or bin? What is the probability a randomly chosen sample will have value greater than some number?  Integrating under the area of frequency counts (sum=1) in a histogram gives a probability distribution.  For example, a square have has a pdf with only two possible values, a triangle wave has a uniform distribution, and random noise has a gaussian (bell-shaped curve).  Thus, rather than having a frequency count of numbers in a bin, a probability of a number being in a bin can be given.  Likewise, a cumulative distribution function, gives the probability of finding some number, at any given time, in a range of bins, or standard deviations.  The gaussian distribution cannot be simply integrated, it requires sampling and tabulation of millions of points.  The P(x) would be restricted to those x-nubmer of states a signal takes.   </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-39'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-39'>#</a>
+      </div>
+      <p>The clt (central limit thm.) states that sum of random numbers becomes gaussian as more r.v. are summed.  The clt does not require the r.v to be from any particular distribution, or all from the same.  This is why normally distributed signal are seen widely in nature.  When many different random forces are interacting, the resulting pdf becomes Gaussian.   For example, adding one random number generates a step function, two rv generate uniform distribution(triangle wave), and many r.v generate a gaussian.  Often the number of states, or bin-sizes far exceeds number of samples in a signal.  Selecting bin number is a compromise of the statistical noise in two directions(x,y).  If too many bins, there are few counts, and the amplitude(y) is difficult to estimate.  If too few, the probability mass function (discrete), loses resolution along the x-axis.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-40'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-40'>#</a>
+      </div>
+      <p>robustness mean vs median
+http://stats.stackexchange.com/questions/59838/standard-error-of-the-median</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-41'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-41'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">ecdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ent</span><span class="p">):</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ent</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;cumulative distribution&quot;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;entropy&quot;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;Frequency&quot;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-42'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-42'>#</a>
+      </div>
+      <h2>kde</h2>
+<p>A kernel is a type of probability distribution function, required to be even.  A kernel is non-negative, real-valued, even, integral=1.  PDFs which are kernels include uniform(-1,1), and standard normal distributions.
+KDE estimates the pdf of a continuous random variable without assumption about its underlying distribution, non-parametrically.  At every point, a kernel is created with the point at its center; therefore kernel is symmetric.  PDF is then estimated by adding all of the kernel functions and dividing by number of data(non-negative, and normalizes).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-43'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-43'>#</a>
+      </div>
+      <p>The bandwidth of a kernel is the standard deviation.  Chosen small for large, tightly packed data, larger for sparse, small data sets.  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-44'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-44'>#</a>
+      </div>
+      <p>kernel
+kernel = stats.gaussian_kde(ent4150)
+plt.title("kde")
+kdeX = np.linspace(0,5,100)
+plot(kdeX,kernel(kdeX),'r',label='kde') # distribution function
+print 'krnl', kernel
+hist(ent4150,normed=1,alpha=.3) # histogram over all points</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">plotkde</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-45'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-45'>#</a>
+      </div>
+      <p>kernel = stats.gaussian_kde( ent )
+kdeX = np.linspace(0,5,100)
+thresh = [ kernel(x) for x in kdeX ]
+he = [   i for t in thresh ]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-46'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-46'>#</a>
+      </div>
+      <p>plot(kdeX,kernel(kdeX),'r',label='kde') # distribution function</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre> 
+		<span class="n">density</span> <span class="o">=</span> <span class="n">kde</span><span class="o">.</span><span class="n">gaussian_kde</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entbys</span><span class="p">)</span>
+		<span class="n">xgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entbys</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entbys</span><span class="p">),</span> <span class="mi">1000</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entbys</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">density</span><span class="p">(</span><span class="n">xgrid</span><span class="p">),</span> <span class="s">&#39;r-&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-47'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-47'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">plotkdefit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-48'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-48'>#</a>
+      </div>
+      <p>best fit of data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entbys</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-49'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-49'>#</a>
+      </div>
+      <p>the histogram of the data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entbys</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">&#39;green&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-50'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-50'>#</a>
+      </div>
+      <p>add a 'best fit' line</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">y</span> <span class="o">=</span> <span class="n">mlab</span><span class="o">.</span><span class="n">normpdf</span><span class="p">(</span> <span class="n">bins</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+		<span class="n">l</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s">&#39;r--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-51'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-51'>#</a>
+      </div>
+      <p>plot</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>		<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Entropy&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Probability&#39;</span><span class="p">)</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">r&#39;$\mathrm{Histogram\ of\ Entropy:}\ \mu=</span><span class="si">%.3f</span><span class="s">,\ \sigma=</span><span class="si">%.3f</span><span class="s">$&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+		
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-52'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-52'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">plotkdeNL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">fitfunc</span>  <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+		<span class="n">errfunc</span>  <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">fitfunc</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+		
+		<span class="n">filename</span> <span class="o">=</span> <span class="s">&quot;gaussdata.csv&quot;</span>
+		<span class="n">data</span>     <span class="o">=</span> <span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+		<span class="n">xdata</span>    <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">ydata</span>    <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+		
+		<span class="n">init</span>  <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+		
+		<span class="n">out</span>   <span class="o">=</span> <span class="n">leastsq</span><span class="p">(</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">))</span>
+		<span class="n">c</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		
+		<span class="k">print</span> <span class="s">&quot;A exp[-0.5((x-mu)/sigma)^2] + k &quot;</span>
+		<span class="k">print</span> <span class="s">&quot;Parent Coefficients:&quot;</span>
+		<span class="k">print</span> <span class="s">&quot;1.000, 0.200, 0.300, 0.625&quot;</span>
+		<span class="k">print</span> <span class="s">&quot;Fit Coefficients:&quot;</span>
+		<span class="k">print</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+		
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">fitfunc</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">xdata</span><span class="p">))</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
+		
+		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">r&#39;$A = </span><span class="si">%.3f</span><span class="s">\  \mu = </span><span class="si">%.3f</span><span class="s">\  \sigma = </span><span class="si">%.3f</span><span class="s">\ k = </span><span class="si">%.3f</span><span class="s"> $&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="n">c</span><span class="p">[</span><span class="mi">3</span><span class="p">]));</span>
+		
+		<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-53'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-53'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">ksggviolin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ent</span><span class="p">):</span>
+		<span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-54'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-54'>#</a>
+      </div>
+      <h2>summary statistics</h2>
+<p>Error estimate can be obtained by repeating measurements in time.  The error, or deviations can be calculated as the difference from the mean/average over all measurements.  However, the average deviation over n samples, by definition, gives zero (the negative vs positive deviations cancel).  To remove the negative values, the erros are squared, and then averaged; this is the standard deviation measure.  The std tell us the average spread about the mean value.  Scales of precision for various measures: cm 0.1, electronic device half of last unit, 128.3 +- .015</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-55'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-55'>#</a>
+      </div>
+      <p>5-number, box-plot</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-56'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-56'>#</a>
+      </div>
+      <p>Confidence intervals</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-57'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-57'>#</a>
+      </div>
+      <p>HDI vs tailed intervals
+using highest density interval instead of equal-tailed intervals
+Suppose heads=0 in n=10 flips of a coin, modeled with Bernoulli likelihood, and uniform prior dbeta(1,1).  Then the posterior = dbeta(1,11).  The graph of this curve is aysmptotic.  The 95% HDI includes zero, while the equal-tail intervals do not.  HDI is more meaningful and intuitive summary of the posterior.<br />
+http://doingbayesiandataanalysis.blogspot.com/2012/04/why-to-use-highest-density-intervals.html</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-58'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-58'>#</a>
+      </div>
+      <p>ECDF
+Cumulative density functions good way to distinguish distributions.  Present the data without transformation, unlike histograms or kde.  Give good visual representation, where accuracy of each point is buffered by points before and after without binning(histograms), or smoothing(kde).  Work well with parmaetric, mixture, or messy non-parametric distribution.  Shallow sloped areas represent sparse distribution, and steep represent dense distribution.
+http://stats.stackexchange.com/questions/51718/assessing-approximate-distribution-of-data-based-on-a-histogram/51753#51753 </p>
+<p>plot(ecdf(Annie),xlim=c(min(Zoe),max(Annie)),col="red",main="ECDFs")
+lines(ecdf(Brian),col="blue")
+lines(ecdf(Chris),col="green")
+lines(ecdf(Zoe),col="orange")</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-59'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-59'>#</a>
+      </div>
+      <p>qq, kir-smirnov</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-60'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-60'>#</a>
+      </div>
+      <h2>threshold</h2>
+<p>http://blog.counsyl.com/2013/08/07/detecting-genetic-copy-number-with-gaussian-mixture-models/</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-61'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-61'>#</a>
+      </div>
+      <h2>signal processing</h2>
+<p>time series
+- cross-validation
+http://www.dspguide.com/ch2/4.htm
+laplace transform
+z-transform
+benford law
+kelly criterion</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-62'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-62'>#</a>
+      </div>
+      <p>apdx.
+def rnkci(self): </p>
+<pre><code>vitals = self.data[0]
+alerts = self.data[1]
+readings= self.data[2]
+
+
+#heicg=[ "hard"=None, "easy"=None, "inc"=None, "cor"=None, "glb"=None ]
+#return heicg
+</code></pre>
+<p>def histo(self):
+    #------------------------------------------------------------
+    # First figure: show normal histogram binning
+    fig = plt.figure(figsize=(10, 4))
+    fig.subplots_adjust(left=0.1, right=0.95, bottom=0.15)</p>
+<pre><code>ax1 = fig.add_subplot(121)
+ax1.hist(self.entnrm, bins=15, histtype='stepfilled', alpha=0.2, normed=True)
+ax1.set_xlabel('entropy bins=15')
+ax1.set_ylabel('Count(t)')
+
+ax2 = fig.add_subplot(122)
+ax2.hist(self.entnrm, bins=200, histtype='stepfilled', alpha=0.2, normed=True)
+ax2.set_xlabel('entropy bins=200')
+ax2.set_ylabel('Count(t)')
+
+#------------------------------------------------------------
+# Second &amp; Third figure: Knuth bins &amp; Bayesian Blocks
+fig = plt.figure(figsize=(10, 4))
+fig.subplots_adjust(left=0.1, right=0.95, bottom=0.15)
+
+for bins, title, subplot in zip(['knuth', 'blocks'],
+                                ["Knuth's rule-fixed bin-width", 'Bayesian blocks variable width'],
+                                [121, 122]):
+    ax = fig.add_subplot(subplot)
+
+    # plot a standard histogram in the background, with alpha transparency
+    hist(self.entnrm, bins=200, histtype='stepfilled',
+         alpha=0.2, normed=True, label='standard histogram')
+
+    # plot an adaptive-width histogram on top
+    hist(self.entbys, bins='blocks', ax=ax, color='black',
+         histtype='step', normed=True, label=title)
+
+    ax.legend(prop=dict(size=12))
+    ax.set_xlabel('entropy bins')
+    ax.set_ylabel('C(t)')
+
+plt.show()
+</code></pre>
+<p>def comparePlot(self):
+        #hard vs easy
+    #correct vs incorrect
+    #correct vs incorrect
+    pass</p>
+<p>def plot_accuracy(x, y, plot_placement, x_legend):
+   """Plot accuracy as a function of x."""
+   x = np.array(x)
+   y = np.array(y)
+   pl.subplots_adjust(hspace=0.5)
+   pl.subplot(plot_placement)
+   pl.title('Classification accuracy as a function of %s' % x_legend)
+   pl.xlabel('%s' % x_legend)
+   pl.ylabel('Accuracy')
+   pl.grid(True)
+   pl.plot(x, y)</p>
+<p>pl.figure(1)</p>
+<h1>Plot accuracy evolution with #examples</h1>
+<p>accuracy, n_examples = zip(*stats['accuracy_history'])
+plot_accuracy(n_examples, accuracy, 211, "training examples (#)")</p>
+<h1>Plot accuracy evolution with runtime</h1>
+<p>accuracy, runtime = zip(*stats['runtime_history'])
+plot_accuracy(runtime, accuracy, 212, 'runtime (s)')</p>
+<p>pl.show()</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

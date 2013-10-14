@@ -10,19 +10,19 @@
 
 
 
-#** objective: **	<br>
-#1.return a rnkCIlabel -> correct incorrect for each pt-state	<br>
-#2.return a fpCurve(fp vs kernel-size..feature as bag-of-words) -> and do it for 3 curves	<br>
-#window-size of smoothing, 	<br>
-#<<<< sequential-time  >>>>>>	<br>
-#kernel-size of kernel	<br>
-#<<<<  form of the data >>>>>>	<br>
-#ci-size(static)sequence-size(dynamic)	<br>
+### ** objective: **	<br>
 
-#** import ** 	<br>
-#entropy	<br>
-#boosting fit fnc	<br>
-#<cite>http://www.astroml.org/examples/algorithms/plot_bayesian_blocks.html</cite>	<br>
+# 1.return a rnkCIlabel -> correct incorrect for each pt-state	<br>
+
+# 2.return a fpCurve(fp vs kernel-size..feature as bag-of-words) -> and do it for 3 curves	<br>
+
+# window-size of smoothing, 	<br>
+#   <<<< sequential-time  >>>>>>	<br>
+
+# kernel-size of kernel	<br>
+#   <<<<  form of the data >>>>>>	<br>
+
+# ci-size(static)sequence-size(dynamic)	<br>
 
 from entrofunc import *
 from boostwrap import *
@@ -34,68 +34,78 @@ from matplotlib import pyplot as plt
 from astroML.plotting import hist
 
 
-#** _[what] **	<br>
+### ** _[what] **	<br>
 class threshold(object):
-	#Hard-easy, the engine
+	
+	# 2. sampling  -- what is a label? 
+	# hashkernel.py,  bayescovariance.py(wishart) diseasemodeling.py
     def indicator(self, entropy):
-		return fpCrv
-	#Alert label
+		return fpCrv  #focused on size-changes effect on fp-rate
+	
+	# 1. alert label;  -- given labels, what does the data tell us
+	# score.py, features.py boosting.py, MAB , heic.py
+	# what is probability distribution function?
     def label(self):
-		return rnkCI
-	#Map iterated_dynamics states
-    def recur(self, mapvct):
-		return ste
+		return rnkCI  # bar graph, heic1 vs heic2
+
+	# << meta >>: a. sequential, b. global(static)   (recurrence dynamical system)
+	# texture.py, crossvalidate.py(autocorrelate), roc-scores , datasmallvsbig
+    def recur(self, mapvct): 
+		return ste  #static/sequential, optimization( mle, adaptive-bin, word-type )
 
 
-#** [how] **	<br>
+### ** [how] **	<br>
 #DATA <> queue[where,when] .. direct injection objects	<br>
 
-#entropy - timeseries - whats significant	<br>
-class bayes_bin( threshold ):
-	def indicator(self, ent ,size, aMiner ):
-		#`kernel = stats.gaussian_kde(ent)`
+#entropy - timeseries - whats significant	<br> 
+# what is the distribution priors
+# parametric based appraoch
+class bayesInf( threshold ):
+	
+	def indicator(self, ent ,size, aMiner ): #multi-arm-bandit single vs global
 		#size is kde window size	<br>
 		#TODO named-tuple	<br>
-    		# plot a standard histogram in the background, with alpha transparency
-    		hist(ent, bins=200, histtype='stepfilled',alpha=0.2, normed=True, label='standard histogram')
+		return fpCurve  
 
-    		# plot an adaptive-width histogram on top
-    		hist(ent, bins=bins, ax=ax, color='black', histtype='step', normed=True, label=title)
-    		#H_I array 1=hard 0=easy
-
-		return fpCurve
-
-	def label( self, H_I, aMiner):
+	def label( self, H_I, aMiner):    #conjugate_analytic vs MCMC, fixed-entropyvsBayesBlockBin
 		return rankedCI #correct_incorrect
 
-	def recurr( self, states, aMiner):
+	def recurr( self, states, aMiner): #static(wishart) vs sequential(ie the hot-hand)   
 		return texturesequenceGraph
 
-#what can be learned - form it takes?
+#what can be learned - form it takes? ; 
 class hashKern( threshold ):
-	def indicator(self, ent, size, aMiner):
+	
+	def indicator(self, ent, size, aMiner): #probabalistic scraping mixed-int programming
 		#size is bit-size
 		return fpCurve
-	def label( self, H_I, aMiner):
+	
+	def label( self, H_I, aMiner): #kde=estimate prob.density.function, non-parametrically, bandwidth can be determined through cross-validation
+									#different regression effect on classifier, hashkernel #regression and correlation
 		return rankedCI
-	def recurr(self, states, aMiner):
+	
+	def recurr(self, states, aMiner): #plot the np-hard problem of MIP
 		return texturedstateGraph
 
-#what is a label? size of CI... show the
-class kde( threshold ):
-	def indicator(self, sizeCI, aMiner):
+#what is a label? size of CI... show the;  
+class ensemble( threshold ):
+	
+	def indicator(self, sizeCI, aMiner): #game-based kelly criterion
 		kernel = stats.gaussian_kde(ent)
 		return fpCurve
-	def label(self, H_I, aMiner):
+	
+	def label(self, H_I, aMiner):  #stump vs tree vs mab
 		#H_I is the entorpy indicator function
 		return rankedCI
-	def recurr(self, state, aMiner):
+	
+	def recurr(self, state, aMiner):  #static/sequential, optimizationofkelly
 		return exploratorytextureGraph
 
+#class language(alert language, transformer, states)
 
-#[WHO] api
+### [WHO] api
 class dataMine(object):
-   	 def __init__(self, ):
+   	 def __init__(self, alt_how_cls ):
      		   self.how = alt_how_cls
 
    	 def fpCurve(self, ent, size ):
