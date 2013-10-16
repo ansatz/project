@@ -15,18 +15,31 @@
 
 """
 ### refs
+#dirichlet
 # http://snippyhollow.github.com/blog/2013/03/10/collapsed-gibbs-sampling-for-dirichlet-process-gaussian-mixture-models/	<br>
 # snippyhollow.github.com/blog/2013/03/10/collapsed-gibbs-sampling-for-dirichlet-process-gaussian-mixture-models/	<br>
+
+# gmm
 #http://blog.counsyl.com/2013/08/07/detecting-genetic-copy-number-with-gaussian-mixture-models/	<br>
 #http://sociograph.blogspot.com/2011/11/clique-percolation-in-few-lines-of.html	<br>
+
 #plots	<br>
 #http://blog.revolutionanalytics.com/2009/11/charting-time-series-as-calendar-heat-maps-in-r.html	<br>
+
+#clique-percolation
 #http://sociograph.blogspot.com/2013/05/revealing-community-structure-with.html	<br>
 #http://mindsknowledge.blogspot.com/2012/02/javascript-tools-for-neuroscience.html	<br>
 #http://wwwold.fi.isc.cnr.it/users/thomas.kreuz/research/synchrony.html	<br>
 #http://levreyzin.blogspot.com/2012/12/uics-mcs-program-seeking-graduate.html
+
+#logical distance
 #http://jeremykun.com/2012/04/21/kolmogorov-complexity-a-primer/
 
+#n-gram
+#http://news.rapgenius.com/Atodd-when-harvard-met-sally-n-gram-analysis-of-the-new-york-times-weddings-section-lyrics
+
+#meaningful
+#clustering is meaningless : keogh
 """
 class object that can classify clusters
 

@@ -1,5 +1,4 @@
 #wordle
-#bubble chart of weights of adaboosst
 #picloud amazon cluster
 """
 
@@ -29,7 +28,7 @@ have to set dd , col-headers in data file
 
 """
 
-#load 
+# load 
 "data  --workaround for module path issues"
 w = '/home/solver/project/scikit-learn-master/weight.pkl'
 e = '/home/solver/project/scikit-learn-master/entropybasic.pkl'
@@ -40,8 +39,8 @@ pd = pndsa(w,e,i,d) #pandadata.py object inherits from score-class
 
 
 
-### bin
-# bayesian_blocks is expensive so check
+# bin
+"bayesian_blocks is expensive so check"
 if os.path.isfile('bayesblock.pkl') :
 		bayesfile=open('bayesblock.pkl','rb')
 		bypkl = pickle.load(bayesfile)
@@ -58,27 +57,29 @@ else :
 
 
 
-### entropy
+# entropy
 # <a knowl="ref.html">kwl</a>
-ent4150  = ab.entnrm #fixed-width 1/4150
-entbayes = ab.entropy() #adaptive-width
-#print 'entropy', entbayes[:15]
+"fixed-width 1/4150"
+ent4150  = ab.entnrm 
+"adaptive-width"
+entbayes = ab.entropy() 
+print 'entropy', sorted(entbayes)[-15:-1]
 
-
-
-### pandas
-#print 'data to csv' , ab.pcklcsv() #write to csv
-ab.dframe()
-
-
-#pd.loads() #load frame from csv
-#pd.alert()
-
-# density estimation 
-# plot
+# hdi density estimation 
+"plot"
 #ab.plotkde()
 #ab.plotkdefit()
 #ab.plotkdeNL()
+
+
+# score.py pandas
+#print 'data to csv' , ab.pcklcsv() #write to csv
+"set dataframe columns heic"
+ab.dframe()
+"plot --stackedbar --bubble --timeseries"
+ab.alerts()
+
+
 
 # indicator function
 #print 'entbys', ab.entbys, ab.entbys.ndim

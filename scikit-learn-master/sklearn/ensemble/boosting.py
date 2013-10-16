@@ -332,6 +332,7 @@ entfile.close
 
 
 ### sampling
+# simpsons paradox
 #phantom correlation
 ##n a general sense (the proof being left as an exercise for the reader):
 #

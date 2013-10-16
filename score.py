@@ -7,7 +7,24 @@
 #entropy
 #https://www.ncbi.nlm.nih.gov/pubmed/10843903
 
+#cross-validation
+#http://bytefish.de/blog/gender_classification/
+#http://normaldeviate.wordpress.com/
+#bonferonni corrrected confidence interval
+#time of day effect http://nbviewer.ipython.org/urls/raw.github.com/jrjohansson/scientific-python-lectures/master/Lecture-4-Matplotlib.ipynb
+#http://blog.nextgenetics.net/?e=94
 
+#plot
+#http://nbviewer.ipython.org/urls/raw.github.com/jrjohansson/scientific-python-lectures/master/Lecture-4-Matplotlib.ipynb
+#https://github.com/mikedewar/d3py
+#https://github.com/wrobstory/vincent
+#http://blog.nextgenetics.net/?e=85
+
+#pandas
+#http://nbviewer.ipython.org/urls/gist.github.com/wesm/5773719/raw/1399562c0a02b9edc3d13c71a70387a31d87260b/tutorial.ipynb
+#www.bearrelroll.com/2013/05/python-pandas-tutorial/
+
+###stat prob. space vs biological prob. space
 """
 
 <script type="text/javascript" src="jquery-latest.min.js"></script>
@@ -49,13 +66,14 @@ from scipy.stats import kde
 from scipy.stats import norm
 import matplotlib.mlab as mlab
  
-#from pylab import *
+from pylab import *
 from numpy import loadtxt
 from scipy.optimize import leastsq
+from scipy.stats import sem
 import csv
 from itertools import izip
 import os.path
-
+import scipy as sp
 import pandas as pd
 
 class score(object):
@@ -94,12 +112,13 @@ class score(object):
 		self.wts = wtnp
 		self.entnrm = entnp
 		self.inc = incnp #full size 1=inc 0=corr
-		self.bins = None	
+		self.bins = None	#bayes blocks intervals
  		self.entbys = None
 		self.data=[]
 		#self.data[0] = dv; self.data[1]= da; self.data[2]=dr
 		self.data.append(dv); self.data.append(da); self.data.append(dr);
 		self.df = None #panda dataframe
+		self.dw = pd.DataFrame(self.wts)
 
 ### utility function: data
 	def pckle(self, selfdata, filename):
@@ -117,6 +136,10 @@ class score(object):
 				row2 = [i for i in row[0]]
 				row2.append(row[1])
 				writeF.writerow( row2 )
+
+
+#tele_raw_dta = np.recfromcsv("/home/solver/data/raw-labeled-th/all.csv", dtype=dd)
+#mimic_raw = np.recfromcsv("/home/solver/Desktop/data/raw-labled-mimic/all.csv", dtype=dd)
 					
 
 ### pandas data frame
@@ -149,31 +172,169 @@ class score(object):
 	def dframe(self):
 		"get scr attributes"
  		"[vitals,alerts,readings]"
-		
-		" open csv import "
-		#df = pd.read_csv('pandacsv.csv')
-		#header = self.data[0]
-		#header = ['SYS','DIA','HR1','OX','HR2','WHT','alert']
-		#df.columns = header
-		
+	
+
 		"frame"
 		hdr = [ i[0] for i in self.data[0] ]
 		df2 = pd.DataFrame(self.data[2], columns=hdr[:6] ) #remove Label
 		#print 'lbl', len(self.data[2][:,5])
 		df2['Label']=self.data[2][:,5]
-		
-		
-		"incorrect" "entropy" "weights"
-		#df['INC'] = self.inc
-		
-		df2['ENT'] = self.entbys
-		#print 'e len\n' , self.entbys[-5:-1],'\n', df2.tail(5)
-		
-		# 4150x50 df['WTS'] = self.wts
+	
 
-		"data frame attribute"
+		#set columns
+		"incorrect" 
+		df2['INC'] = self.inc
+		
+		"entropy -- return heic"
+		df2['ENT'] = self.entbys  #print 'e len\n' , self.entbys[-5:-1],'\n', df2.tail(5)
+		ff = df2['ENT'].order()
+		print 'ent', len(ff), '\n', ff.tail(10)
+		
+		
+		#hdi
+		"--histogram kde plotkdefit()"
+		mu = df2['ENT'].mean()
+		si = df2['ENT'].std()
+		#tl= "r'$\mathrm{Histogram\ of\ Entropy:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, si)"
+		df2['ENT'].hist(bins=self.bins, color='k', alpha=0.3, normed=True)
+		df2['ENT'].plot(kind='kde',style='k--', xlim=[0,(df2['ENT'].max()+5)] , title='entropy over weights')
+		
+		"sort self.entbys, get hdi -> 95ci, all other points h"
+		df2['srt'] = df2['ENT'].sort
+		#hdi = lambda x: (x isin 
+		#df2['hdi'] = df2['ENT'].map(hdi)
+
+		"easy-way just set a lambda set non-zero to hard"
+		he = lambda x: x>0 and 'h' or 'e'
+		df2['HE'] = df2['ENT'].map(he)
+		print 'he\n', df2['HE'].value_counts()
+
+	   #TODO 2013-10-16 11:42
+	   # make function that takes hdi and uses that as 95%ci
+
+### hard easy
+# ecdf difference in two distributions(hard-easy)
+
+# hdi
+
+# gaussian-mixture: set threshold on entrop; delta reference: map(weight -> entropy).  inverse fit-function get weight from threshold entropy.  what is reference?(healthy, no alert); can visualize separate groups(observed label) based on delta histogram; gaussian-mixture. fit prior(unobserved + label) distribution using expectation-maximization(result is the posterior, iterate)
+		
+# MCMC sampling: prior(beta distr) look at diff. of thetas(alert/non); likelihood function(bernoulli rv prob of theta1 or theat2) given observed data; combine prior and likelihood to calc the posterior using MCMC (burn, metropolis, etc.) make histogram to see if difference (HDI) between thetas.
+
+		
+		#sem (standard error measure) conf. interval
+		#alerts create columns for each header 1>ci 0<ci
+		"alerts" 
+		for h in hdr[:6]:
+			se = sem(df2[h])
+			#(df2[h].std() / df2[h].count() * 1.96 #z from cum dis fun (cdf)
+			n = df2[h].count(); #nn = df2[h].shape[0]; nnn=len(df2[h])
+			#print n, nn, nnn
+			z = se * sp.stats.t._ppf((1.95)/2., n-1)
+
+			#print 'ci', ci
+			maxci= df2[h].mean() + z
+			minci= df2[h].mean() - z
+			print 'maxmin', maxci, minci
+			df2['alr1'+h]= df2[h].map(lambda x: ( x > maxci and '1') or (x < minci and '1') or '0' ) 
+
+		#print df2['SYS'].tail(30)
+		print df2[df2['alr1SYS'] == 0 ].count()
+
+		"group by sex, geography, timeofday"
+		#confs/dmhi-current/reports/.txt	
+		
+
+		"weights"
+		# 4150x50 df['WTS'] = self.wts
+		print 'wts shape', self.wts.shape
+		print self.dw.head(10)
+
+		"dataframe class instance attribute"
 		self.df = df2
-		print self.df.describe()
+		#print self.df.describe()
+
+
+# alerts: read in each row and set to string. 
+# group over these names by sex,geography,timeOfday
+# plot weighted bubble graph: color=incorrect, y-axis entropy, x-axis reading-index , plot threshold of hard vs easy: indicator function
+	def alerts(self):
+		"select row as series using xs"
+		"concat string->alert type"
+		hdr = [ i[0] for i in self.data[0] ]
+	
+		self.df['alrm'] = self.df['alr1'+hdr[0]]
+		for h,i in enumerate(hdr[:6]):
+			if h != 0:
+				self.df['alrm'] = self.df['alrm'] + self.df['alr1'+i]
+
+		"group/count unique/ sort -> value_counts"
+		#print 'value_counts\n', pd.value_counts(self.df.alrm)[:10]	
+		#print 'label count\n', self.df['Label'].idx(1).count()
+
+		"--barplot"
+		vc = pd.value_counts(self.df.alrm)
+		print "vc\n", vc.shape, vc[0]
+		#a,c = zip(*vc); print a; print c
+		#dbar = pd.DataFrame
+
+		"sex{mf} geography{urb,sub} time{days}"
+		fig = plt.figure(); 
+		fig,axes = plt.subplots(1,3,sharex=True, sharey=True)
+		plt.subplots_adjust(wspace=0,hspace=0)	
+		pd.value_counts(self.df.alrm).plot(kind='bar')
+		show()
+		#plt.savefig('barplot.svg')
+		#plt.savefig('barplot.png', dpi=400, bbox_inches='tight')
+
+
+		"--bubbleplot"
+		"x-axis: index"	
+		lin = self.df.index.shape[0]
+		#print 'lin ', lin
+		self.df['ptrd']= range(lin )
+		print 'ptrd\n', self.df['ptrd'].head(10)
+		
+		"text: set INC 1 to 'xxx', CORR 0 to 'o'"
+		inc=lambda x: x==1 and 'xxx' or 'o'
+		self.df['i2'] = self.df['INC'].apply(inc)
+		#print 'inc', len(self.df.i2), i2[:10]
+		text(self.df.ptrd.values, self.df.ENT.values, \
+				self.df['i2'].values, size=11, horizontalalignment='center')
+		
+		print 'dw sum ', self.dw.sum().shape[0], '\n',self.dw.sum().tail(10)	
+		"plot x,y,color=hard/easy,size=weight, text=inc"
+		sct = scatter(self.df.ptrd.values  , \
+					  self.df.ENT.values  , \
+					  c= self.df['HE'] , \
+					  s=self.dw.sum() , \
+					  linewidths=2, edgecolor='w')
+		"styling"
+		sct.set_alpha(0.75)
+		xmax=self.df.alrm.shape[0]
+		ymin=self.df.ENT.min(); ymax=self.df.ENT.max()
+		axis( [0,xmax,ymin,ymax] )
+		xlabel('patient readings')
+		ylabel('entropy')
+		show()
+
+		"--time-series plot"
+
+
+
+
+
+
+
+		
+#	def kdeCI(self): pass
+#	def germanTank(self): pass #"think stats book"
+#
+#	def alert1(self):
+#		"confidence intv"
+#
+#		"get frame, row"
+##		self.df[self.data[
 
 
 ### entropy
@@ -269,6 +430,7 @@ class score(object):
 #plot(kdeX,kernel(kdeX),'r',label='kde') # distribution function
 #print 'krnl', kernel
 #hist(ent4150,normed=1,alpha=.3) # histogram over all points
+
 	def plotkde(self):
 		#kernel = stats.gaussian_kde( ent )
 		#kdeX = np.linspace(0,5,100)
@@ -357,7 +519,8 @@ class score(object):
 
 
 # qq, kir-smirnov
-			
+# parallel plot (violin plot)
+#http://pyinsci.blogspot.com/2009/09/violin-plot-with-matplotlib.html
 
 ### threshold
 #http://blog.counsyl.com/2013/08/07/detecting-genetic-copy-number-with-gaussian-mixture-models/
@@ -370,6 +533,14 @@ class score(object):
 # z-transform
 # benford law
  # kelly criterion
+
+
+
+### stats-scores
+# aor (tibshirani paper)
+# simpsons paradox http://vudlab.com/simpsons/
+# kelly criterion
+
 
 
 
