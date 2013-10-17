@@ -19,12 +19,15 @@
 #https://github.com/mikedewar/d3py
 #https://github.com/wrobstory/vincent
 #http://blog.nextgenetics.net/?e=85
+#http://pandas.pydata.org/pandas-docs/dev/visualization.html#scatter-plot-matrix
 
 #pandas
 #http://nbviewer.ipython.org/urls/gist.github.com/wesm/5773719/raw/1399562c0a02b9edc3d13c71a70387a31d87260b/tutorial.ipynb
 #www.bearrelroll.com/2013/05/python-pandas-tutorial/
 
 ###stat prob. space vs biological prob. space
+#http://www.gwern.net/Lewis%20meditation
+#http://blog.nextgenetics.net/?e=85
 """
 
 <script type="text/javascript" src="jquery-latest.min.js"></script>
@@ -49,7 +52,7 @@
 # hard-easy 
 # alerts over global 000, 001, 010, 100, 101
 # kernel-hash
-
+from random import random
 from collections import Counter
 import pickle, pprint
 import numpy as np
@@ -196,8 +199,8 @@ class score(object):
 		mu = df2['ENT'].mean()
 		si = df2['ENT'].std()
 		#tl= "r'$\mathrm{Histogram\ of\ Entropy:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, si)"
-		df2['ENT'].hist(bins=self.bins, color='k', alpha=0.3, normed=True)
-		df2['ENT'].plot(kind='kde',style='k--', xlim=[0,(df2['ENT'].max()+5)] , title='entropy over weights')
+		#df2['ENT'].hist(bins=self.bins, color='k', alpha=0.3, normed=True)
+		#df2['ENT'].plot(kind='kde',style='k--', xlim=[0,(df2['ENT'].max()+5)] , title='entropy over weights')
 		
 		"sort self.entbys, get hdi -> 95ci, all other points h"
 		df2['srt'] = df2['ENT'].sort
@@ -273,51 +276,110 @@ class score(object):
 		#print 'label count\n', self.df['Label'].idx(1).count()
 
 		"--barplot"
+#http://stackoverflow.com/questions/18598891/pandas-plotting-integration-with-matplotlib
 		vc = pd.value_counts(self.df.alrm)
 		print "vc\n", vc.shape, vc[0]
-		#a,c = zip(*vc); print a; print c
-		#dbar = pd.DataFrame
 
 		"sex{mf} geography{urb,sub} time{days}"
-		fig = plt.figure(); 
-		fig,axes = plt.subplots(1,3,sharex=True, sharey=True)
-		plt.subplots_adjust(wspace=0,hspace=0)	
-		pd.value_counts(self.df.alrm).plot(kind='bar')
-		show()
+		##fig = plt.figure(); 
+		##fig,axes = plt.subplots(1,3,sharex=True, sharey=True)
+		##plt.subplots_adjust(wspace=0,hspace=0)	
+		##pd.value_counts(self.df.alrm).plot(kind='bar')
+		##show()
 		#plt.savefig('barplot.svg')
 		#plt.savefig('barplot.png', dpi=400, bbox_inches='tight')
 
 
 		"--bubbleplot"
 		"x-axis: index"	
+		fig = plt.figure();
+		fig,axes = plt.subplots(1,1)
 		lin = self.df.index.shape[0]
 		#print 'lin ', lin
 		self.df['ptrd']= range(lin )
-		print 'ptrd\n', self.df['ptrd'].head(10)
+		#print 'ptrd\n', self.df['ptrd'].head(10)
 		
 		"text: set INC 1 to 'xxx', CORR 0 to 'o'"
 		inc=lambda x: x==1 and 'xxx' or 'o'
 		self.df['i2'] = self.df['INC'].apply(inc)
 		#print 'inc', len(self.df.i2), i2[:10]
-		text(self.df.ptrd.values, self.df.ENT.values, \
-				self.df['i2'].values, size=11, horizontalalignment='center')
-		
-		print 'dw sum ', self.dw.sum().shape[0], '\n',self.dw.sum().tail(10)	
+		#text(self.df.ptrd.values, self.df.ENT.values, \
+#				 self.df['i2'].values, \
+#				 size=11, horizontalalignment='center')
+	
+		sm = self.dw.sum()
+		print 'dw sum ', sm.values[-10:]	
+
 		"plot x,y,color=hard/easy,size=weight, text=inc"
-		sct = scatter(self.df.ptrd.values  , \
-					  self.df.ENT.values  , \
-					  c= self.df['HE'] , \
-					  s=self.dw.sum() , \
-					  linewidths=2, edgecolor='w')
-		"styling"
-		sct.set_alpha(0.75)
-		xmax=self.df.alrm.shape[0]
-		ymin=self.df.ENT.min(); ymax=self.df.ENT.max()
-		axis( [0,xmax,ymin,ymax] )
-		xlabel('patient readings')
-		ylabel('entropy')
+		cl =lambda x: x=='h' and 1 or 0
+		clr = self.df['HE'].apply(cl)
+		#print 'cl\n', clr.values[-10:]
+		x=[]; y=[]
+		data = self.df[['ENT','INC']].values
+		i=0
+		for d in data:
+			x.append(i) 
+			y.append(d[0])
+			#text(i,d[0],d[1], size=11, horizontalalignment='center')
+			i+=1
+		print 'x ', x[0:10]
+		print 'y ', y[0:10]
+		c2d = lambda x: x=='e' and 1.0 or 0.0
+		cl2 = self.df.HE.apply(c2d)
+
+		dd = self.df.HE.values
+		d2= [1 if d=='e' else 0 for d in dd]
+		print 'd2', len(d2), d2[0:10]	
+		print 'cl2 ', len(cl2), cl2[0:10]
+		cc=[0.0 for i in xrange(len(cl2))]
+		for i,cb in enumerate(cl2):
+			cc[i] = cb
+		print 'cc', len(cc), cc[0:10]
+
+
+		#x,y = [i,en for i,en in enumerate(self.df.ENT)]
+		#cv = [c for c in clr] 
+		#sv = [s for s in sm]
+		#print 'xy\n', data[:10],'\n', x[0:10], y[0:10]
+		#plt.scatter(x, y) #,c=cv,s=sv, linewidths=2, edgecolor='w')
+		#self.df.plot(x='index.values',y='ENT',style='o')
+		#print 'df  ', self.df['HE'].tail(15)
+	 	
+		sm2 = self.dw.astype(float).sum()/ self.dw.astype(float).sum().max()	
+		#yy = [ yz+(0.5*random.random() ) for yz in y]
+		yy=[]; zz =0
+		for yz in y:
+			zz = random()
+			yy.append(zz+yz)
+
+		scatter(x,yy, c=d2, s=sm*1000 , cmap='autumn',alpha=0.5) #linewidths=2, edgecolor='w')
+		#data 
+		"x index , y ent , c = he , s = weight"
+		#xyc = self.df[['ptrd','ENT']].astype(float)
+
+
+
+		#append
+
+
+		#scatter	
+
+
+		#"styling"
+		#sct.set_alpha(0.75)
+		#xmax=self.df.alrm.shape[0]
+		#ymin=self.df.ENT.min(); ymax=self.df.ENT.max()
+		#axis( [0,xmax,ymin,ymax] )
+		#xlabel('patient readings')
+		#ylabel('entropy')
+		#axis( [0,4200,0,70])
+		xlim(0,4175)
+		ylim(-7,70)
 		show()
 
+		"-- parallel box-plot to compare hard vs easy"
+		
+		
 		"--time-series plot"
 
 
