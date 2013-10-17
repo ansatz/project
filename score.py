@@ -295,87 +295,75 @@ class score(object):
 		fig = plt.figure();
 		fig,axes = plt.subplots(1,1)
 		lin = self.df.index.shape[0]
-		#print 'lin ', lin
 		self.df['ptrd']= range(lin )
-		#print 'ptrd\n', self.df['ptrd'].head(10)
 		
 		"text: set INC 1 to 'xxx', CORR 0 to 'o'"
-		inc=lambda x: x==1 and 'xxx' or 'o'
-		self.df['i2'] = self.df['INC'].apply(inc)
 		#print 'inc', len(self.df.i2), i2[:10]
 		#text(self.df.ptrd.values, self.df.ENT.values, \
 #				 self.df['i2'].values, \
 #				 size=11, horizontalalignment='center')
-	
+		"size of weights"	
 		sm = self.dw.sum()
+		#ct=sm.value_counts()
+		#print 'count sum', ct
 		print 'dw sum ', sm.values[-10:]	
+		sz = [s/.0001 for s in sm.values]
+		print 'dw sum/.01 ', sz[-10:]
 
-		"plot x,y,color=hard/easy,size=weight, text=inc"
-		cl =lambda x: x=='h' and 1 or 0
-		clr = self.df['HE'].apply(cl)
-		#print 'cl\n', clr.values[-10:]
+		"x=readings ,y=entropy "
 		x=[]; y=[]
-		data = self.df[['ENT','INC']].values
+		data = self.df['ENT'].values
 		i=0
 		for d in data:
 			x.append(i) 
-			y.append(d[0])
-			#text(i,d[0],d[1], size=11, horizontalalignment='center')
+			y.append(d)
 			i+=1
-		print 'x ', x[0:10]
-		print 'y ', y[0:10]
-		c2d = lambda x: x=='e' and 1.0 or 0.0
-		cl2 = self.df.HE.apply(c2d)
 
 		dd = self.df.HE.values
 		d2= [1 if d=='e' else 0 for d in dd]
 		print 'd2', len(d2), d2[0:10]	
-		print 'cl2 ', len(cl2), cl2[0:10]
-		cc=[0.0 for i in xrange(len(cl2))]
-		for i,cb in enumerate(cl2):
-			cc[i] = cb
-		print 'cc', len(cc), cc[0:10]
-
-
-		#x,y = [i,en for i,en in enumerate(self.df.ENT)]
-		#cv = [c for c in clr] 
-		#sv = [s for s in sm]
-		#print 'xy\n', data[:10],'\n', x[0:10], y[0:10]
-		#plt.scatter(x, y) #,c=cv,s=sv, linewidths=2, edgecolor='w')
-		#self.df.plot(x='index.values',y='ENT',style='o')
-		#print 'df  ', self.df['HE'].tail(15)
-	 	
-		sm2 = self.dw.astype(float).sum()/ self.dw.astype(float).sum().max()	
-		#yy = [ yz+(0.5*random.random() ) for yz in y]
+		"incorrect"
+		#inc=lambda x: x==1 and 'xxx' or 'o'
+		#self.df['i2'] = self.df['INC'].apply(inc)
+	 	ii = self.df.INC.values
+		ccc = self.df['INC'].value_counts().values #3747 403
+		print 'ccc ', ccc[0], ccc[1]
+		iz= [ 0 if i==0 else 1 for i in ii] 
+		print 'ii',len(ii), ii[0:10]
+		print 'iz',len(iz), iz[0:10]
+		#sm2 = self.dw.astype(float).sum()/ self.dw.astype(float).sum().max()	
+		"jitter weights"
 		yy=[]; zz =0
+		ysum = sum(y)
 		for yz in y:
-			zz = random()
-			yy.append(zz+yz)
-
-		scatter(x,yy, c=d2, s=sm*1000 , cmap='autumn',alpha=0.5) #linewidths=2, edgecolor='w')
-		#data 
-		"x index , y ent , c = he , s = weight"
-		#xyc = self.df[['ptrd','ENT']].astype(float)
-
-
-
-		#append
-
-
-		#scatter	
-
+			zz = random() * 5.0
+			#yy.append((yz)/ysum)
+			yy.append(yz+zz)
+			#yy.append(log(yz))
+		print 'yy ' , min(yy),max(yy)
+		#c=d2
+		"x=itr,y=entr,c=heic, s=weight cmap='autumn'"
+		scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9) #linewidths=2, edgecolor='w')
 
 		#"styling"
 		#sct.set_alpha(0.75)
 		#xmax=self.df.alrm.shape[0]
 		#ymin=self.df.ENT.min(); ymax=self.df.ENT.max()
 		#axis( [0,xmax,ymin,ymax] )
-		#xlabel('patient readings')
-		#ylabel('entropy')
-		#axis( [0,4200,0,70])
-		xlim(0,4175)
-		ylim(-7,70)
+		xlabel('patient readings')
+		ylabel('entropy')
+		"hard easy"
+		hhh = self.df['HE'].value_counts()
+		h1 = hhh[1]; hh2 =hhh[0]
+		cr = ccc[0]; ccr=ccc[1] 
+		legend(loc='best')
+		xlim(0,4150)
+		ylim(-3,70)
+		title("boosted weights vs entropy CRR=%s,INC=%s,HARD=%s,EASY=%s" % (cr,ccr,h1,hh2))
 		show()
+
+		"y=count x=binned-entropy c=INC s=weight"
+
 
 		"-- parallel box-plot to compare hard vs easy"
 		

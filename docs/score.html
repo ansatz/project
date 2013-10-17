@@ -731,7 +731,10 @@ plt.savefig('barplot.png', dpi=400, bbox_inches='tight')</p>
 		<span class="s">&quot;x-axis: index&quot;</span>	
 		<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
 		<span class="n">fig</span><span class="p">,</span><span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-		<span class="n">lin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div>
+		<span class="n">lin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;ptrd&#39;</span><span class="p">]</span><span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">lin</span> <span class="p">)</span>
+		
+		<span class="s">&quot;text: set INC 1 to &#39;xxx&#39;, CORR 0 to &#39;o&#39;&quot;</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -740,10 +743,14 @@ plt.savefig('barplot.png', dpi=400, bbox_inches='tight')</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-46'>#</a>
       </div>
-      <p>print 'lin ', lin</p>
+      <p>print 'inc', len(self.df.i2), i2[:10]
+text(self.df.ptrd.values, self.df.ENT.values, \
+             self.df['i2'].values, \
+             size=11, horizontalalignment='center')</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>		<span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;ptrd&#39;</span><span class="p">]</span><span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">lin</span> <span class="p">)</span></pre></div>
+      <div class="highlight"><pre>		<span class="s">&quot;size of weights&quot;</span>	
+		<span class="n">sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dw</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -752,13 +759,27 @@ plt.savefig('barplot.png', dpi=400, bbox_inches='tight')</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-47'>#</a>
       </div>
-      <p>print 'ptrd\n', self.df['ptrd'].head(10)</p>
+      <p>ct=sm.value_counts()
+print 'count sum', ct</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>		
-		<span class="s">&quot;text: set INC 1 to &#39;xxx&#39;, CORR 0 to &#39;o&#39;&quot;</span>
-		<span class="n">inc</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="s">&#39;xxx&#39;</span> <span class="ow">or</span> <span class="s">&#39;o&#39;</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;i2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;INC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">inc</span><span class="p">)</span></pre></div>
+      <div class="highlight"><pre>		<span class="k">print</span> <span class="s">&#39;dw sum &#39;</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>	
+		<span class="n">sz</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">/.</span><span class="mo">0001</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+		<span class="k">print</span> <span class="s">&#39;dw sum/.01 &#39;</span><span class="p">,</span> <span class="n">sz</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
+
+		<span class="s">&quot;x=readings ,y=entropy &quot;</span>
+		<span class="n">x</span><span class="o">=</span><span class="p">[];</span> <span class="n">y</span><span class="o">=</span><span class="p">[]</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;ENT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+		<span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+			<span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> 
+			<span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+			<span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+
+		<span class="n">dd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">HE</span><span class="o">.</span><span class="n">values</span>
+		<span class="n">d2</span><span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">d</span><span class="o">==</span><span class="s">&#39;e&#39;</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dd</span><span class="p">]</span>
+		<span class="k">print</span> <span class="s">&#39;d2&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">),</span> <span class="n">d2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>	
+		<span class="s">&quot;incorrect&quot;</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -767,19 +788,16 @@ plt.savefig('barplot.png', dpi=400, bbox_inches='tight')</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-48'>#</a>
       </div>
-      <p>print 'inc', len(self.df.i2), i2[:10]
-text(self.df.ptrd.values, self.df.ENT.values, \
-             self.df['i2'].values, \
-             size=11, horizontalalignment='center')</p>
+      <p>inc=lambda x: x==1 and 'xxx' or 'o'
+self.df['i2'] = self.df['INC'].apply(inc)</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>	
-		<span class="n">sm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dw</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-		<span class="k">print</span> <span class="s">&#39;dw sum &#39;</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>	
-
-		<span class="s">&quot;plot x,y,color=hard/easy,size=weight, text=inc&quot;</span>
-		<span class="n">cl</span> <span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">==</span><span class="s">&#39;h&#39;</span> <span class="ow">and</span> <span class="mi">1</span> <span class="ow">or</span> <span class="mi">0</span>
-		<span class="n">clr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;HE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span></pre></div>
+      <div class="highlight"><pre>	 	<span class="n">ii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">INC</span><span class="o">.</span><span class="n">values</span>
+		<span class="n">ccc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;INC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span> <span class="c">#3747 403</span>
+		<span class="k">print</span> <span class="s">&#39;ccc &#39;</span><span class="p">,</span> <span class="n">ccc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ccc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">iz</span><span class="o">=</span> <span class="p">[</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ii</span><span class="p">]</span> 
+		<span class="k">print</span> <span class="s">&#39;ii&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">ii</span><span class="p">),</span> <span class="n">ii</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+		<span class="k">print</span> <span class="s">&#39;iz&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">iz</span><span class="p">),</span> <span class="n">iz</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -788,15 +806,14 @@ text(self.df.ptrd.values, self.df.ENT.values, \
       <div class='octowrap'>
         <a class='octothorpe' href='#section-49'>#</a>
       </div>
-      <p>print 'cl\n', clr.values[-10:]</p>
+      <p>sm2 = self.dw.astype(float).sum()/ self.dw.astype(float).sum().max()    </p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>		<span class="n">x</span><span class="o">=</span><span class="p">[];</span> <span class="n">y</span><span class="o">=</span><span class="p">[]</span>
-		<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[[</span><span class="s">&#39;ENT&#39;</span><span class="p">,</span><span class="s">&#39;INC&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
-		<span class="n">i</span><span class="o">=</span><span class="mi">0</span>
-		<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-			<span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> 
-			<span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></pre></div>
+      <div class="highlight"><pre>		<span class="s">&quot;jitter weights&quot;</span>
+		<span class="n">yy</span><span class="o">=</span><span class="p">[];</span> <span class="n">zz</span> <span class="o">=</span><span class="mi">0</span>
+		<span class="n">ysum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">yz</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
+			<span class="n">zz</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mf">5.0</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -805,23 +822,10 @@ text(self.df.ptrd.values, self.df.ENT.values, \
       <div class='octowrap'>
         <a class='octothorpe' href='#section-50'>#</a>
       </div>
-      <p>text(i,d[0],d[1], size=11, horizontalalignment='center')</p>
+      <p>yy.append((yz)/ysum)</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>			<span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
-		<span class="k">print</span> <span class="s">&#39;x &#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
-		<span class="k">print</span> <span class="s">&#39;y &#39;</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
-		<span class="n">c2d</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">==</span><span class="s">&#39;e&#39;</span> <span class="ow">and</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="mf">0.0</span>
-		<span class="n">cl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">HE</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">c2d</span><span class="p">)</span>
-
-		<span class="n">dd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">HE</span><span class="o">.</span><span class="n">values</span>
-		<span class="n">d2</span><span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">d</span><span class="o">==</span><span class="s">&#39;e&#39;</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dd</span><span class="p">]</span>
-		<span class="k">print</span> <span class="s">&#39;d2&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">),</span> <span class="n">d2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>	
-		<span class="k">print</span> <span class="s">&#39;cl2 &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl2</span><span class="p">),</span> <span class="n">cl2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
-		<span class="n">cc</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cl2</span><span class="p">))]</span>
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">cb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cl2</span><span class="p">):</span>
-			<span class="n">cc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cb</span>
-		<span class="k">print</span> <span class="s">&#39;cc&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cc</span><span class="p">),</span> <span class="n">cc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span></pre></div>
+      <div class="highlight"><pre>			<span class="n">yy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yz</span><span class="o">+</span><span class="n">zz</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -830,17 +834,10 @@ text(self.df.ptrd.values, self.df.ENT.values, \
       <div class='octowrap'>
         <a class='octothorpe' href='#section-51'>#</a>
       </div>
-      <p>x,y = [i,en for i,en in enumerate(self.df.ENT)]
-cv = [c for c in clr] 
-sv = [s for s in sm]
-print 'xy\n', data[:10],'\n', x[0:10], y[0:10]
-plt.scatter(x, y) #,c=cv,s=sv, linewidths=2, edgecolor='w')
-self.df.plot(x='index.values',y='ENT',style='o')
-print 'df  ', self.df['HE'].tail(15)</p>
+      <p>yy.append(log(yz))</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>	 	
-		<span class="n">sm2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dw</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dw</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></pre></div>
+      <div class="highlight"><pre>		<span class="k">print</span> <span class="s">&#39;yy &#39;</span> <span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">yy</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -849,15 +846,11 @@ print 'df  ', self.df['HE'].tail(15)</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-52'>#</a>
       </div>
-      <p>yy = [ yz+(0.5*random.random() ) for yz in y]</p>
+      <p>c=d2</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>		<span class="n">yy</span><span class="o">=</span><span class="p">[];</span> <span class="n">zz</span> <span class="o">=</span><span class="mi">0</span>
-		<span class="k">for</span> <span class="n">yz</span> <span class="ow">in</span> <span class="n">y</span><span class="p">:</span>
-			<span class="n">zz</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
-			<span class="n">yy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zz</span><span class="o">+</span><span class="n">yz</span><span class="p">)</span>
-
-		<span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">yy</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">d2</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">sm</span><span class="o">*</span><span class="mi">1000</span> <span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">&#39;autumn&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> <span class="c">#linewidths=2, edgecolor=&#39;w&#39;)</span></pre></div>
+      <div class="highlight"><pre>		<span class="s">&quot;x=itr,y=entr,c=heic, s=weight cmap=&#39;autumn&#39;&quot;</span>
+		<span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">yy</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">iz</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">sz</span> <span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s">&#39;autumn&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span> <span class="c">#linewidths=2, edgecolor=&#39;w&#39;)</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -866,67 +859,27 @@ print 'df  ', self.df['HE'].tail(15)</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-53'>#</a>
       </div>
-      <p>data </p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>		<span class="s">&quot;x index , y ent , c = he , s = weight&quot;</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-54'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-54'>#</a>
-      </div>
-      <p>xyc = self.d <a href="'ptrd','ENT'.html">'ptrd','ENT'</a>.astype(float)</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-55'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-55'>#</a>
-      </div>
-      <p>append</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-56'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-56'>#</a>
-      </div>
-      <p>scatter </p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-57'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-57'>#</a>
-      </div>
       <p>"styling"
 sct.set_alpha(0.75)
 xmax=self.df.alrm.shape[0]
 ymin=self.df.ENT.min(); ymax=self.df.ENT.max()
-axis( [0,xmax,ymin,ymax] )
-xlabel('patient readings')
-ylabel('entropy')
-axis( [0,4200,0,70])</p>
+axis( [0,xmax,ymin,ymax] )</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>		<span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4175</span><span class="p">)</span>
-		<span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">70</span><span class="p">)</span>
+      <div class="highlight"><pre>		<span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;patient readings&#39;</span><span class="p">)</span>
+		<span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;entropy&#39;</span><span class="p">)</span>
+		<span class="s">&quot;hard easy&quot;</span>
+		<span class="n">hhh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;HE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+		<span class="n">h1</span> <span class="o">=</span> <span class="n">hhh</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="n">hh2</span> <span class="o">=</span><span class="n">hhh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">cr</span> <span class="o">=</span> <span class="n">ccc</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="n">ccr</span><span class="o">=</span><span class="n">ccc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
+		<span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s">&#39;best&#39;</span><span class="p">)</span>
+		<span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4150</span><span class="p">)</span>
+		<span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">70</span><span class="p">)</span>
+		<span class="n">title</span><span class="p">(</span><span class="s">&quot;boosted weights vs entropy CRR=</span><span class="si">%s</span><span class="s">,INC=</span><span class="si">%s</span><span class="s">,HARD=</span><span class="si">%s</span><span class="s">,EASY=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cr</span><span class="p">,</span><span class="n">ccr</span><span class="p">,</span><span class="n">h1</span><span class="p">,</span><span class="n">hh2</span><span class="p">))</span>
 		<span class="n">show</span><span class="p">()</span>
+
+		<span class="s">&quot;y=count x=binned-entropy c=INC s=weight&quot;</span>
+
 
 		<span class="s">&quot;-- parallel box-plot to compare hard vs easy&quot;</span>
 		
@@ -935,10 +888,10 @@ axis( [0,4200,0,70])</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-58'>
+  <div class='section' id='section-54'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-58'>#</a>
+        <a class='octothorpe' href='#section-54'>#</a>
       </div>
       <p>def kdeCI(self): pass
 def germanTank(self): pass #"think stats book"</p>
@@ -953,10 +906,10 @@ def germanTank(self): pass #"think stats book"</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-59'>
+  <div class='section' id='section-55'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-59'>#</a>
+        <a class='octothorpe' href='#section-55'>#</a>
       </div>
       <h2>entropy</h2>
 <p>bayes binning</p>
@@ -966,16 +919,67 @@ def germanTank(self): pass #"think stats book"</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-60'>
+  <div class='section' id='section-56'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-60'>#</a>
+        <a class='octothorpe' href='#section-56'>#</a>
       </div>
       
     </div>
     <div class='code'>
       <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">uniqueSrt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 	        <span class="n">c</span><span class="o">=</span><span class="n">Counter</span><span class="p">();</span> <span class="n">wht</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wts</span><span class="p">);</span> <span class="n">arln</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mi">4150</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-57'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-57'>#</a>
+      </div>
+      <p>dict key=weight : values=count-frequency</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wht</span><span class="p">:</span>
+	                <span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-58'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-58'>#</a>
+      </div>
+      <p>interval count
+ascending sort by key</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>			<span class="n">srt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">)</span>
+			<span class="k">return</span> <span class="n">srt</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-59'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-59'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">entCntBin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span> <span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-60'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-60'>#</a>
+      </div>
+      <p>return scalar, entropy for one reading</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	 	<span class="n">c</span><span class="o">=</span><span class="n">Counter</span><span class="p">();</span> <span class="n">wht</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">);</span> <span class="n">arln</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mi">4150</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -987,8 +991,8 @@ def germanTank(self): pass #"think stats book"</p>
       <p>dict key=weight : values=count-frequency</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>	        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wht</span><span class="p">:</span>
-	                <span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span></pre></div>
+      <div class="highlight"><pre>		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wht</span><span class="p">:</span>
+			<span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -997,57 +1001,6 @@ def germanTank(self): pass #"think stats book"</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-62'>#</a>
       </div>
-      <p>interval count
-ascending sort by key</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>			<span class="n">srt</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">)</span>
-			<span class="k">return</span> <span class="n">srt</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-63'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-63'>#</a>
-      </div>
-      
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">entCntBin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span> <span class="p">):</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-64'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-64'>#</a>
-      </div>
-      <p>return scalar, entropy for one reading</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>	 	<span class="n">c</span><span class="o">=</span><span class="n">Counter</span><span class="p">();</span> <span class="n">wht</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">);</span> <span class="n">arln</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mi">4150</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-65'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-65'>#</a>
-      </div>
-      <p>dict key=weight : values=count-frequency</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>		<span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">wht</span><span class="p">:</span>
-			<span class="n">c</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-66'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-66'>#</a>
-      </div>
       <p>interval count</p>
     </div>
     <div class='code'>
@@ -1055,10 +1008,10 @@ ascending sort by key</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-67'>
+  <div class='section' id='section-63'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-67'>#</a>
+        <a class='octothorpe' href='#section-63'>#</a>
       </div>
       <p>list iterator next()
 i = iter(self.bins)</p>
@@ -1069,10 +1022,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-68'>
+  <div class='section' id='section-64'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-68'>#</a>
+        <a class='octothorpe' href='#section-64'>#</a>
       </div>
       <p>count number of val in binned interval</p>
     </div>
@@ -1081,10 +1034,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-69'>
+  <div class='section' id='section-65'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-69'>#</a>
+        <a class='octothorpe' href='#section-65'>#</a>
       </div>
       <p>for x in np.nditer(self.bins, flags=['index']):</p>
     </div>
@@ -1099,10 +1052,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-70'>
+  <div class='section' id='section-66'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-70'>#</a>
+        <a class='octothorpe' href='#section-66'>#</a>
       </div>
       <p>dbn = i.next()</p>
     </div>
@@ -1111,10 +1064,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-71'>
+  <div class='section' id='section-67'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-71'>#</a>
+        <a class='octothorpe' href='#section-67'>#</a>
       </div>
       <p>calculate entropy over binned counts</p>
     </div>
@@ -1123,10 +1076,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-72'>
+  <div class='section' id='section-68'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-72'>#</a>
+        <a class='octothorpe' href='#section-68'>#</a>
       </div>
       <p>print 'entropy ', etr</p>
     </div>
@@ -1135,10 +1088,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-73'>
+  <div class='section' id='section-69'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-73'>#</a>
+        <a class='octothorpe' href='#section-69'>#</a>
       </div>
       
     </div>
@@ -1147,10 +1100,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-74'>
+  <div class='section' id='section-70'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-74'>#</a>
+        <a class='octothorpe' href='#section-70'>#</a>
       </div>
       <p>return for all readings</p>
     </div>
@@ -1166,10 +1119,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-75'>
+  <div class='section' id='section-71'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-75'>#</a>
+        <a class='octothorpe' href='#section-71'>#</a>
       </div>
       <h2>histogram</h2>
 <p>A histogram is discrete, count of number of values in a bin.   It is a frequency distribution of measurements, where the mean value can be seen directly(the highest bar).  Given a histogram the standard deviation, is the region centered at the mean value.  For a normal distribution, 68% of the measurements lie within one standard deviation on either side of the mean.  From a histogram, the width of the area which contains 68% of the measurements is 2stdv, or the width/2 for 1 stdv.  Histograms can be used to check theoretical distributions against observed data, comparing populatinos, or deriving particle velocity from time dilation (a proof of special relativity).  They answer the question of how many and where?  Viewing a histogram reveals whether the distribution is symmetric, left-skewed, or right-skewed, the number of modes, and any outliers.</p>
@@ -1179,10 +1132,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-76'>
+  <div class='section' id='section-72'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-76'>#</a>
+        <a class='octothorpe' href='#section-72'>#</a>
       </div>
       <p>What is the probability that a sample taken from the signal will be within a certain state or bin? What is the probability a randomly chosen sample will have value greater than some number?  Integrating under the area of frequency counts (sum=1) in a histogram gives a probability distribution.  For example, a square have has a pdf with only two possible values, a triangle wave has a uniform distribution, and random noise has a gaussian (bell-shaped curve).  Thus, rather than having a frequency count of numbers in a bin, a probability of a number being in a bin can be given.  Likewise, a cumulative distribution function, gives the probability of finding some number, at any given time, in a range of bins, or standard deviations.  The gaussian distribution cannot be simply integrated, it requires sampling and tabulation of millions of points.  The P(x) would be restricted to those x-nubmer of states a signal takes.   </p>
     </div>
@@ -1191,10 +1144,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-77'>
+  <div class='section' id='section-73'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-77'>#</a>
+        <a class='octothorpe' href='#section-73'>#</a>
       </div>
       <p>The clt (central limit thm.) states that sum of random numbers becomes gaussian as more r.v. are summed.  The clt does not require the r.v to be from any particular distribution, or all from the same.  This is why normally distributed signal are seen widely in nature.  When many different random forces are interacting, the resulting pdf becomes Gaussian.   For example, adding one random number generates a step function, two rv generate uniform distribution(triangle wave), and many r.v generate a gaussian.  Often the number of states, or bin-sizes far exceeds number of samples in a signal.  Selecting bin number is a compromise of the statistical noise in two directions(x,y).  If too many bins, there are few counts, and the amplitude(y) is difficult to estimate.  If too few, the probability mass function (discrete), loses resolution along the x-axis.  </p>
     </div>
@@ -1203,10 +1156,10 @@ i = iter(self.bins)</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-78'>
+  <div class='section' id='section-74'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-78'>#</a>
+        <a class='octothorpe' href='#section-74'>#</a>
       </div>
       <p>robustness mean vs median
 http://stats.stackexchange.com/questions/59838/standard-error-of-the-median</p>
@@ -1216,10 +1169,10 @@ http://stats.stackexchange.com/questions/59838/standard-error-of-the-median</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-79'>
+  <div class='section' id='section-75'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-79'>#</a>
+        <a class='octothorpe' href='#section-75'>#</a>
       </div>
       
     </div>
@@ -1233,10 +1186,10 @@ http://stats.stackexchange.com/questions/59838/standard-error-of-the-median</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-80'>
+  <div class='section' id='section-76'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-80'>#</a>
+        <a class='octothorpe' href='#section-76'>#</a>
       </div>
       <h2>kde</h2>
 <p>A kernel is a type of probability distribution function, required to be even.  A kernel is non-negative, real-valued, even, integral=1.  PDFs which are kernels include uniform(-1,1), and standard normal distributions.
@@ -1247,10 +1200,10 @@ KDE estimates the pdf of a continuous random variable without assumption about i
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-81'>
+  <div class='section' id='section-77'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-81'>#</a>
+        <a class='octothorpe' href='#section-77'>#</a>
       </div>
       <p>The bandwidth of a kernel is the standard deviation.  Chosen small for large, tightly packed data, larger for sparse, small data sets.  </p>
     </div>
@@ -1259,10 +1212,10 @@ KDE estimates the pdf of a continuous random variable without assumption about i
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-82'>
+  <div class='section' id='section-78'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-82'>#</a>
+        <a class='octothorpe' href='#section-78'>#</a>
       </div>
       <p>kernel
 kernel = stats.gaussian_kde(ent4150)
@@ -1277,10 +1230,10 @@ hist(ent4150,normed=1,alpha=.3) # histogram over all points</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-83'>
+  <div class='section' id='section-79'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-83'>#</a>
+        <a class='octothorpe' href='#section-79'>#</a>
       </div>
       
     </div>
@@ -1289,10 +1242,10 @@ hist(ent4150,normed=1,alpha=.3) # histogram over all points</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-84'>
+  <div class='section' id='section-80'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-84'>#</a>
+        <a class='octothorpe' href='#section-80'>#</a>
       </div>
       <p>kernel = stats.gaussian_kde( ent )
 kdeX = np.linspace(0,5,100)
@@ -1304,10 +1257,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-85'>
+  <div class='section' id='section-81'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-85'>#</a>
+        <a class='octothorpe' href='#section-81'>#</a>
       </div>
       <p>plot(kdeX,kernel(kdeX),'r',label='kde') # distribution function</p>
     </div>
@@ -1321,10 +1274,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-86'>
+  <div class='section' id='section-82'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-86'>#</a>
+        <a class='octothorpe' href='#section-82'>#</a>
       </div>
       
     </div>
@@ -1333,10 +1286,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-87'>
+  <div class='section' id='section-83'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-87'>#</a>
+        <a class='octothorpe' href='#section-83'>#</a>
       </div>
       <p>best fit of data</p>
     </div>
@@ -1345,10 +1298,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-88'>
+  <div class='section' id='section-84'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-88'>#</a>
+        <a class='octothorpe' href='#section-84'>#</a>
       </div>
       <p>the histogram of the data</p>
     </div>
@@ -1357,10 +1310,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-89'>
+  <div class='section' id='section-85'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-89'>#</a>
+        <a class='octothorpe' href='#section-85'>#</a>
       </div>
       <p>add a 'best fit' line</p>
     </div>
@@ -1370,10 +1323,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-90'>
+  <div class='section' id='section-86'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-90'>#</a>
+        <a class='octothorpe' href='#section-86'>#</a>
       </div>
       <p>plot</p>
     </div>
@@ -1387,10 +1340,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-91'>
+  <div class='section' id='section-87'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-91'>#</a>
+        <a class='octothorpe' href='#section-87'>#</a>
       </div>
       
     </div>
@@ -1424,10 +1377,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-92'>
+  <div class='section' id='section-88'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-92'>#</a>
+        <a class='octothorpe' href='#section-88'>#</a>
       </div>
       
     </div>
@@ -1437,10 +1390,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-93'>
+  <div class='section' id='section-89'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-93'>#</a>
+        <a class='octothorpe' href='#section-89'>#</a>
       </div>
       <h2>summary statistics</h2>
 <p>Error estimate can be obtained by repeating measurements in time.  The error, or deviations can be calculated as the difference from the mean/average over all measurements.  However, the average deviation over n samples, by definition, gives zero (the negative vs positive deviations cancel).  To remove the negative values, the erros are squared, and then averaged; this is the standard deviation measure.  The std tell us the average spread about the mean value.  Scales of precision for various measures: cm 0.1, electronic device half of last unit, 128.3 +- .015</p>
@@ -1450,10 +1403,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-94'>
+  <div class='section' id='section-90'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-94'>#</a>
+        <a class='octothorpe' href='#section-90'>#</a>
       </div>
       <p>5-number, box-plot</p>
     </div>
@@ -1462,10 +1415,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-95'>
+  <div class='section' id='section-91'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-95'>#</a>
+        <a class='octothorpe' href='#section-91'>#</a>
       </div>
       <p>Confidence intervals</p>
     </div>
@@ -1474,10 +1427,10 @@ he = [   i for t in thresh ]</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-96'>
+  <div class='section' id='section-92'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-96'>#</a>
+        <a class='octothorpe' href='#section-92'>#</a>
       </div>
       <p>HDI vs tailed intervals
 using highest density interval instead of equal-tailed intervals
@@ -1489,10 +1442,10 @@ http://doingbayesiandataanalysis.blogspot.com/2012/04/why-to-use-highest-density
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-97'>
+  <div class='section' id='section-93'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-97'>#</a>
+        <a class='octothorpe' href='#section-93'>#</a>
       </div>
       <p>ECDF
 Cumulative density functions good way to distinguish distributions.  Present the data without transformation, unlike histograms or kde.  Give good visual representation, where accuracy of each point is buffered by points before and after without binning(histograms), or smoothing(kde).  Work well with parmaetric, mixture, or messy non-parametric distribution.  Shallow sloped areas represent sparse distribution, and steep represent dense distribution.
@@ -1507,10 +1460,10 @@ lines(ecdf(Zoe),col="orange")</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-98'>
+  <div class='section' id='section-94'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-98'>#</a>
+        <a class='octothorpe' href='#section-94'>#</a>
       </div>
       <p>qq, kir-smirnov
 parallel plot (violin plot)
@@ -1521,10 +1474,10 @@ http://pyinsci.blogspot.com/2009/09/violin-plot-with-matplotlib.html</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-99'>
+  <div class='section' id='section-95'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-99'>#</a>
+        <a class='octothorpe' href='#section-95'>#</a>
       </div>
       <h2>threshold</h2>
 <p>http://blog.counsyl.com/2013/08/07/detecting-genetic-copy-number-with-gaussian-mixture-models/</p>
@@ -1534,10 +1487,10 @@ http://pyinsci.blogspot.com/2009/09/violin-plot-with-matplotlib.html</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-100'>
+  <div class='section' id='section-96'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-100'>#</a>
+        <a class='octothorpe' href='#section-96'>#</a>
       </div>
       <h2>signal processing</h2>
 <p>time series
@@ -1553,10 +1506,10 @@ kelly criterion</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-101'>
+  <div class='section' id='section-97'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-101'>#</a>
+        <a class='octothorpe' href='#section-97'>#</a>
       </div>
       <h2>stats-scores</h2>
 <p>aor (tibshirani paper)
@@ -1568,10 +1521,10 @@ kelly criterion</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-102'>
+  <div class='section' id='section-98'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-102'>#</a>
+        <a class='octothorpe' href='#section-98'>#</a>
       </div>
       <p>apdx.
 def rnkci(self): </p>
