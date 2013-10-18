@@ -77,7 +77,7 @@ print 'entropy', sorted(entbayes)[-15:-1]
 "set dataframe columns heic"
 ab.dframe()
 "plot --stackedbar --bubble --timeseries"
-ab.alerts()
+ab.barz()
 
 
 

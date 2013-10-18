@@ -24,17 +24,17 @@
 #pandas
 #http://nbviewer.ipython.org/urls/gist.github.com/wesm/5773719/raw/1399562c0a02b9edc3d13c71a70387a31d87260b/tutorial.ipynb
 #www.bearrelroll.com/2013/05/python-pandas-tutorial/
+#http://stackoverflow.com/questions/18598891/pandas-plotting-integration-with-matplotlib
 
 ###stat prob. space vs biological prob. space
 #http://www.gwern.net/Lewis%20meditation
 #http://blog.nextgenetics.net/?e=85
 #http://www.dspguide.com/ch34/1.htm --benford
-"""
 
+"""
 <script type="text/javascript" src="jquery-latest.min.js"></script>
 <link href="knowlstyle.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="knowl.js"></script>
-
 """
 
 
@@ -44,9 +44,6 @@
 "  entropy:[            ] (nx1)"
 "  kde:[                ] (nx1) if 1 is hard 0 easy"
 "  bin:[                ] (nx1) if 1 is hard 0 easy "
-
-
-
 
 
 ###
@@ -124,6 +121,8 @@ class score(object):
 		self.data.append(dv); self.data.append(da); self.data.append(dr);
 		self.df = None #panda dataframe
 		self.dw = pd.DataFrame(self.wts)
+		self.alarmV =None
+		self.he=None
 
 ### utility function: data
 	def pckle(self, selfdata, filename):
@@ -213,9 +212,20 @@ class score(object):
 		he = lambda x: x>0 and 'h' or 'e'
 		df2['HE'] = df2['ENT'].map(he)
 		print 'he\n', df2['HE'].value_counts()
+		self.he = df2['HE'].values
 
 	   #TODO 2013-10-16 11:42
 	   # make function that takes hdi and uses that as 95%ci
+
+
+		#self.dw
+		"weights"
+		# 4150x50 df['WTS'] = self.wts
+		print 'wts shape', self.wts.shape
+		print self.dw.head(10)
+
+
+
 
 ### hard easy
 # ecdf difference in two distributions(hard-easy)
@@ -225,11 +235,10 @@ class score(object):
 # gaussian-mixture: set threshold on entrop; delta reference: map(weight -> entropy).  inverse fit-function get weight from threshold entropy.  what is reference?(healthy, no alert); can visualize separate groups(observed label) based on delta histogram; gaussian-mixture. fit prior(unobserved + label) distribution using expectation-maximization(result is the posterior, iterate)
 		
 # MCMC sampling: prior(beta distr) look at diff. of thetas(alert/non); likelihood function(bernoulli rv prob of theta1 or theat2) given observed data; combine prior and likelihood to calc the posterior using MCMC (burn, metropolis, etc.) make histogram to see if difference (HDI) between thetas.
-
-		
+		#self.df['alr1SYS'] alr1+ vitals	
 		#sem (standard error measure) conf. interval
 		#alerts create columns for each header 1>ci 0<ci
-		"alerts" 
+		"--alerts" 
 		for h in hdr[:6]:
 			se = sem(df2[h])
 			#(df2[h].std() / df2[h].count() * 1.96 #z from cum dis fun (cdf)
@@ -240,94 +249,109 @@ class score(object):
 			#print 'ci', ci
 			maxci= df2[h].mean() + z
 			minci= df2[h].mean() - z
-			print 'maxmin', maxci, minci
+			#print 'maxmin', maxci, minci
 			df2['alr1'+h]= df2[h].map(lambda x: ( x > maxci and '1') or (x < minci and '1') or '0' ) 
 
 		#print df2['SYS'].tail(30)
 		print df2[df2['alr1SYS'] == 0 ].count()
 
-		"group by sex, geography, timeofday"
-		#confs/dmhi-current/reports/.txt	
-		
-
-		"weights"
-		# 4150x50 df['WTS'] = self.wts
-		print 'wts shape', self.wts.shape
-		print self.dw.head(10)
-
-		"dataframe class instance attribute"
-		self.df = df2
-		#print self.df.describe()
-
-
-# alerts: read in each row and set to string. 
-# group over these names by sex,geography,timeOfday
-# plot weighted bubble graph: color=incorrect, y-axis entropy, x-axis reading-index , plot threshold of hard vs easy: indicator function
-	def alerts(self):
-		"--barplot"
-		#http://stackoverflow.com/questions/18598891/pandas-plotting-integration-with-matplotlib
-		
+		#self.alrm 
 		"select row over all alr1-types as series using xs"
 		"concat string->alert type"
 		hdr = [ i[0] for i in self.data[0] ]
-	
-		self.df['alrm'] = self.df['alr1'+hdr[0]]
+
+		#print 'hdr ', hdr
+		df2['alrm'] = df2['alr1'+hdr[0]]
 		for h,i in enumerate(hdr[:6]):
 			if h != 0:
-				self.df['alrm'] = self.df['alrm'] + self.df['alr1'+i]  #'alrm' equals all rows in one ie 000100
+				df2['alrm'] = df2['alrm'] + df2['alr1'+i]  #'alrm' equals all rows in one ie 000100
 
-		"group/count unique/ sort -> value_counts"
-		#print 'value_counts\n', pd.value_counts(self.df.alrm)[:10]	
-		#print 'label count\n', self.df['Label'].idx(1).count()
-
-		vc = pd.value_counts(self.df.alrm)
-		print "vc\n", vc.shape, vc[0]
-
-		"sex{mf} geography{urb,sub} time{days}"
-		#fig = plt.figure(); 
-		fig,axes = plt.subplots(1,3,sharex=True, sharey=True) #"idiom,not called at index=0 but axes is indexed at zero"
-		plt.subplots_adjust(wspace=0,hspace=0)	
-		#axes[0,0].pd.value_counts(self.df.alrm).plot(kind='bar')    #.alrmpd.value_counts(self.df.alrm).plot(kind='bar')
-			
-		### matching product(n^k) to combinations (n choose k permuationats divided by 2, ie symmetric) by iterating over the 1...k combinations over n {n choose 1}, {n choose 2}...{n choose k}
-		# using dict of product-space to iterated-sum combination space.  These are held in the dataframe object as 'alrm' and 'alrmV'.  'alrm' column is a tuple, an instance of namedtuples(Vtl) is created over its values.  The Vtl named-tuples are the key, map to the valus of alrmV; a dict{ key named-tuple: value is alarm combo tuple.  So input is tuple -->{dict} --> output is tuple.  
-
-		"legend"
+### matching product(n^k) to combinations (n choose k permuationats divided by 2, ie symmetric) by iterating over the 1...k combinations over n {n choose 1}, {n choose 2}...{n choose k}.  using dict of product-space to iterated-sum combination space.  These are held in the dataframe object as 'alrm' and 'alrmV'.  'alrm' column is a tuple, an instance of namedtuples(Vtl) is created over its values.  The Vtl named-tuples are the key, map to the valus of alrmV; a dict{ key named-tuple: value is alarm combo tuple.  So input is tuple -->{dict} --> output is tuple.  
+		#self.df.alrmV
+		"alert label from 101000 to sysdiaox"
 		#alarms = ['sys-','dia-','hr1-','ox-','hr2-','wht-')
-		alm = self.df['alrm'].values
+		alm = df2['alrm'].values
 		codeprd = [i for i in itertools.product('01',repeat=6)] #('1','1')
-		print 'alarm ' , alm[:10] #111111
+		#print 'alarm ' , alm[:10] #111111
 
 		#almperm = [ combinations(hdr[:6],repeat=i) for i in range(6) ]
 		a1= [ii for j in range(0,7) for ii in itertools.combinations( hdr[:6],j)]
 		a0 =['no_alert']
 		alarmcmbo = a0 + a1[1:]
-		print 'prod', len(codeprd), codeprd[-5:]
-		print 'combo', len(alarmcmbo), alarmcmbo[-5:] 
+		#print 'prod', len(codeprd), codeprd[-5:]
+		#print 'combo', len(alarmcmbo), alarmcmbo[-5:] 
 	
 		"named tuples key(1,1,1,1,1: a,b,c,d)"
 		Vtl = namedtuple('Vtl',['sys','dia','hr1','ox','hr2','wht'])
 		keytuplperm =[ Vtl(*i) for i in codeprd ]
 		dee = dict( izip(keytuplperm, alarmcmbo) )
 
-		print 'dee ' , dee[tuple('111111')]
-		self.df['alrmV'] = self.df['alrm'].apply(lambda x: dee[tuple(x)] )
-		print 'alrmV ', self.df.alrmV.values[:10]
+		#print 'dee ' , dee[tuple('111111')]
+		df2['alrmV'] = df2['alrm'].apply(lambda x: dee[tuple(x)] )
+		#print 'alrmV ', self.df.alrmV.values[:10]
+		self.alrmV = df2['alrmV'].values
+		####
+		"dataframe class instance attribute"
+		self.df = df2
+		#print self.df.describe()
+##############################################################
 
-		#dtf = lambda x:  
-		#dicttuple = self.df['alrm'].apply(dtf,axis=1)
-		#print 'dicttuple ', dicttuple[1,1,1,1,1,1]
-		#lgnd = dict(izip(codeperm,alarm))
-		#print 'FULL ALERT', lgnd[111111]	
-		#self.df.legend = self.df.alrm.apply(lambda x: lgnd[x])
-		#print 'legend\n', legend[:10]
+
+
+# alrmV group over values by sex,geography,timeOfday
+# plot weighted bubble graph: color=incorrect, y-axis entropy, x-axis reading-index , plot threshold of hard vs easy: indicator function
+	def barz(self):
+		"--barplot"
+		"frame"
+		bz = pd.DataFrame({'he': self.he, 'inc': self.inc, 'alrmV':self.alrmV } )
+		print '**alrmV', self.alrmV[:10], bz.alrmV.value_counts()
+	
+		"parse data"
+		#confs/dmhi-current/reports/.txt	
+		"group/count unique/ sort -> value_counts"
+		#self.df['Label'].idx(1).count()
+		
+		
+		"counts"
+		at = pd.value_counts(bz.alrmV); #print "**alert-types-10\n", at.shape, at[:10]
+		inc = bz.inc.value_counts(); #print "incorrect\n", inc #1=incorrect
+		he = bz.he.value_counts(); #print "hardeasy\n", he
+		#inc.plot(kind='bar')
+
+		"group by"  #gender, geography, timeofday
+		grouped = bz.groupby(['he','inc'])#.sum().plot(kind='bar', stacked=True)		
+		#key = [k for (k,v) in grouped.groups]
+		#print 'key', key
+		#print grouped.size()
+		#print 'PPP', grouped.value_counts()
+		pew=grouped['alrmV'].value_counts().unstack().fillna(0.)
+		print 'heic vals(\n' 
+		pprint.pprint(pew)
+
+		pew.plot(kind='bar',stacked=True)
+		#heic = [izip(k,v.sum) for (k,v) in grouped]
+			
+
+		#cum-sum
+		#cs = self.df['Label','HE']
+		#self.df.HE(np.cumsum)
+
+		#plot: sex geog time
+		#fig = plt.figure(); 
+		#fig,axes = plt.subplots(1,3,sharex=True, sharey=True) #"idiom, index=1 but axes is indexed at zero"
+		#plt.subplots_adjust(wspace=0,hspace=0)	
+		#axes[0,0].pd.value_counts(self.df.alrm).plot(kind='bar')    
+			
+
+		"legend -- self.df['alrmV']"
+
 	
 
 		show()
 		#plt.savefig('barplot.svg')
 		#plt.savefig('barplot.png', dpi=400, bbox_inches='tight')
 
-
+	def bblplt(self):
 		"--bubbleplot"
 		"x-axis: index"	
 		fig = plt.figure();
