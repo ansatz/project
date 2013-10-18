@@ -28,6 +28,7 @@
 ###stat prob. space vs biological prob. space
 #http://www.gwern.net/Lewis%20meditation
 #http://blog.nextgenetics.net/?e=85
+#http://www.dspguide.com/ch34/1.htm --benford
 """
 
 <script type="text/javascript" src="jquery-latest.min.js"></script>
@@ -78,7 +79,8 @@ from itertools import izip
 import os.path
 import scipy as sp
 import pandas as pd
-
+import itertools
+from collections import namedtuple
 class score(object):
 
 ### data
@@ -262,30 +264,66 @@ class score(object):
 # group over these names by sex,geography,timeOfday
 # plot weighted bubble graph: color=incorrect, y-axis entropy, x-axis reading-index , plot threshold of hard vs easy: indicator function
 	def alerts(self):
-		"select row as series using xs"
+		"--barplot"
+		#http://stackoverflow.com/questions/18598891/pandas-plotting-integration-with-matplotlib
+		
+		"select row over all alr1-types as series using xs"
 		"concat string->alert type"
 		hdr = [ i[0] for i in self.data[0] ]
 	
 		self.df['alrm'] = self.df['alr1'+hdr[0]]
 		for h,i in enumerate(hdr[:6]):
 			if h != 0:
-				self.df['alrm'] = self.df['alrm'] + self.df['alr1'+i]
+				self.df['alrm'] = self.df['alrm'] + self.df['alr1'+i]  #'alrm' equals all rows in one ie 000100
 
 		"group/count unique/ sort -> value_counts"
 		#print 'value_counts\n', pd.value_counts(self.df.alrm)[:10]	
 		#print 'label count\n', self.df['Label'].idx(1).count()
 
-		"--barplot"
-#http://stackoverflow.com/questions/18598891/pandas-plotting-integration-with-matplotlib
 		vc = pd.value_counts(self.df.alrm)
 		print "vc\n", vc.shape, vc[0]
 
 		"sex{mf} geography{urb,sub} time{days}"
-		##fig = plt.figure(); 
-		##fig,axes = plt.subplots(1,3,sharex=True, sharey=True)
-		##plt.subplots_adjust(wspace=0,hspace=0)	
-		##pd.value_counts(self.df.alrm).plot(kind='bar')
-		##show()
+		#fig = plt.figure(); 
+		fig,axes = plt.subplots(1,3,sharex=True, sharey=True) #"idiom,not called at index=0 but axes is indexed at zero"
+		plt.subplots_adjust(wspace=0,hspace=0)	
+		#axes[0,0].pd.value_counts(self.df.alrm).plot(kind='bar')    #.alrmpd.value_counts(self.df.alrm).plot(kind='bar')
+			
+		### matching product(n^k) to combinations (n choose k permuationats divided by 2, ie symmetric) by iterating over the 1...k combinations over n {n choose 1}, {n choose 2}...{n choose k}
+		# using dict of product-space to iterated-sum combination space.  These are held in the dataframe object as 'alrm' and 'alrmV'.  'alrm' column is a tuple, an instance of namedtuples(Vtl) is created over its values.  The Vtl named-tuples are the key, map to the valus of alrmV; a dict{ key named-tuple: value is alarm combo tuple.  So input is tuple -->{dict} --> output is tuple.  
+
+		"legend"
+		#alarms = ['sys-','dia-','hr1-','ox-','hr2-','wht-')
+		alm = self.df['alrm'].values
+		codeprd = [i for i in itertools.product('01',repeat=6)] #('1','1')
+		print 'alarm ' , alm[:10] #111111
+
+		#almperm = [ combinations(hdr[:6],repeat=i) for i in range(6) ]
+		a1= [ii for j in range(0,7) for ii in itertools.combinations( hdr[:6],j)]
+		a0 =['no_alert']
+		alarmcmbo = a0 + a1[1:]
+		print 'prod', len(codeprd), codeprd[-5:]
+		print 'combo', len(alarmcmbo), alarmcmbo[-5:] 
+	
+		"named tuples key(1,1,1,1,1: a,b,c,d)"
+		Vtl = namedtuple('Vtl',['sys','dia','hr1','ox','hr2','wht'])
+		keytuplperm =[ Vtl(*i) for i in codeprd ]
+		dee = dict( izip(keytuplperm, alarmcmbo) )
+
+		print 'dee ' , dee[tuple('111111')]
+		self.df['alrmV'] = self.df['alrm'].apply(lambda x: dee[tuple(x)] )
+		print 'alrmV ', self.df.alrmV.values[:10]
+
+		#dtf = lambda x:  
+		#dicttuple = self.df['alrm'].apply(dtf,axis=1)
+		#print 'dicttuple ', dicttuple[1,1,1,1,1,1]
+		#lgnd = dict(izip(codeperm,alarm))
+		#print 'FULL ALERT', lgnd[111111]	
+		#self.df.legend = self.df.alrm.apply(lambda x: lgnd[x])
+		#print 'legend\n', legend[:10]
+	
+
+		show()
 		#plt.savefig('barplot.svg')
 		#plt.savefig('barplot.png', dpi=400, bbox_inches='tight')
 
@@ -293,7 +331,7 @@ class score(object):
 		"--bubbleplot"
 		"x-axis: index"	
 		fig = plt.figure();
-		fig,axes = plt.subplots(1,1)
+		fig,axes = plt.subplots(2,2)
 		lin = self.df.index.shape[0]
 		self.df['ptrd']= range(lin )
 		
@@ -341,26 +379,40 @@ class score(object):
 			yy.append(yz+zz)
 			#yy.append(log(yz))
 		print 'yy ' , min(yy),max(yy)
+		
+		"bbl-plot: x=itr,y=entr,c=heic, s=weight cmap='autumn'"
 		#c=d2
-		"x=itr,y=entr,c=heic, s=weight cmap='autumn'"
-		scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9) #linewidths=2, edgecolor='w')
+		axes[0,0].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9 ) #linewidths=2, edgecolor='w')
+		axes[0,1].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9 )
+		axes[1,0].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9)
+		axes[1,1].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9)
 
 		#"styling"
-		#sct.set_alpha(0.75)
-		#xmax=self.df.alrm.shape[0]
-		#ymin=self.df.ENT.min(); ymax=self.df.ENT.max()
-		#axis( [0,xmax,ymin,ymax] )
+		plt.subplots_adjust(wspace=0,hspace=0)
+		
+		"axis" #( [0,xmax,ymin,ymax] )
 		xlabel('patient readings')
 		ylabel('entropy')
-		"hard easy"
+		xlim(0,4150)
+		ylim(0,70)
+		
+		"title: hard easy"
 		hhh = self.df['HE'].value_counts()
 		h1 = hhh[1]; hh2 =hhh[0]
 		cr = ccc[0]; ccr=ccc[1] 
-		legend(loc='best')
-		xlim(0,4150)
-		ylim(-3,70)
 		title("boosted weights vs entropy CRR=%s,INC=%s,HARD=%s,EASY=%s" % (cr,ccr,h1,hh2))
+		#plt.title(r'$\mathrm{Histogram\ of\ IQ:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, sigma))
+		#plt.title(r'$\mathrm{boosted\ weight\ vs\ entropy:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, sigma))
+		
+		"legend"
+		legend(loc='best')
+		axes[0,0].set_label('correct=%s'%(cr))
+		axes[0,0].set_label('incorrect=%s'%(ccr))
+		
+		#fig.draw() 
 		show()
+
+
 
 		"y=count x=binned-entropy c=INC s=weight"
 
