@@ -78,6 +78,9 @@ import scipy as sp
 import pandas as pd
 import itertools
 from collections import namedtuple
+import time
+import matplotlib.animation as animation
+
 class score(object):
 
 ### data
@@ -121,7 +124,7 @@ class score(object):
 		self.data.append(dv); self.data.append(da); self.data.append(dr);
 		self.df = None #panda dataframe
 		self.dw = pd.DataFrame(self.wts)
-		self.alarmV =None
+		self.alrmV =None
 		self.he=None
 
 ### utility function: data
@@ -195,18 +198,18 @@ class score(object):
 		print 'ent', len(ff), '\n', ff.tail(10)
 		
 		
-		#hdi
-		"--histogram kde plotkdefit()"
-		mu = df2['ENT'].mean()
-		si = df2['ENT'].std()
-		#tl= "r'$\mathrm{Histogram\ of\ Entropy:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, si)"
-		#df2['ENT'].hist(bins=self.bins, color='k', alpha=0.3, normed=True)
-		#df2['ENT'].plot(kind='kde',style='k--', xlim=[0,(df2['ENT'].max()+5)] , title='entropy over weights')
-		
-		"sort self.entbys, get hdi -> 95ci, all other points h"
-		df2['srt'] = df2['ENT'].sort
-		#hdi = lambda x: (x isin 
-		#df2['hdi'] = df2['ENT'].map(hdi)
+		##hdi
+		#"--histogram kde plotkdefit()"
+		#mu = df2['ENT'].mean()
+		#si = df2['ENT'].std()
+		##tl= "r'$\mathrm{Histogram\ of\ Entropy:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, si)"
+		##df2['ENT'].hist(bins=self.bins, color='k', alpha=0.3, normed=True)
+		##df2['ENT'].plot(kind='kde',style='k--', xlim=[0,(df2['ENT'].max()+5)] , title='entropy over weights')
+		#
+		#"sort self.entbys, get hdi -> 95ci, all other points h"
+		#df2['srt'] = df2['ENT'].sort
+		##hdi = lambda x: (x isin 
+		##df2['hdi'] = df2['ENT'].map(hdi)
 
 		"easy-way just set a lambda set non-zero to hard"
 		he = lambda x: x>0 and 'h' or 'e'
@@ -223,9 +226,6 @@ class score(object):
 		# 4150x50 df['WTS'] = self.wts
 		print 'wts shape', self.wts.shape
 		print self.dw.head(10)
-
-
-
 
 ### hard easy
 # ecdf difference in two distributions(hard-easy)
@@ -331,7 +331,7 @@ class score(object):
 		pew.plot(kind='bar',stacked=True)
 		#heic = [izip(k,v.sum) for (k,v) in grouped]
 			
-
+	def cumsumplt(self):
 		#cum-sum
 		#cs = self.df['Label','HE']
 		#self.df.HE(np.cumsum)
@@ -351,11 +351,13 @@ class score(object):
 		#plt.savefig('barplot.svg')
 		#plt.savefig('barplot.png', dpi=400, bbox_inches='tight')
 
-	def bblplt(self):
+	def bblplt(self, entk):
 		"--bubbleplot"
 		"x-axis: index"	
 		fig = plt.figure();
 		fig,axes = plt.subplots(2,2)
+		#fig,axes = plt.subplot2grid((2,3))
+
 		lin = self.df.index.shape[0]
 		self.df['ptrd']= range(lin )
 		
@@ -364,6 +366,7 @@ class score(object):
 		#text(self.df.ptrd.values, self.df.ENT.values, \
 #				 self.df['i2'].values, \
 #				 size=11, horizontalalignment='center')
+		
 		"size of weights"	
 		sm = self.dw.sum()
 		#ct=sm.value_counts()
@@ -374,9 +377,10 @@ class score(object):
 
 		"x=readings ,y=entropy "
 		x=[]; y=[]
-		data = self.df['ENT'].values
+		#self.df['ENT'].values
+		data = entk 
 		i=0
-		for d in data:
+		for d in data: #done for matplotlib reasons, does not like np, only wants lists
 			x.append(i) 
 			y.append(d)
 			i+=1
@@ -387,13 +391,13 @@ class score(object):
 		"incorrect"
 		#inc=lambda x: x==1 and 'xxx' or 'o'
 		#self.df['i2'] = self.df['INC'].apply(inc)
-	 	ii = self.df.INC.values
+		ii = self.df.INC.values
 		ccc = self.df['INC'].value_counts().values #3747 403
 		print 'ccc ', ccc[0], ccc[1]
 		iz= [ 0 if i==0 else 1 for i in ii] 
 		print 'ii',len(ii), ii[0:10]
-		print 'iz',len(iz), iz[0:10]
-		#sm2 = self.dw.astype(float).sum()/ self.dw.astype(float).sum().max()	
+		print 'iz',len(iz), iz[0:10] #sm2 = self.dw.astype(float).sum()/ self.dw.astype(float).sum().max()	
+
 		"jitter weights"
 		yy=[]; zz =0
 		ysum = sum(y)
@@ -402,23 +406,33 @@ class score(object):
 			#yy.append((yz)/ysum)
 			yy.append(yz+zz)
 			#yy.append(log(yz))
-		print 'yy ' , min(yy),max(yy)
+		#print 'yy ' , min(yy),max(yy)
 		
 		"bbl-plot: x=itr,y=entr,c=heic, s=weight cmap='autumn'"
 		#c=d2
-		axes[0,0].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9 ) #linewidths=2, edgecolor='w')
-		axes[0,1].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9 )
-		axes[1,0].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9)
-		axes[1,1].scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9)
+		print 'x-range', len(x), len(yy)
+		#axes[0,0].scatter(x[0:1000],yy[0:1000], c=iz, s=sz , cmap='autumn',alpha=0.9 ) #linewidths=2, edgecolor='w')
+		#axes[0,1].scatter(x[1001:2000],yy[1001:2000], c=iz, s=sz , cmap='autumn',alpha=0.9 )
+		#axes[1,0].scatter(x[2001:3000],yy[2001:3000], c=iz, s=sz , cmap='autumn',alpha=0.9)
+		#axes[1,1].scatter(x[3001:len(x)],yy[3001:len(x)], c=iz, s=sz , cmap='autumn',alpha=0.9)
+
+		"loop for bubble-plot 4-layout"
+		xmin=0
+		xmax=1000
+		for i in [0,1]:
+			for j in [0,1]:
+				axes[i,j].scatter(x[xmin:xmax], yy[xmin:xmax], c=iz[xmin:xmax], s=sz[xmin:xmax], cmap='autumn', alpha=0.9)
+				xmin+=1001 #ymin+=1001;izmin+=1001;szmin += 1001
+				xmax+=1000 #ymax+=1000;izmax+=1000;szmax += 1000
 
 		#"styling"
-		plt.subplots_adjust(wspace=0,hspace=0)
+		plt.subplots_adjust(wspace=.2,hspace=.2)
 		
 		"axis" #( [0,xmax,ymin,ymax] )
 		xlabel('patient readings')
 		ylabel('entropy')
-		xlim(0,4150)
-		ylim(0,70)
+		#xlim(0,4150)
+		#ylim(0,70)
 		
 		"title: hard easy"
 		hhh = self.df['HE'].value_counts()
@@ -432,8 +446,9 @@ class score(object):
 		legend(loc='best')
 		axes[0,0].set_label('correct=%s'%(cr))
 		axes[0,0].set_label('incorrect=%s'%(ccr))
-		
-		#fig.draw() 
+
+		"kde histogram"
+		"add graph separate title, axis, etc"
 		show()
 
 
@@ -520,9 +535,137 @@ class score(object):
 		self.entbys = ent
 	 	return ent
 
+	def animoBbl(self):
+		"--bubbleplot"
+		"size of weights"	
+		fig = plt.figure();
+		plt.axis([0,4150,0,70])
+
+		sm = self.dw.sum()
+		sz = [s/.0001 for s in sm.values]
+		#ct=sm.value_counts()
+		#print 'count sum', ct
 	
+		x=[];yy=[]; y=[]
+		iz=[]
+		plt.ion()
+		plt.show()
+		for anm in xrange(13):
+			if anm==0: continue #entropy is 0 messes up
+			
+			"get entropy"
+			data = self.animoEntropyK(anm)
+			for i,d in enumerate(data): #done for matplotlib reasons, does not like np, only wants lists
+				x.append(i) 
+				y.append(d)
+
+			dd = self.df.HE.values
+			d2= [1 if d=='e' else 0 for d in dd]
+			print 'hard/easy', len(d2), d2[0:10]	
+			"incorrect"
+			ii = self.df.INC.values
+			ccc = self.df['INC'].value_counts().values #3747 403
+			print 'corr/Inc ', ccc[0], ccc[1]
+			iz= [ 0 if i==0 else 1 for i in ii] 
+
+			"jitter weights"
+			zz =0
+			ysum = sum(y)
+			for yz in y:
+				zz = random() * 5.0
+				yy.append(yz+zz)
+			
+			"plot: x=itr,y=entr,c=heic, s=weight cmap='autumn'"
+			if anm == 1:
+ 				#scat = plt.scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9 ) 
+				scat=plt.scatter(x,yy, c=iz, s=sz , cmap='autumn',alpha=0.9 ) 
+				#plt.show()
+				#plt.imshow(scat)
+				#plt.draw()	
+			print 'setting data', anm
+			#plt.pause(0.5)
+			ani = animation.FuncAnimation(fig, self.scatF ,frames=13, fargs=(scat, x,yy,iz,sz), blit=True)	
+			x=[];yy=[]; y=[]
+			print 'draw'
+			#time.sleep(0.05)
+			#plt.draw()	
+			plt.show()	
+		"axis" #( [0,xmax,ymin,ymax] )
+		xlabel('patient readings')
+		ylabel('entropy')
+		#xlim(0,4150)
+		#ylim(0,70)
+		
+		"title: hard easy"
+		hhh = self.df['HE'].value_counts()
+		h1 = hhh[1]; hh2 =hhh[0]
+		cr = ccc[0]; ccr=ccc[1] 
+		title("boosted weights vs entropy CRR=%s,INC=%s,HARD=%s,EASY=%s" % (cr,ccr,h1,hh2))
+		
+		"legend"
+		legend(loc='best')
+		axes[0,0].set_label('correct=%s'%(cr))
+		axes[0,0].set_label('incorrect=%s'%(ccr))
+
+		"kde histogram"
+		"add graph separate title, axis, etc"
+
+	def animoEntropy(self):
+		plt.ion()
+		ct = self.wts.shape[0]
+		entK= [ [] for i in xrange(ct-1)] #copy is shallow, nested not copied
+		print 'entK ', entK[-1], len(entK), ct
+		for k in xrange(ct-1):
+			if k==0: 
+				print 'pass1'; 
+				continue;
+			entFeatures = self.wts[:k,:]
+			print 'entFeatures k -- ' , entFeatures.shape[0]
+			c = Counter()
+			for e in set(entFeatures.flat):
+				c[e]+=1
+			entT = map(list, zip(*entFeatures))
+			ent = [self.entCntBin( e ) for e in entT ]
+			#print 'ent k -- ' , len(ent)	
+			entK[k].append(ent)
+		print 'ent k -- done'
+		return entK	
+
+	def animoEntropyK(self,k):
+		entFeatures = self.wts[:k,:].copy()
+		print 'entFeatures k -- ' , entFeatures.shape[0]
+		c = Counter()
+		for e in set(entFeatures.flat):
+			c[e]+=1
+		entT = map(list, zip(*entFeatures))
+		ent = [self.entCntBin( e ) for e in entT ]
+		#print 'ent k -- ' , len(ent)	
+		return ent
+	
+	def scatF(self,k,scat,x,y,iz,sz):
+		scat = plt.scatter(x,y, c=iz, s=sz , cmap='autumn',alpha=0.9 ) 
+		plt.draw()
+		#scat.set_offsets(y)
+		#scat.set_offsets(iz)
+		#scat.set_offsets(sz)
+
+    	#scat.set_array(ent)
+		#print 'ent k -- ' , len(ent)	
+		return scat
+
+	#print 'entK', entK[:3]
+		#fig = self.bblplt(entK[0])
+		#print 'animo'
+		#for j in xrange(ct):
+			#if j==0: break
+			#time.sleep(0.05)
 
 
+
+
+
+
+		
 
 ### histogram
 # A histogram is discrete, count of number of values in a bin.   It is a frequency distribution of measurements, where the mean value can be seen directly(the highest bar).  Given a histogram the standard deviation, is the region centered at the mean value.  For a normal distribution, 68% of the measurements lie within one standard deviation on either side of the mean.  From a histogram, the width of the area which contains 68% of the measurements is 2stdv, or the width/2 for 1 stdv.  Histograms can be used to check theoretical distributions against observed data, comparing populatinos, or deriving particle velocity from time dilation (a proof of special relativity).  They answer the question of how many and where?  Viewing a histogram reveals whether the distribution is symmetric, left-skewed, or right-skewed, the number of modes, and any outliers.
@@ -558,17 +701,26 @@ class score(object):
 #hist(ent4150,normed=1,alpha=.3) # histogram over all points
 
 	def plotkde(self):
+		print "HEYY##"
 		#kernel = stats.gaussian_kde( ent )
 		#kdeX = np.linspace(0,5,100)
 		#thresh = [ kernel(x) for x in kdeX ]
 		#he = [   i for t in thresh ]
 		
 		#plot(kdeX,kernel(kdeX),'r',label='kde') # distribution function
- 
+		fig = plt.figure();
+		fig,axes = plt.subplots(1,1)
+		
+		mu = np.mean( self.entbys )
+		si = np.std( self.entbys )
+		tl= "r'$\mathrm{Histogram\ of\ Entropy:}\ \mu=%.3f,\ \sigma=%.3f$' %(mu, si)"
+		##df2['ENT'].hist(bins=self.bins, color='k', alpha=0.3, normed=True)
+		##df2['ENT'].plot(kind='kde',style='k--', xlim=[0,(df2['ENT'].max()+5)] , title='entropy over weights')
 		density = kde.gaussian_kde(self.entbys)
 		xgrid = np.linspace(min(self.entbys), max(self.entbys), 1000)
 		plt.hist(self.entbys, bins=8, normed=True)
 		plt.plot(xgrid, density(xgrid), 'r-')
+		plt.title=tl
 		plt.show()
 
 	def plotkdefit(self):
@@ -576,7 +728,7 @@ class score(object):
 		(mu, sigma) = norm.fit(self.entbys)
 		
 		# the histogram of the data
-		n, bins, patches = plt.hist(self.entbys, 60, normed=1, facecolor='green', alpha=0.75)
+		n, bins, patches = plt.hist(self.entbys, bins=self.bins, normed=1, facecolor='green', alpha=0.75)
 		
 		# add a 'best fit' line
 		y = mlab.normpdf( bins, mu, sigma)

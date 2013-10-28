@@ -1,6 +1,6 @@
 #TODO	Sun 13 Oct 2013 05:17:47 PM CDT
 #bubble wrap from visual this book to show weight dynamics
-
+#http://www.tonicebrian.com/2012/11/05/training-gradient-boosting-trees-with-python/
 
 # boost wrapper and driver, data is pickled
 

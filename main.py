@@ -65,9 +65,11 @@ ent4150  = ab.entnrm
 entbayes = ab.entropy() 
 print 'entropy', sorted(entbayes)[-15:-1]
 
+
+
 # hdi density estimation 
 "plot"
-#ab.plotkde()
+###ab.plotkde()
 #ab.plotkdefit()
 #ab.plotkdeNL()
 
@@ -77,8 +79,14 @@ print 'entropy', sorted(entbayes)[-15:-1]
 "set dataframe columns heic"
 ab.dframe()
 "plot --stackedbar --bubble --timeseries"
-ab.barz()
+###ab.barz()
+###ab.bblplt()
+print "animo call-- "
+ab.animoBbl()
 
+#ab.animoEntropy()
+
+#ab.plotkdefit()
 
 
 # indicator function

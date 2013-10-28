@@ -192,6 +192,8 @@ given a unknown probability p, a beta(_alpha, _beta) is assigned prior to p.  An
   flat priors 0-1
   1.sample r.v. from prior X_b from prior of bandit b, for all b
   2.
+"""
+
 
 
 
