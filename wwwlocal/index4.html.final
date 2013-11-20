@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8"/>
+  <title> Trending Chart Panel </title>
+  <script type="text/javascript" src="d3.v2.js"></script>
+  <script type="text/javascript" src="timrwood-moment-b21d427/moment.js"></script>
+  
+  <style>
+    body{
+        font-family:sans-serif;
+    }
+    .axis path, line{
+        stroke:black;
+    }
+    .timeseries path{
+        stroke-width:3px;
+    }
+    .timeseries circle{
+        stroke: white;
+	}
+	
+	.graph_line {
+    }
+
+	.timeseries text{
+        fill: white;
+        stroke: none;
+        font-size:12px;
+        font-weight: bold;
+    }
+    .line {
+ 		stroke:black;
+		stroke-width:2px;
+		float:left;
+    }
+    .line_container{
+        width: 150px;
+        height: 20px;
+    }
+    path{
+        fill: none;
+    }
+    .key{
+        float:right;
+    }
+    .key_line{
+        font-size:17px;
+        width:100%;
+    }
+    .key_square{
+        height:10px;
+        width:10px;
+        outline:solid 1px black;
+        float:left;
+        margin-right:10px;
+        margin-top:6px;
+        margin-left:10px;
+    }
+    #timeseries{
+        float:left;
+    }
+    
+    .label {
+        margin-bottom:30px;
+    }
+
+
+  </style>
+<script>
+
+
+var paths = [];
+var paramKeys;
+
+// Access json tuple elements
+function timeToEpoch(t) {
+	return moment(t,"YYYY-MM-DD HH:mm" ).unix() * 1000;
+}
+
+function getTime(dataRow, column) {
+	return timeToEpoch(dataRow.TIME)
+}
+
+function get(dataRow, column) {
+	return dataRow[column]
+}
+
+function getRowStr(dataRow) {
+    var str = []
+    for( var i = 0; i < paramKeys.length; i++ ) {
+        str.push( dataRow[paramKeys[i]] );
+    }
+    return str.join();
+}
+
+
+function limits(data, column) {
+	var min;
+	var max = min = data[0][column];
+	if( column == "TIME" ) {
+		max = min = timeToEpoch(min);
+	}
+
+	for( var i in data ) {
+		var newMin = data[i][column];
+		if( column == "TIME" ) {
+			newMin = timeToEpoch(newMin);
+		}
+		var newMax = newMin;
+		
+		if( newMin < min ) {
+			min = newMin;
+		}
+		if( newMax > max ) {
+			max = newMax;
+		}
+	}
+	return [min, max];
+}
+
+function sendAlert(value) {
+    d3.xhr("http://localhost:8888/log.html?log=" + value);
+}
+
+function draw_timeseries(data, param, x_scale, y_scale){
+
+    var line = d3.svg.line()
+        .x(function(d){return x_scale(getTime(d))})
+        .y(function(d){return y_scale(get(d, param))})
+        .interpolate("linear")
+
+    var g = d3.select("#g_" + param)
+        .append('g')
+
+	// line style
+    g.append('path')
+		.attr('d', line(data))
+		.style('opacity', 1)             // make line opaque
+		.style('stroke', 'black')        // make line black
+		.style('stroke-width', '3px')    // make line thick
+        .attr("id", param);
+  
+    //paths.push(g);
+    paths.push(g.select("path"));
+    
+    g.selectAll('circle')
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr('cx', function(d) {return x_scale(getTime(d)) })
+        .attr('cy', function(d) {return y_scale(get(d, param))})
+        .attr('val', function(d) {return getRowStr(d)})
+		.attr('r',5) // circle radius
+		// set circle id to "d.TIME_param", for example: "2008-12-23 18:46_HR1"
+		// split by "_", find json element/row by date, then find json attribute/column by param
+		//.attr('id', function(d){return d.TIME + "_" + param})
+
+        g.selectAll('circle')
+            .on('mouseover', function(d){
+                d3.select(this)
+                    .transition().attr('r', 12)
+                
+                var val= d3.select(this).attr('val');
+                d3.selectAll('[val="' + val + '"]')
+                    .transition().attr('r', 12)
+               
+
+            })
+            .on('click', function(d){
+                var val= d3.select(this).attr('val');
+                d3.selectAll('[val="' + val + '"]')
+                    .transition().style('stroke', 'red')
+                    .style('fill', 'red')
+                sendAlert(val);
+            })
+            .on('mouseout', function(d,i){
+                if (i !== data.length-1) {
+                    d3.select(this).transition().attr('r', 5)
+
+                var val= d3.select(this).attr('val');
+                d3.selectAll('[val="' + val + '"]')
+                    .transition().attr('r', 5)
+                    .style('stroke', 'black')
+                    .style('fill', 'black')
+
+
+
+                }
+            })
+}
+
+function draw(data, param, dimensions) {
+    "use strict";
+
+	// find maximum and minimum times
+	var [minTime, maxTime] = limits(data, "TIME");
+    var x_scale = d3.time.scale()
+        .range([0, dimensions.chart.width])
+			 .domain([minTime, maxTime]);
+
+	var [min, max] = limits(data, param);
+    var y_scale = d3.scale.linear()
+        .range([dimensions.chart.height, 0])
+        .domain([min-5, max+5]);
+    
+    var x_axis = d3.svg.axis()
+        .scale(x_scale)
+    
+    var y_axis = d3.svg.axis()
+        .scale(y_scale)
+        .orient("left");
+    
+    // draw axes
+ 
+    d3.select("#scroller").append("div").attr("id", "div_" + param);
+
+    var g = d3.select('#div_' + param)
+      .append('svg')
+        .attr("width", dimensions.container.width)
+        .attr("height", dimensions.container.height)
+      .append("g")
+          .attr("transform", "translate(" + dimensions.margins.left + "," + dimensions.margins.top + ")")
+          .attr("id", "g_" + param);
+/*
+    g.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + dimensions.chart.height + ")")
+        .call(x_axis);
+*/     
+    g.append("g")
+        .attr("class", "y axis")
+        .call(y_axis);
+
+    d3.select('#div_' + param).append("div").text(param).attr("class", "label");
+
+    draw_timeseries(data, param, x_scale, y_scale)
+}
+
+function layout(data) {
+    "use strict";
+    paramKeys = Object.keys(data[0])
+    var pathParams = [];
+    for( var i = 1; i < paramKeys.length; i++ ) {
+        var param = paramKeys[i];
+
+        if( param != "PTNT" ) {
+
+            pathParams.push( param );
+
+            // construct the viewport, the scales, and axis
+            var dimensions = new function() {
+                //this.container = { width: window.innerWidth * 0.3, height: window.innerHeight * 0.4}
+                this.container = { width: window.innerWidth * 3, height: window.innerHeight * 0.16}
+    	        this.margins = { top: 30, right: 30, bottom: 5, left: 30}
+                this.chart = { width: this.container.width - this.margins.left - this.margins.right,
+                         height: this.container.height - this.margins.top - this.margins.bottom } 
+                         };
+
+            draw(data, param, dimensions);
+        }
+    }
+
+}
+
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and 
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = pair[1];
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]], pair[1] ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(pair[1]);
+    }
+  } 
+    return query_string;
+} ();
+
+
+</script>
+</head>
+
+<body>
+<script>
+//d3.json("data/pat-3pt-dat.json", layout)
+
+d3.json(QueryString.file, layout)
+//d3.json("data/pat-dat.json", layout)
+</script>
+
+<div id='charts' style='overflow-x:scroll;width:80%;float:left;'>
+    <div style='width:2000px' id='scroller'></div>
+</div>
+
+<!--
+<div id='control' style='float:left;'>
+<div style='float:center;'>
+<p style='text-align:center;padding:20px 20px 20px 20px;background-color:#6495ed;float:center;'
+   onclick='sendAlert()'>Alert</p>
+</div>
+-->
+</body>
+
+</html>

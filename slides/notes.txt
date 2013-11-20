@@ -1,0 +1,10 @@
+
+pandoc -t slidy -s 1023.md -o view.html
+
+<div class=note>
+----pandoc----
+pandoc -s -S -i -t slidy --mathjax 1023.md -o view.html
+--self-contained
+
+pandoc -t slidy -s slides -o view
+</div>
