@@ -1,0 +1,105 @@
+html,body
+{
+   background-color: #FFFFFF;
+}
+
+
+#navbar {
+
+	background-color: #247cb3;
+	color: #FFFFFF;
+}     
+   #navbar a:hover {
+          color: rgb(0,180,255);
+           background-color: #247cb3;
+   }
+
+
+#breadcrumb {
+	color: white;
+	background-color: #247cb3;
+
+}
+   #breadcrumb a {
+	color: #FFFFFF;
+   }
+
+   #breadcrumb a:hover {
+          color: rgb(0,180,255);
+           background-color: #247cb3;
+   }
+
+
+#sidebar {
+	font-size: .8em;
+	color: #FFFFFF;
+  background: #247cb3;
+}
+   #sidebar div.block {
+      background: #247cb3;
+      margin:0px;
+      padding-top: 10px;
+      padding-bottom:10px;
+   }
+
+   #sidebar div.block span.blockTitle {
+         color: white;
+   }
+   #sidebar a {
+      color: #FFFFFF;
+   }
+   
+   #sidebar a:hover {
+	   color: rgb(0,180,255);
+     background-color: #247cb3;
+   }
+
+
+#userinfo {
+	color: #093852;
+	background-color: #247cb3;
+}
+
+
+a:link {
+	color: #000099;
+	text-decoration: underline;
+}
+
+a:active {
+	color: #000099;
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #000099;
+	text-decoration: underline;
+}
+
+a:hover {
+	color: white;
+	background: #247cb3;
+}
+
+
+
+
+
+
+
+b.rtop b, b.rbottom b
+{
+   background: #000080;
+   display: none;
+}
+
+#topbar 
+{  
+  background-color: #247cb3;
+  width:100%;
+  margin-left: 0px; 
+}
+#issueSelect { background-color: #247cb3; }
+#issueSelect a { background-color: #247cb3; }
+#breadIssue { background-color: #247cb3; }
+

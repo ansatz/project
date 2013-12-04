@@ -1,0 +1,6 @@
+#rate algorithm
+
+#power curve analysis of big_data
+can MAB be used here for this?
+
+

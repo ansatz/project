@@ -1,0 +1,108 @@
+#Journal of medical informatics research (jmir)
+require public trials registry at enrollment
+isrct #
+3000-6000 words
+
+##### TITLE:
+Alert Fatigue Reduction Using Dynamical Boosting and Empirical Bayes
+Reduction of Alert Fatigue and Decision Analysis using Boosting Dynamics with Empirical Bayesian Methods
+
+###############################################################################################
+ABSTRACT:(450wordsmax)
+##Background: 
+The rate of Alert Fatigue is defined as the number of alerts ignored by clinical staff.  Normally, alerts are generated, independent of context, by any number of devices or systems. 
+
+##Objective: 
+(1) To test our hypothesis that the dynamical weights of boosting associated with nearer to boundaries classification, relates to clinical points of interest, (2) to increase the number of alerts relating to care and management(3) to provide criteria for meaningful medical use relating to effect size, feature variability, and group differences.
+
+##Methods:  
+Two data sets were obtained.
+
+Alert classification labels are defined using bayes credible intervals, association mapping, generative mixture, and expert priors using the roulette method.
+
+Prior distribution over the boosting weights dynamics, alert classification, is determined using kernel density estimator.  Expert prior distribution for alert_classification, are determined with a trained cardiologist using the roulette method.
+
+Boosting is calibrated over the two groups, ICU and at-home telehealth.  Validation of prior estimates is determined through convergence of posteriors, between large ICU and small telehealth data-sets.
+
+The overlap between the joint posterior distriubtions of the hard vs easy points is what determines statistically significant difference.
+
+Power curve analysis of effect size is determined.
+
+Causal modeling of time_of_day, gender, and geography are also explored.
+
+A hierarchical model over top alert-type features is explored.
+
+A loss likelihood function for the prediction of care is defined as the sum over a probability distribution of the number of alerts, the distribution of time between alerst, using a weibull prior, and the predicted number of alerts not yet seen.
+
+##Results: 
+data:
+A total of 125 at-home cardiac telehealth patients were each monitored an average of 3.23 months.  An independent, publicly available, dataset, XXX patients who expired in the ICU do to cardiac complications, with an average stay of 133days. Of the telehealth patients, an average number of alerts was XX, with gap-rate of XX, and time_to_failure at yy; the ICU patients average number was XXmu,YYsigma with gap-rate of XXmu,YYsigma.  
+
+boosting:
+Overall boosting classification performance was at XXAUC, YY%sensitivity, and ZZ%specificity; top alert features identified as max-entropy points with threshold of YY%.   
+
+labels:
+Overall trend of feature variance to max-entropy had median=x,IQR=y, with trend being an increase in boosting entropy with increase in feature variation across the top 5 alert-feature types.  The joint posterior probability distribution between low-entropy,easy points and high-entropy points shows less than 5%overlap, giving a XX CI for hard-alerts relating to feature.  Hierarchical modeling of top 3 features, gives a likelihood score of _theta zz%.
+loss function: monty, missing species  
+
+
+
+
+relation of , , and  over model evaluation for feature variability, Data mining and hypothesis testing The max-entropy dynamics of boosting and empirical bayesian methods are used, for datamining and hypothesis testing.  
+     
+
+-- sample size, 
+power curve analysis with data effect size
+alert reduction
+meaningful use criteria:
+- likelihood function (monty switch or not)
+- state-space vs biological space
+- causal modeling {time_of_day, gender, geography}
+
+Conclusions:
+Trial Registration:
+
+keyworkds: (3-10)
+boosting, empirical bayes methods, meaningful clinical use, alert fatigue
+
+################################################################################################3 
+Introduction:
+(prior, theores, hypotheses)
+
+	Medical alerts have been shown to provide positive benefit: such as reduced blood sugar variability \cite{Mastro}, and improved prescribing safety \cite{Raebel}.  Currently, the extent of preventable medical error is estimated at 40,000 fatalities per year \cite{Muse}.  The need for improved medical alerts has been recognized in a recent Joint Commission and FDA statement.  The percentage of alerts currently being ignored, or alert fatigue, is estimated at 70-80\% \cite{Gouveia}.  The purpose of this study is to link model complexity with visual information for a clinically meaningful alert.  Recently, we were involved with a telehealth, at-home monitoring study, which recorded patient vital sign readings, twice daily, for an approximate several month interval.  A publicly available dataset is sampled as well for comparative analysis.  The dynamics of Adaboost weights have been shown to distinguish 'easy' from 'hard' classification points\cite{Capri2002}.  Data mining techniques are applied to handle features common to clinical data: high-dimensionality, variously scaled measures, group differences, and time series issues.  Three types of clinical alert are identified, static, sequential, and drifting.  Further, global monitoring over the combined feature space is achieved.  Finally, to address the issue of alert fatigue, results are graphically interpretable.  Decision tree, forest plot, and sequence logo are presented.
+
+
+
+
+
+################################################################################################
+Methods:
+
+################################################################################################
+Results:
+
+
+
+###############################################################################################
+Discussion:
+In this discussion we focus on model interpretation, and the assumptions which lead to difference in results.  Sigma size selection of hard alerts, yields different variability not only between groups, but within.  Next, effect size differences are apparent through power curve analysis.  In this discussion we apply causal modeling to alert variability and group effect size.
+
+
+
+
+
+   If we are trying to relate hardness to meaningful clinical action, or alert fatigue reduction, an appropriate heuristic for feature variablilty will be discussed.  Next, effect size differences are apparent through power curve analysis.    
+Any interesting physical system has many models of interpretation, yielding different results.  In this discussion we 
+
+
+
+(1) To reduce the overall rate of alert fatigue, using a model-cost of intervention (2) to incorporate factors important to understanding clinical management, such as group effects, factor variability, and.
+
+Analysis of the factors underlying alert generation can also provide understanding of care management. 
+
+, and  over model evaluation for feature variability, Data mining and hypothesis testing The max-entropy dynamics of boosting and empirical bayesian methods are used, for datamining and hypothesis testing.  
+
+
+
+ , the probability distribution  is generated, as well as and given a Weibull distribution, gap_rates between  gap_rates between ICU  bayesian methods, model evaluation and optimized cost thresholds are determined. 
+

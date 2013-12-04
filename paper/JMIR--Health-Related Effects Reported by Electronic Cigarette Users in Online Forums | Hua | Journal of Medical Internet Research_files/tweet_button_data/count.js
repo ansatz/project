@@ -1,0 +1,1 @@
+twttr.receiveCount({"count":22,"url":"http:\/\/www.jmir.org\/2013\/4\/e59\/"});

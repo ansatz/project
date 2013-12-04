@@ -29,6 +29,7 @@ function expandBTNS(){
 			exp[i+''+j] = vlu;
 	return exp
 }
+
 function dta() {
 	var dataset = {}, keyz, vlu, i, j ;
 	function z(){
@@ -147,33 +148,6 @@ function addSVG(bi){
 	console.log('test --addSVG, button ',i, ' pressed', stk)
 }
 
-//function addSVG2(btnPress){
-//	 var NS = "http://www.w3.org/2000/svg",
-//		 svg = document.createElementNS(NS,"circle"),
-//		 colIndx = btnPress.slice(-1),
-//		 posL,posT; //position from left, top
-//	 		
-//	 posL = colIndx*120;
-//	 posT = 100 - (15*BUTTONS[colIndx]) //number elements in the column 
-//
-//	 svg.id="red-crl"+T;
-//	 svg.setAttribute("cx", posL);
-//	 svg.setAttribute("cy", posT);
-//	 svg.setAttribute("r", "15");
-//	 svg.setAttribute("fill", "#336699");
-//	 
-//	 svgContainer.appendChild(svg);
-//	 console.log("dbg --addSVG2 container", svgContainer)
-//	 //eleSVG = document.getElementByID(svg.id);
-//	 //eleSVG.style.left=(i*100)+"px";
-//	 //eleSVG.style.top=(100-2*N)+"px";
-//	 
-//	 //svg.width=w;
-//	 //svg.height=h;
-//	 
-//	 console.log("test --addSVG2", svg.id)
-//	 return svg;
-//}
 
 
 //get data into dict{key=ij, val=ij*2
@@ -219,10 +193,6 @@ function addBTN(pr,j) {
 function main(){
 	var pr = 20,
 		i;
-	//set up the dom
-	//svgContainer = dom("SVG", {id: "svg-container", width:"500px" , height: "400px", top: "100px", left: "100px"}); //,{width:"600px"},{height:"400px"} );
-	//console.log("dbg main() svg", svgContainer);
-	//document.body.appendChild( svgContainer );
 	bb(); //create button dictionary
 	
 	//main
@@ -262,6 +232,13 @@ function filter(hardjson){
 		//var ib = pieces.join("")
 
 
+
+/////////
+//box plot
+var chart = d3.box()
+	.whiskers(iqr(1.5))
+	.width(width)
+	.height(height);
 
 
 

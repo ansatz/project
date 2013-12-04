@@ -1,0 +1,262 @@
+\documentclass[12pt]{article}
+%\usepackage{fullpage}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage{times}
+\usepackage{multicol}
+%\DeclareMathOperator*{\argmin}{arg\!\min}
+%\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+%\usepackage{natbib}
+\parskip 0.05in
+%\doublespace
+
+
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+                                  {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                  {2.3ex \@plus.2ex}%
+                                  {\normalfont\bfseries}}
+\makeatother
+\begin{document}
+\noindent
+\footnotesize{
+\noindent
+\textit{Preliminary Report- Project Proposal- Thesis Outline}
+%\textit{Proceedings of the 7th INFORMS Workshop on Data Mining and Health Informatics (DM-HI 2012)\\
+\noindent
+G.~Singh, B.~Avitall, H.~Lu, eds.}}
+
+\vspace{0.1in}
+\begin{center}
+    {\large\bf Using the Dynamics of Adaboost in Clinical Monitoring}\\
+    \vspace{0.3in}
+\end{center}
+
+\begin{multicols}{3}
+\begin{center}
+\textbf{Gobind Singh}
+
+Department of Bioinformatics\\
+University of Illinois at Chicago\\
+Chicago, IL\\
+\texttt{gsingh6@uic.edu}\\
+\columnbreak
+
+\textbf{Boaz Avitall}
+
+Department of Cardiology\\
+University of Illinois at Chicago\\
+Chicago, IL\\
+\texttt{bavitall@uic.edu}
+\columnbreak
+
+\textbf{Hui Lu}
+
+Department of Bioinformatics\\
+University of Illinois at Chicago\\
+Chicago, IL\\
+\texttt{huilu@uic.edu}\\
+
+\end{center}
+\end{multicols}
+
+
+
+\begin{center}
+    {\bf Abstract}\\
+\end{center}
+\noindent
+Medical alerts have been shown to provide positive benefit: such as reduced blood sugar variability \cite{Mastro}, and improved prescribing safety \cite{Raebel}.  Currently, the extent of preventable medical error is estimated at 40,000 fatalities per year \cite{Muse}.  The need for improved medical alerts has been recognized in a recent Joint Commission and FDA statement.  The percentage of alerts currently being ignored, or alert fatigue, is estimated at 70-80\% \cite{Gouveia}.  The purpose of this study is to link model complexity with visual information for a clinically meaningful alert.  Recently, we were involved with a telehealth, at-home monitoring study, which recorded patient vital sign readings, twice daily, for an approximate several month interval.  A publicly available dataset is sampled as well for comparative analysis.  The dynamics of Adaboost weights have been shown to distinguish 'easy' from 'hard' classification points\cite{Capri2002}.  Data mining techniques are applied to handle features common to clinical data: high-dimensionality, variously scaled measures, group differences, and time series issues.  Three types of clinical alert are identified, static, sequential, and drifting.  Further, global monitoring over the combined feature space is achieved.  Finally, to address the issue of alert fatigue, results are graphically interpretable.  Decision tree, forest plot, and sequence logo are presented. 
+\noindent {\bf Keywords:}
+ ensemble learning, algorithmic game theory, clinical health monitoring
+
+ 
+\section*{Introduction}
+Learning algorithms generate hypothesis describing the relationship between input and output data points.  The generation of these hypotheses is often black-boxed, or not entirely clear.  In this paper, we investigate the relationship between Adaboost weight dynamics and points with high classification uncertainty.  We seek to relate computational complexity of the hard boosting weights, with visually evaluated clinical assessment.  The entropy and computational number of iterations over the weight dynamics, are lower in 'easy' points, while the opposite holds true for both entropy and weight dynamics of 'hard' points.  Further, hard points are localized near the classification boundary, and easy points are spread further away.  It has been shown \cite{Capri2002}, that filtering 'easy', low-entropy weights from training incurs no significant loss in accuracy.  In this work, we utilize exploratory graphical statistics to link algorithm complexity with visual information.  An entropy-based Sequence Logo, along with other graphics, are discussed to promote transparency and utilization by clinicians.  The boosting weight dynamics of Adaboost are applied to data from a tele-health monitor alert study.  Graphical comparison of alerts from clinician evaluation and automation is designed to reduce alert fatigue, and provide users a means to evaluate an alert's scope and severity.
+
+\section*{Methods}
+
+\subsection{Patient Data-Set and Study Design}
+Two distinct data sets were obtained.  One from a home-based telehealth monitoring study, and the second data collected from patients in the Intensive Care Unit (ICU).  Thirty patients from each group were selected randomly, summary statistics include mean age X +- x, p-value q.  Data from the telehealth study, is privately available, obtained from an earlier study conducted in the Avitall lab.  The second dataset, MIMIC\_II, is publicly available at http:\/\/physionet.org\/mimic2\/.  Label alerts are based on a Kernel Regression confidence interval(CI=2); we define these alerts as static.  Next, we identify sequential alerts through based on rule-based list generation\cite{Pieri}.  We plan to include a refactored visual information component that will allow for clinician training of the algorithm.  
+   
+\subsection*{Alert System Workflow}
+\begin{figure}[h!]
+\begin{lstlisting}[frame=single]
+Adaboost:
+Train
+   -alerts labeled with confidence intervals 
+   \emph{refactored visual inspection}
+   -parameter tuning: cross-validation and normalization
+Test
+   -distinct test-set
+Track
+    entropy weight dynamics
+Refactor
+   -xslt
+\end{lstlisting}
+\caption{SHERPA (Searches for Hard and Easy Refactored Points Alg.) Workflow.\label{fig:workflow1}}
+\end{figure}
+%Referring to figure~\ref{fig:workflow1}
+
+\subsection*{Adaboost}
+  Adaptive Boosting, known as Adaboost, has been described "as the best off-the shelf classifier in the world"\cite{elemStatLearn}, and listed in the top ten Machine Learning Algorithms.  Adaboost relies upon a weighted ensemble of voters$(x_1..x_n)$, whereby the final prediction(G(x)) is determined by the sign of the sum of each prior classifier $(G_1(x)..G_m(x))$(Eq1).
+\begin{equation}
+G(x)=\textup{sign}(\sum_{m=1}^{M}\alpha_{m}G_{m}(x) )
+\end{equation}
+A strong(non-linear) classifier thereby emerges from a successive set of weak(linear) learners.  For each Adaboost iteration, the observer weights$(x_1,..,x_n)$ are adapted to minimize the error of an exponential loss function.  The exponential function allows for a computationally simple, modular re-weighting, shown in (Eq2).  The voters are split into two groups, and correctly predicted observers receive reduced weights, while incorrect observers are exponentially increased.  Each classifier which follows, thus increasingly concentrates on the now higher weighted observations missed prior.  
+\begin{equation}
+e^{-\beta }\cdot\sum_{y_{i}=G(x_{i})}{w_{i}}^{(m)} + e^{\beta }\cdot\sum_{y_{i}\neq G(x_{i})}{w_{i}}^{(m)}
+\end{equation}
+   Error optimization of the loss function, is based on convex optimization.  Weak learners are normally described as better than random.  A more motivating description is perhaps that fundamental to each weak learner is an inability to calculate the weights of each its features.  Minimization of error loss does not explain how Adaboost works.  The final strong classifier is based on the sign of weighted voters.  In other words, Adaboost is a weighted average over the sum of classifier weights; whereby a tree is used to explore the feature set space.  We use a decision tree to generate splits which minimize the classification error using a Gini measure, found to be less biased to categorical data than the entropy measure.    
+\begin{equation}
+I_G(f)=\sum_{i=1}^{m}f_i(1-f_i)
+\end{equation}
+
+\subsection{Event Detection}
+Cross-sectional techniques have limited relevance to time-series data, given non-stationarity within the data.  Intra-hour and intra-day structure is normally looked at.  Additionally, anomalies can be one-time(pulse) or systematic(level-shift).  Transfer function procedures such as multi-variate Box-Jenkins can be utilized.  Further, model techniques, such as ARIMA, GARCH, can be applied.  We apply kernel regression, which localizes the mean, and is an analogue to ARIMA methods.  A confidence interval (CI=2) is set at 95\%, for initial training of the alerts.  Next, we apply iSAX, a symbolic aggregate approximation, of the time series data.  Further, we present a Gaussian Hidden Markov Model clustering technique over the temporal data, to find distinct time periods with similar activity.
+
+\subsection*{Parameter Tuning, Weights Threshold}
+\raggedright To minimize inflated confidence caused by over-fitting dependencies between data instances, cross-validation is performed on the training-set only.  For example, given a stationary, time-series process, no change in overall mean or variance is experienced.  Training data is rescaled, to zero mean and unit variance, using z-normalization.  Further, cross-validated data is split explicitly by gender, patient-group, and age.  Post cross-validation, transformations are based solely upon parameter tuning of training-sets.  
+\raggedright For each instance, an entropy score over the boosting number of weights is calculated.  A kernel density estimator, then smooths the entropy score for each data instance, thus providing a threshold to distinguish easy(low-entropy) from hard (high-entropy) points.            
+
+
+\subsection{Sequence Learning}
+Sequence Learning relies on evaluating is found closely related to psychological aspects of human thinking 
+
+
+
+
+\subsection*{ROC, Accuracy, Assessment}
+Adaboost was developed in-house, but with a wrapper-class to the Scikit-Learn.Ensemble module.  ROC scores are defined as 
+
+
+\subsection*{Exploratory Data Analysis }
+Exploratory graphical statistics can influence and help guide interpretation of data.  Graphics have been created using the python libraries Matplotlib and Pandas, the ggplot, and rMeta module of R, and the d3.js Javascript library.  These packages are the current state-of-the-art, in a rapidly developing field.  Path plots, parallel , adjusted odds ratio, dirchilet mixture models, and QQ plots were generated using standard packages.  The SequenceLogo-Type Alert Graphic was independently developed.  The design principle of maximizing information to pixel space was followed in its design. 
+Online Programming Tutor
+
+
+\section*{Results}
+scatterplot:
+splom with histogram and curve
+time series:
+Box-Jenkins,Gaussian Kernel, Pulse-Long, iSAX, transformed data(with residuals histogram subplot)
+ROC:
+cross-validate, adaboost, stump, trees, MAB, Thomspson
+Graphic:
+QQ plots, forest, sequence logo, 
+
+
+
+
+\section*{Discussion}
+The creativity and focus of Machine Learning is driven in the context of classification.  Statistically, understanding variable effects and importance is not requisite for an increased prediction score.  In bioinformatics, with the identification of significant gene interactions, Machine learning methods have been created to deal with small samples and unbalanced data\cite{Tib} to has been used to deal with small sample size and unbalance data.  However, in the clinical setting, black-box solutions are not well-received; interpretability is important.  Therefore, in this study, we have made an effort toward graphical representations, which show variable inter-relationship and importance, as well as allow visual assesment of scope and power.  
+
+  Sequential learning improved alert detection, and provided for a graphical representation as well.  Further, neuro-psychological studies indicate human reasoning is based on context, costs, and rewards in sequence[].  Static human vs machine metrics are criticized as being overly simplisitic, given human evaluation and reasoning is often based on context, rewards, and cost in sequence.  In fact, when machines are re-evaluated in the more complex domain, human judgement is found equal or on par with machines[cite].
+
+Algorithmic game-theory is attractive in the clinical setting, allowing for cost-optimization, sequential learning, and imperfect information to be incorporated.
+Alert fatigue is an important issue.          
+
+Breiman discusses the between variables Increased prediction scores are not requisite focus is The application of Machine Learning is not often seen in clinical study.  Vice-versa, issues such as confidence intervals, model structure,   
+
+ght be interested in Leo Breiman's 'Statistical Modeling - The two cultures', where this is covered in depth(recognition.su/wiki/images/8/85/Breiman01stat-ml.pdf) Furthermore, there are reasons for this approach -- if you want humans to interprete things, for example.
+
+The labeling of health alerts is accomplished by addressing the time-series statistical issues, of dependency and model fitting.  This helps achieve the model accuracy shown in Fig, motivates exploratory data analysis(Fig), and provides some validation for use of Machine Learning for in health monitoring.  Basically, a two-step refactoring for health alerts was used.  First, a z-normalized cross-validation was applied to reduce dependency, and next kernel regression, an analogue of ARIMA models, and a local mean-weighted , establishes confidence-interval.  Refactoring for alert values is shown in Fig., with a mean change of nos. over the full alert state.  
+
+   However, although this methodology leverages Machine Learning and some statistics, it does not formulate an actual model for health vs disease, an issue we would like to address by establishing a bottom-up join for symptoms to disease, P(D|symptoms), rather than the top-down prediction of disease to symptoms, P(symptoms|D).  Further, our model can be extended to incorporate sequential learning, and active learning approaches.  Defining alerts as sequence motifs gives a more robust definition of health-states vs disease-states, allows to better deal with time series issues within the data, and provides an analogue to human reasoning, which is based on sequential learning.  Active learning, training of the algorithm by human judgment is important to further increase interpretability.
+
+  An alert defined as sequence motifs will further allow from threshold to  domains training by human defined alerts, pushes the complexity the model can address, and perhaps better reduce alert fatigue through incorporation of clinical judgement.
+
+
+
+
+
+
+
+
+References should be numbered and listed at the end of the paper in the section References.
+Within the text, they should be cited by the corresponding numbers, enclosed in brackets,
+%e.g., \cite{Sundaramoorthietal2009}, or \cite{Sundaramoorthietal2010a, Sundaramoorthietal2010b,coultetal2010,changwyskwang2006}  for multiple references.
+Examples of reference formats are shown below.
+\begin{table}[!h]
+\centering
+\begin{tabular}{|r|r|r|r|}
+  \hline
+  1 & 0.8151 & 0.9401 & 0.4640 \\   \hline
+  2 & 0.5028 & 0.6623 & 0.5464 \\   \hline
+  3 & 0.1423 & 0.0884 & 0.0465 \\   \hline
+  4 & 0.3435 & 0.2900 & 0.7783 \\   \hline
+\end{tabular}
+\caption{Caption}
+\end{table}
+
+
+\bibliographystyle{plain}
+
+
+\begin{thebibliography}{1}
+
+\bibitem{Capri2002}
+Caprile, B., Furlanello, C., Merier, S., 2002, ``The Dynamics of AdaBoost Weights Tells You What's Hard to Classify,'' arXiv:cs/0201014 [cs.LG].
+
+\bibitem{mimic2}
+Goldberger, A. L., Amaral, L. A. N., Glass, L., Hausdorff, J. M, Ivanov, P. Ch., Mark, R. G., Mietus, J. E., Moody, G. B., Peng, C.-K., Stanley, H. E., 2000, ``PhysioBank, PhysioToolkit, and PhysioNet: Components of a New Research Resource for Complex Physiologic Signals,'' Circulation, [Circulation Electronic Pages; http://circ.ahajournals.org/cgi/content/full/101/23/e215].
+
+\bibitem{elemStatLearn}
+Hastie, T., Tibshirani, R., Friedman, J., 2001, The elements of statistical learning: data mining, inference, and prediction, Springer, New York.
+
+\bibitem{scikit}
+Pedregosa et al., 2011, ``Scikit-learn: Machine Learning in Python,'' Journal of Machine Learning Research 12, 2825-2830.
+
+\bibitem{mimic1}
+Saeed, M., Villarroel, M., Reisner, A. T., Clifford, G., Lehman, L., Moody, G. B., Heldt, T., Kyaw, T. H., Moody, B. E., Mark., R .G., 2001,``Multiparameter intelligent monitoring in intensive care II (MIMIC-II): A public-access ICU database,'' Critical Care Medicine 39(5), 952-960.
+
+
+\bibitem{VCI}
+Plemenos, M., Miaoulis,J., 2009, Visual Complexity and Intelligent Computer Graphics Techniques Enhancements
+
+
+\bibitem{kreimer}
+PMID:Quality \& safety. Alarming: Joint Commission, FDA set to tackle alert fatigue. Kreimer S.
+
+\bibitem{Mastro}
+John Mastrototaro, Ph.D., John B. Welsh, M.D., Ph.D., and Scott Lee, M.D.
+Practical Considerations in the Use of Real-Time Continuous Glucose Monitoring Alerts
+
+\bibitem{Muse}
+Trotter, F., Uhlman, D, Meaningful Use and Beyond Oreilly
+
+\bibitem{Raebel}
+Raebel MA, Carroll NM, Kelleher JA, Chester EA, Berga S, Magid DJ.
+Randomized trial to improve prescribing safety during pregnancy.
+J Am Med Inform Assoc. 2007 Jul-Aug;14(4):440-50. Epub 2007 Apr 25.
+
+\bibitem{Gouveia}
+Gouveia WA. Am J Health Syst Pharm. 2010 Apr 15;67(8):603-4; Alert fatigue: A lesson relearned.
+
+\bibitem{Hasanm}
+Hasan M, Al-Dorzi1, Hani M Tamim1, Antoine Cherfan, Mohamad A Hassan, Saadi Taher, and Yaseen M Arabi1, 2011, "Impact of computerized physician order entry (CPOE) system on the outcome of critically ill adult patients: a before-after study," BMC Medical Informatics and Decision Making 11:71 
+
+\bibitem{Tsay}
+Chen, C. and Tiao, G.C. (1990) "Random level-shift time series models,
+ARIMA approximations, and level-shift detection". Journal of Business
+and Economics Statistics, 8, 83-97.
+
+\bibitem{Charf}
+Charfeddine,L. Guégan (2009) "Breaks or Long Memory Behaviour: An empirical Investigation" Documents de Travail du Centre d’Economie de la Sorbonne
+
+\bibitem{Schwaig}
+Schwaighofer A, Schroeter T, Mika S, Blanchard G. (2009) "How Wrong Can We Get? A Review of Machine Learning Approaches and Error Bars" Comb Chem High Throughput Screen."  Jun;12(5):453-68.
+
+\bibitem{Tib}
+Hastie T, Sobel E, Wu T, Chen Y, "Genome-wide association analysis by lasso penalized logistic regression." Authors: ; Lange, K Bioinformatics Vol: 25 Issue: 6 ISSN: 1367-4803 2009 Pages: 714 - 721
+
+\bibitem{Prie}
+Fawcett T, PRIE:A System for Generating Rulelists to Maximize ROC Performance.
+
+
+\end{thebibliography}
+\end{document}
