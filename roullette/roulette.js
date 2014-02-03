@@ -7,8 +7,8 @@
  *
  */
 
-var N = 10;
-var B = 5;
+var N = 10; //no of trials
+var B = 5;  //no of percentiles
 var BUTTONS = {}
 
 function bb(){
@@ -154,7 +154,7 @@ function addSVG(bi){
 //BUTTONS is dict
 
 var dset = { "01":[10,100], "02":[10,120], "03":[10,140], "11":[150,100], "12":[150,120] }
-var	svg = d3.select('body').append('svg').attr('width',500).attr('height',400); //.attr("id","d3svgctnr");
+var	svg = d3.select('body').append('svg').attr('width',600).attr('height',400); //.attr("id","d3svgctnr");
 console.log('svg', svg);
 function btnd3(dset){
 	var	ptid;
@@ -235,10 +235,10 @@ function filter(hardjson){
 
 /////////
 //box plot
-var chart = d3.box()
-	.whiskers(iqr(1.5))
-	.width(width)
-	.height(height);
+//var chart = d3.box()
+//	.whiskers(iqr(1.5))
+//	.width(width)
+//	.height(height);
 
 
 
