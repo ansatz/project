@@ -6,6 +6,7 @@
 ### refs
 #entropy
 #https://www.ncbi.nlm.nih.gov/pubmed/10843903
+#http://stanford.edu/~mwaskom/software/seaborn/
 
 #cross-validation
 #http://bytefish.de/blog/gender_classification/
@@ -30,6 +31,9 @@
 #http://www.gwern.net/Lewis%20meditation
 #http://blog.nextgenetics.net/?e=85
 #http://www.dspguide.com/ch34/1.htm --benford
+
+# r vs python -- graphs
+#http://www.theswarmlab.com/r-vs-python-round-3/ --> ci for regression plots
 
 """
 <script type="text/javascript" src="jquery-latest.min.js"></script>
@@ -819,7 +823,8 @@ class score(object):
 # simpsons paradox http://vudlab.com/simpsons/
 # kelly criterion
 
-
+# bayes kruscke model diagrams
+#http://doingbayesiandataanalysis.blogspot.com.au/2012/05/graphical-model-diagrams-in-doing.html
 
 
 # apdx.
