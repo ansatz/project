@@ -1,0 +1,56 @@
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {1\hskip 2em}\uppercase {\LaTeX {}}}{1}
+\contentsline {section}{\numberline {1.1} Standard Document Styles}{2}
+\contentsline {section}{\numberline {1.2} {$\mathcal {A}\mathcal {M}\mathcal {S}$-\LaTeX {}}{} Document Styles}{4}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {2\hskip 2em}\uppercase {Getting Started with {$\mathbb {UICTHESI}$}}}{5}
+\contentsline {section}{\numberline {2.1} Overall Structure}{5}
+\contentsline {section}{\numberline {2.2} Running Text}{6}
+\contentsline {section}{\numberline {2.3} \LaTeX {} and {$\mathbb {UICTHESI}$}{} Commands}{6}
+\contentsline {section}{\numberline {2.4} Other Things to Look At}{8}
+\contentsline {section}{\numberline {2.5} Front Matter}{9}
+\contentsline {subsection}{\numberline {2.5.1} Title Page}{9}
+\contentsline {subsection}{\numberline {2.5.2} Preliminary Sections}{11}
+\contentsline {subsubsection}{\numberline {2.5.2.1} Creating a Copyright Page}{11}
+\contentsline {subsubsection}{\numberline {2.5.2.2} Creating a Dedication}{11}
+\contentsline {subsubsection}{\numberline {2.5.2.3} Creating an Acknowledgment}{11}
+\contentsline {subsubsection}{\numberline {2.5.2.4} Creating a Preface}{11}
+\contentsline {subsubsection}{\numberline {2.5.2.5} Creating the Table of Contents and Lists of Figures and Tables}{12}
+\contentsline {subsubsection}{\numberline {2.5.2.6} Creating a List of Abbreviations}{12}
+\contentsline {subsubsection}{\numberline {2.5.2.7} Creating a Summary}{13}
+\contentsline {section}{\numberline {2.6} Sectioning Commands in the Body of the Thesis}{13}
+\contentsline {section}{\numberline {2.7} Sectioning Commands in the Appendix}{14}
+\contentsline {subsection}{\numberline {2.7.1} Starting the Appendices}{14}
+\contentsline {subsection}{\numberline {2.7.2} Multiple Appendices}{14}
+\contentsline {section}{\numberline {2.8} Back Matter}{14}
+\contentsline {subsection}{\numberline {2.8.1} Creating a Cited Literature Section}{14}
+\contentsline {subsection}{\numberline {2.8.2} Using {\rmfamily B\kern -.05em{\scshape i\kern -.025em b}\kern -.08em T\kern -.1667em\lower .7ex\hbox {E}\kern -.125emX}}{15}
+\contentsline {subsection}{\numberline {2.8.3} Creating a Vita}{16}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {3\hskip 2em}\uppercase {Environments}}{17}
+\contentsline {section}{\numberline {3.1} Quotations}{17}
+\contentsline {section}{\numberline {3.2} Centering and Flushing}{18}
+\contentsline {section}{\numberline {3.3} Lists}{19}
+\contentsline {section}{\numberline {3.4} Figures}{19}
+\contentsline {section}{\numberline {3.5} Tables}{21}
+\contentsline {section}{\numberline {3.6} Tabular Alignment with the Tabbing Environment}{21}
+\contentsline {section}{\numberline {3.7} Tabular Alignment with the Tabular Environment}{23}
+\contentsline {section}{\numberline {3.8} Verbatim Output}{24}
+\contentsline {section}{\numberline {3.9} Mathematical Expressions}{24}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {4\hskip 2em}\uppercase {Errors}}{26}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {5\hskip 2em}\uppercase {Bugs}}{30}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {6\hskip 2em}\uppercase {A Final Reminder}}{32}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {\ }APPENDICES}{33}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix A}{34}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix B}{37}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix C}{43}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix D}{46}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix E}{52}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {\ }CITED LITERATURE}{58}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {\ }VITA}{58}

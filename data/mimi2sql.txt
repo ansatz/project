@@ -1,0 +1,454 @@
+##
+For each mortality patient, the vital sign data should be selected.  These are BP, OX[sys,dia], HR, WHT.
+
+For each data-point [ consisting of the six vital signs ], the closest time-point [k] is used to set the record.
+
+Each data_point_i is column (itemid) in a table.  These tables need to be determined.
+Such as chartevents, d_chartitems.  itemid id codes[455=bp, 1148=wht, 618 ,115  ,211 ].
+sys bp : 6,51,455,6701
+hr: 211(bpm) 618(bpm)
+
+
+
+There is a problem regarding not enough mortality data:
+subject_id=1381 only had 7 points for itemid=455
+subject_id=5077 only has 150 points for itemid=455
+
+Therefore only select patients with data_greater than 300. Telehealth(2/day*30days/month*3months=180points).
+
+What is this query?
+select subject_id, itemid
+from chartevents
+where 200 < (select count(*)
+		and itemid=455
+
+SELECT a, b, COUNT(a) FROM tbl GROUP BY a, b
+
+select  distinct name
+,       count(*) over (partition by Name) as TotalWithThisName
+,       count(*) over (partition by City) as TotalInThisCity
+,       city
+from    YourTable
+
+###
+-- 1.  get count for all the vitals, by 1 patient
+select distinct subject_id, 
+   itemid, 
+    count(*) over (partition by itemid) as count 
+from chartevents
+where subject_id=1381 
+     and itemid in (455,1148,618,115,211)
+-- 2. get count over subject(group)
+select
+from
+where 
+group by subject_id
+
+
+
+-- select subject_id, itemid, value1
+select subject_id,
+   count(*) over (partition by itemid) as vital
+from chartevents
+where 200 < (select count(*) 
+             from chartevents )
+       and itemid in (1148)
+       and subject_id in (5077,1381,21122,22841,26353,10651)
+-- group by subject_id, itemid
+-- (5077,1381,21122,22841,26353,10651)
+
+SQL statement for 1 patient, and the six data points grouped by closest k_time_point needs to be selected.  These can be exported in up to 1000 records (in the explorer interface).
+{ for offline use, ie download the db, then 80GB(storage) + 20GB(working), is needed }
+
+Effect size, etc can be determined from this.
+
+--
+--
+-- ce.subject_id in (1381, 21122, 5077, 22841, 26353, 10651, 430, 14585, 3469)
+--
+--
+select ce.subject_id, ce.itemid, ci.description, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce,d_chartitems ci
+where ce.subject_id=21122 
+  and (ce.itemid=455 or ce.itemid=1148 or ce.itemid=618 or ce.itemid=115 or ce.itemid=211)
+
+select ce.subject_id, ce.itemid,
+	(select ce.itemid, realtime, value1num, 
+	from chartevents ce
+	where ce.itemid=455)
+from chartevents ce
+where ce.subject_id=21122 and ce.itemid=618
+
+select ce.subject_id, realtime, ce.itemid, value1num
+from chartevents ce
+where ce.subject_id=21122
+group by realtime
+
+
+Given one table with itemid and realtime
+Req1: select itemid in (455,1148,618,115,211)
+Req2: each itemid has a realtime (select itemids that have closest realtime) 
+
+sln1:
+select realtime, itemid
+from charttable
+-----------------------------------------------------------
+pagination
+
+select pt.subject_id
+from (SELECT ROW_NUMBER() OVER(ORDER BY subject_id) RowNr, subject_id, hospital_expire_flg FROM d_patients) pt
+where hospital_expire_flg='Y' and RowNr between 50 and 100
+
+select * from 
+( select a.*, ROWNUM rnum from 
+  ( select pt.subject_id
+  from d_patient pt
+  where hospital_expire_flg='Y'
+  order by pt.subject_id ) a 
+    where ROWNUM <= :MAX_ROW_TO_FETCH )
+where rnum  >= :MIN_ROW_TO_FETCH;
+
+
+-------------------------------------------------------------------------------
+>>
+CHARTEVENTS: QUERY
+
+->>
+select ce.subject_id, 
+       pt.sex, pt.dob, pt.dod, pt.hospital_expire_flg, ce.itemid, 
+       ci.description, charttime, realtime, 
+       value1num,value1uom, value2num,value2uom
+from chartevents ce,
+     d_chartitems ci, 
+     d_patients pt
+where hospital_expire_flg='Y' and pt.sex='F'
+  and ce.subject_id not in (1381)
+  and ce.itemid in (455,1148,618,115,211,3581)
+  and ce.itemid=ci.itemid 
+  and pt.subject_id=ce.subject_id
+
+>>
+
+-- in (1381, 21122, 5077, 22841, 26353, 10651, 430, 14585, 3469) 
+--  and (ce.itemid=455 or ce.itemid=1148 or ce.itemid=618 or ce.itemid=115 or ce.itemid=211)
+
+select ce.subject_id, ce.itemid, ci.description, charttime, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce,d_chartitems ci             
+where ce.subject_id in (select pt.subject_id from d_patients pt where hospital_expire_flg='Y' and pt.subject_id not in (:Num) )
+  and ce.itemid in (455,1148,618,115,211,3581) 
+  and ce.itemid=ci.itemid
+  
+  -- and count(ce.subject_id)>1000
+
+-- list the patient ids first 1000
+select ce.subject_id, ce.itemid, ci.description, charttime, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce,d_chartitems ci             
+where ce.subject_id in (select pt.subject_id from d_patients pt where hospital_expire_flg='Y' and pt.subject_id not in (:Num) and rownum<1001)
+  and ce.itemid in (455,1148,618,115,211,3581) 
+  and ce.itemid=ci.itemid
+
+(580,581,733,763,4183,3580,3581,3582,3583,7000)
+chartevents code dictionary:
+http://physionet.org/physiobank/database/dictionaries/ch-id-dict
+
+-- find itemid for label "arterial bp"
+select *
+from mimic2v26.d_chartitems
+where lower(label) like '%arterial bp%';
+
+
+
+present weight: 3581 (lb)
+heart rate: 211
+SpO2: 646
+NPB: 455
+
+ITEMID  LABEL      CATEGORY
+-------------------
+455     nabpsys  value1num
+455     nabpdias  value2num
+456     nabpmean  value1num
+1149    NBP:
+751     zzzNBP
+Such as chartevents, d_chartitems.  itemid id codes[455=bp, 1148=wht, 618 ,115  ,211 ].
+sys bp : 6,51,455,6701
+hr: 211(bpm) 618(bpm)
+wht:1148  NOT EXIST
+
+select ce.subject_id, ce.itemid, ci.description, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce,d_chartitems ci             
+where ce.itemid=1148 and ce.subject_id=1337
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------
+# waveform db
+IMIC II Waveform Database currently consists of recorded vital signs (such as continuous ECG and blood pressure waveforms) and time series of periodic measurements derived from the vital signs (such as systolic, diastolic, and mean blood pressure, heart rate, and respiration rate) obtained from over 4000 patients. Each MIMIC II Waveform Database record typically covers a patient's entire stay in an intensive care unit (in many cases a week or more). 
+ch == chart event
+me == med event
+
+Source code	Meaning
+ad [1]	Additive (to solution)
+ce [3]	Census Event [transfer of patient]
+ch [4]	Chart Event [event recorded in the ICU]
+de [5]	Delivery
+ic [6]	ICD9 [diagnosis code]
+io [8]	I/O Event
+me [10]	Med[ication] Event
+po [11]	Physician Order
+so [12]	Solution
+to [13]	Total I/O [fluid balance] Event
+
+
+
+ Briefly, determination of trend similarity included four stages:
+
+    Determining a temporal overlap between the available trends that were present in the physiologic and clinical data.
+    Identifying if unusual parameters had been recorded at the same time (e.g. cardiac output).
+    Correlating median filtered, down-sampled heart rate and blood pressure numeric trends with heart rate and blood pressure trends in the clinical data.
+    Visual inspection of a subset of files to verify the results.
+
+ITEMID  LABEL      CATEGORY
+---------------------------
+770     AST         [value1num]
+781	BUN (6-20)  [value1num]
+198	GCS         [Total]
+828     Platelets   [value1num]
+211     heartrate   [value1num]
+813     Hematocrit  [value1num] 
+20001   SAPS1       [value1num]
+504 	PCWP        [value1num]
+
+GCS = Glasgow Coma Scale. BUN = Blood Urea Nitrogen (also known as Urea or Urea nitrogen). SAPS1 indicates Simplified Acuity Score (version 1). PCWP = Pulmonary Capillary Wedge Pressure (or simply `Wedge Pressure'). 
+
+ 6.2.3.2 Non Invasive Blood Pressure (NIBP)
+
+ITEMID  LABEL      CATEGORY
+-------------------
+455     nabpsys  value1num
+455     nabpdias  value2num
+456     nabpmean  value1num
+1149    NBP:
+751     zzzNBP
+
+D_WAVEFORM_SIG
+{ # = 7 , signal_class = BP, signal_type=ABPDias;
+  # = 12, signal_class = BP, signal_type=ABPSys
+}
+
+WAVEFORM_SIGNALS
+columns => signal_num  The index of the signal within the record
+
+------------------m
+from information_schema.columns
+ where table_name = 'YourTableName'
+COUNT(*)
+FROM d_waveform_sig
+WHERE 
+
+
+COMORBIDITY_SCORES
+SELECT signal_class
+FROM waveform_signals
+WHERE record_name=
+
+
+
+SELECT signal_class = systolic, diastolic, mean, HR, Respiration rate, SpO2
+FROM d_waveform_sig GROUP BY gender, icustay_expire_flg  
+
+SELECT signal_class
+	FROM d_waveform_sig
+	WHERE signal_class= systolic, diastolic, mean, HR, Respiration rate, SpO2
+	
+
+
+SELECT gender, icustay_expire_flg, COUNT(*) FROM mimic2v26.icustay_detail WHERE subject_icustay_total_num = 1 GROUP BY gender, icustay_expire_flg 
+
+SELECT hospital_expire_flg,
+ COUNT(*)
+ FROM d_patients GROUP BY hospital_expire_flg
+
+**************************************
+
+chartevents  ==>>   d_chartitems   <==   a_chartdurations ,  formevents tables
+
+ It may be useful to view or save an excerpt of a record in text form, which can be done easily following the methods described here220. For example, to read the first 10 samples of each signal in record a40004/a40004, use the command:
+
+ rdsamp -r mimic2db/a40004/a40004 -t s10 -p -v
+
+ which produces this output:
+
+ time	II	III	AVL	AVF	ABP	PAP
+ (sec)	(mV)	(mV)	(mV)	(mV)	(mmHg)	(mmHg)
+   0.000	  0.176	      -	      -	  1.000	109.600	      -
+     0.008	  0.112	      -	      -	  1.011	106.400	      -
+	   0.016	  0.056	      -	      -	  1.021	103.200	      -
+	     0.024	  0.008	      -	      -	  1.032	100.000	      -
+		   0.032	 -0.024	      -	      -	  1.043	 96.800	      -
+		     0.040	 -0.048	      -	      -	  1.053	 92.800	      -
+			   0.048	 -0.064	      -	      -	  1.064	 89.600	      -
+			     0.056	 -0.072	      -	      -	  1.074	 86.400	      -
+				   0.064	 -0.080	      -	      -	  1.085	 83.200	      -
+				     0.072	 -0.080	      -	      -	  1.096	 80.000	      -
+
+
+
+#1. vitals select bp, ox, wt, hr
+#2. select comorbity
+#3. select alive
+#4. grab 2000 samples
+
+
+
+
+## select dyeing patient >> 200patientsexpire.csv
+select subject_id, dod
+from d_patients
+where hospital_expire_flg = 'Y'
+------------------------------------------------------------------
+## select vitals for dyeing pt
+select ce.subject_id, ce.itemid, ci.description, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce,d_chartitems ci             
+where ce.subject_id in (1381, 21122, 5077, 22841, 26353, 10651, 430, 14585, 3469) 
+  and (ce.itemid=455 or ce.itemid=1148 or ce.itemid=618 or ce.itemid=115 or ce.itemid=211)
+
+select ce.subject_id, ce.itemid=211, ci.description, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce,d_chartitems ci
+where ce.subject_id in (1381)
+  and (ce.itemid=455 or ce.itemid=1148 or ce.itemid=618 or ce.itemid=115 or ce.itemid=211)
+
+--for 1 mortality patient=1381 --only 7 records?
+select ce.subject_id, ce.itemid, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce, d_chartitems ci
+where ce.itemid=ci.itemid(+) and
+     ce.subject_id in (1381,21112) and 
+	      (ce.itemid=455)
+-->>
+select subject_id, count(*)
+from waveform_signals
+where subject_id=1381
+
+---------------------------------------------------------------------
+Numerics/Trends (1 sample/second or 1 sample/minute):
+
+Note that some of these numerics, such as temperature and cardiac output, are recalculated at irregular intervals; in such cases, the samples recorded once per second or per minute are the most recent calculated values (not interpolated intermediate values). Other numerics, such as heart rate and systolic/mean/diastolic blood pressure, are recalculated for each recorded sample; these are typically short-term averages of raw measurements that are made each cardiac cycle.
+
+    BP (systolic, diastolic, and mean):
+        AOBP (automated office blood pressure)
+        NBP (noninvasive arterial blood pressure)
+        PAWP (pulmonary artery wedge pressure) 
+    CO: cardiac output
+    CO2: carbon dioxide
+    HR: heart rate
+    Respiration rate
+    SpO2: oxygen saturation (from fingertip plethysmography)
+    ST: ECG ST segment levels
+    Temperature 
+
+waveform_metadata : age, sex
+waveform_segments : num_signals
+
+-- 21122, 5077, 22841, 26353, 10651, 430, 14585, 3469
+
+select wt.subject_id, wts.description,
+       md.signals,
+       wt.age, wt.sex, wt.base_timestamp
+from waveform_metadata md, waveform_trends wt, waveform_trend_signals wts
+where wt.subject_id=wts.subject_id and
+    md.subject_id=wt.subject_id and
+    wts.description in ('RESP','SpO2','NBPSys','NBPDias','NBPMean','HR') and
+    wt.subject_id=26711
+order by wt.base_timestamp, wts.description
+
+>>
+select wt.subject_id, wt.age, wt.sex,
+       wts.description,
+       wt.signals, wt.filename,
+       wt.base_timestamp
+from waveform_metadata md, waveform_trends wt, waveform_trend_signals wts
+where wt.subject_id=wts.subject_id and
+    md.subject_id=wt.subject_id and
+    wts.description in ('RESP','SpO2','NBPSys','NBPDias','NBPMean','HR') and
+    wt.subject_id in (select pt.subject_id from d_patients pt where hospital_expire_flg='Y')
+order by wts.description, wt.base_timestamp
+
+
+SELECT gender, icustay_expire_flg, COUNT(*) FROM mimic2v26.icustay_detail WHERE subject_icustay_total_num = 1 GROUP BY gender, icustay_expire_flg 
+
+SELECT hospital_expire_flg,
+ COUNT(*)
+ FROM d_patients GROUP BY hospital_expire_flg
+
+select bucket, count(*) from (
+select width bucket(value1num, 0, 300, 301) as bucket
+from mimic2v26.chartevents ce,
+mimic2v26.d patients dp
+where itemid = 211
+and ce.subject id = dp.subject id
+and months between(ce.charttime, dp.dob)/12 > 15
+) group by bucket order by bucket;
+
+select itemid
+from chartevents
+where itemid=211
+
+
+
+
+
+
+----------------------------------------------------------------------
+select ce.subject_id, ci.description, realtime, value1num,value1uom, value2num,value2uom
+from chartevents ce, d_chartitems ci
+where ce.itemid=ci.itemid and
+     ce.subject_id=1381 and 
+	      (ce.itemid=455 or ce.itemid=1148)
+
+-- find itemid for label "arterial bp"
+select *
+from mimic2v26.d_chartitems
+where lower(label) like '%arterial bp%';
+
+
+##waveform
+
+select itemid, label, description, signal_type
+from d_waveform_sig, d_chartitems
+where signal_type = 'NBP' and itemid =455
+
+
+select subject_id,itemid
+from chartevents
+where itemid=455
+
+select subject_id,itemid,value1num,value2num
+from chartevents
+where itemid=455 or itemid=1148 or itemid=618 or itemid=115
+
+
+select bucket+15, count(*) 
+from (
+  select months_between(ad.adm_dt, dp.dob)/12, width_bucket(months_between(ad.adm_dt, dp.dob)/12, 15, 100, 85) as bucket 
+  from admissions ad, d_patients dp 
+  where ad.subject_id = dp.subject_id and months_between(ad.adm_dt, dp.dob)/12 between 15 and 199
+) group by bucket order by bucket;
+
+
+heigth histo
+select bucket, count(*) from (
+select value1num, width_bucket(value1num, 1, 200, 200) as
+bucket from mimic2v26.chartevents where itemid = 920 and value1num
+is
+not null and value1num > 0 and value1num < 500
+) group by bucket order by bucket;

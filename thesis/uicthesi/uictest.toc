@@ -1,0 +1,16 @@
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {1\hskip 2em}\uppercase {Introduction}}{1}
+\contentsline {section}{\numberline {1.1} A Section}{1}
+\contentsline {subsection}{\numberline {1.1.1} A Subsection}{1}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {2\hskip 2em}\uppercase {Previous Work}}{3}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {3\hskip 2em}\uppercase {Conclusion}}{5}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {\ }APPENDICES}{6}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix A}{7}
+\contentsline {chapter}{\xnumberline {\ }\ \ \ \ \ Appendix B}{8}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {\ }CITED LITERATURE}{9}
+\addvspace {\baselineskip }
+\contentsline {chapter}{\xnumberline {\ }VITA}{10}
