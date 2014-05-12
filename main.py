@@ -17,6 +17,9 @@
 from score import *
 from pandadata import pndsa
 import os.path
+from scipy import stats, optimize
+import seaborn as sns
+sns.set(palette='Set2') 
 
 ### boost
 """

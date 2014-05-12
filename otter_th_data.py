@@ -294,6 +294,9 @@ def time3d(data):
 	ax.set_zlabel('Z')
 	plt.show()
 
+#----boosting-------------------------------------------------------------------------------------
+#http://www.metacademy.org/graphs/concepts/boosting_as_optimization#focus=boosting_as_optimization&mode=explore
+
 #-model reliability------------------------------------------------------------------------------------------------
 #http://nbviewer.ipython.org/github/mwaskom/Psych216/blob/master/week6_tutorial.ipynb
 #http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Compressive_Sampling.ipynb
