@@ -153,8 +153,8 @@ http://physionet.org/physiobank/database/dictionaries/ch-id-dict
 
 -- find itemid for label "arterial bp"
 select *
-from mimic2v26.d_chartitems
-where lower(label) like '%arterial bp%';
+from d_chartitems
+where lower(label) like '%arterial bp%'
 
 
 
@@ -452,3 +452,28 @@ bucket from mimic2v26.chartevents where itemid = 920 and value1num
 is
 not null and value1num > 0 and value1num < 500
 ) group by bucket order by bucket;
+
+
+SELECT
+    tableRowA.x as x1
+    tableRowB.x as x2
+    tableRowC.x as x3
+FROM
+    table as tableRowA,
+    table as tableRowB,
+    table as tableRowC
+WHERE
+    tableRowA.y = 1
+    tableRowB.y = 2
+    tableRowC.y = 3
+
+
+-- select ce.subject_id
+-- from d_chartitems, chartevents ce
+-- where ce.itemid=455 
+--  and ce.itemid=618
+-- and ce.itemid=d_chartitems.itemid
+SELECT
+(SELECT subject_id FROM table WHERE itemid=455) AS x1,
+(SELECT subject_id FROM table WHERE itemid=618) AS x2,
+(SELECT subject_id FROM table WHERE itemid=211) A

@@ -148,7 +148,6 @@ def uniquegroups(x):
 pt.groupby('charttime','realtime').map(uniquegroups)
 pt['group'] = pt.map(uniquegroups)
 
-
 #dt['group'] = dt['itemid'].map(lambda x: )
 #def f(dataframe=dt):
 #	# order by times

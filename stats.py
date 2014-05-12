@@ -110,3 +110,8 @@ https://github.com/strawlab/best
 	When n=1 , internal validity may apply, but how to apply that to outside cases refers to systematic 
 
 # meijer briggs (not valid but reproducible)
+
+
+
+#summary stats
+#jitter
