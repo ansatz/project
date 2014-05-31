@@ -1,108 +1,5 @@
-'''
-# countdown
-a. alr fatigue, real-time threshold
-b. biosurveillance as prior art
-1. cli: %_method,credible_interval, fft, online(sprt), alert pie{kern-reg, 
-2. weights: make red the hard
-3. bayes: monyhallgame in d3(betty drawing), kreske, event-model:pr(#)+t.t.event
-
-
-# parse the telehealth html files
-~/confs-papers-sldes/DMHI-2012-current/reports/*.html  (51)
-~/confs-papers-sldes/DMHI-2012-current/server-files txt json files incomplete (33)... but may just be due to low data count
-
-~/BOOKS/bk2/BOOKS/kingston082011
-# load pandas --wide-format
-sex, age, date-time, sys,dia,hr1,ox,hr2,wht 
-
--- melt to long date-time, vitals, val, subject_id
-# meta-table
-subject_id, meds, sex,
-gend = [m,f,m,,....]
-sid = [1,2,3,4,]
-meta = DataFrame(gender, index=sid)
-vtl.join(meta,on=key)
-'''
-
-import pylab
-import pandas as pd
-import random
-import csv
-import dateutil
-import os
-import numpy as np
-from operator import add, sub
-
-from scipy import stats
-import statsmodels.api as sm
-import scipy  
-import scikits.bootstrap as bootstrap
-from math import log
-from scipy.stats import lognorm, norm
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-from statsmodels.graphics.gofplots import qqplot
-
-
-#from statsmodels import api as sm
-
-# -- test merge vitals and metadata
-vtl = pd.DataFrame({'subject_id': range(10), 'vals':np.random.randn(10)})
-gndr = [ random.choice(['M','F']) for i in range(10)]
-sid = range(10)
-meta = pd.DataFrame(gndr, index=sid, columns=['sex'])
-vtl = vtl.join(meta, on='subject_id')
-
-#load 
-# -- ~/project/data/load_data_th/reports2/*.txt csv
-#.txt files
-header = ['fname','lname', 'dt1', 'sys', 'dia', 'hr1', 'dt2', 'ox', 'hr2', 'dt3', 'wht']
-drcty = '/home/solver/project/data/load_data_th/reports2/'
-
-# -open files in dir
-# -- extract Data: section
-# Meds: Data: Notes:
-start = False
-out = []
-for fls in os.listdir( drcty):
-	fls = os.path.join(drcty,fls)
-	#print'FILES ', fls
-	with open(fls ,'r') as f:
-		rdr = csv.reader(f, delimiter='\t')
-		for row in rdr: 
-			if 'data:' in [r.lower() for r in row]: 
-				start = f.tell()
-				continue
-			if 'notes:' in [r.lower() for r in row]: 
-				start = False
-			if start:
-				out.append(row)
-# -- csv writer
-flw = drcty + 'all.csv'
-with open(flw, 'wb') as csvfile:
-	pndwrt = csv.writer(csvfile, delimiter=';')
-	pndwrt.writerows(out)
-	
-# -- load dataframe from array
-#th_data = pd.DataFrame(out, columns=header)
-#th_data.columns = header 
-th_data = pd.read_csv(flw, encoding='latin1', names=header, sep=';', parse_dates=True, dayfirst=False, index_col='dt1')
-th_data.index.names=['realtime']
-#print 'TH ', th_data.head() , type(th_data), th_data.dtypes
-
-# - clean data --(null) na
-def cleanr(x):
-    if x==r"NULL":
-        return "NaN"
-    else:
-        return x
-th_data = th_data.applymap(lambda x: cleanr(x))
-#any(th_data is "NULL")
-th_data = th_data.dropna()
-any( pd.isnull( th_data) )
-
 #---fun,#life,news, to read when done------------------------------------------------------------------------------------------------------------------------
+#data sources: http://rs.io/2014/05/29/list-of-data-sets.html
 #cancer project compuational glover virus kill cancer, ecosystem
 #http://www.washingtonpost.com/news/morning-mix/wp/2014/05/15/womans-cancer-killed-by-measles-virus-in-unprecedented-trial/?tid=hp_mm
 
@@ -134,43 +31,6 @@ any( pd.isnull( th_data) )
 #heartbleed
 #http://blog.meldium.com/home/2014/4/10/testing-for-reverse-heartbleed
 #-----------------------------------------------------------------------------------------------------------------<
-
-
-
-#---private data---------------------------------------------------------------------------
-#bootstrap data make private
-#http://healthyalgorithms.com/2013/10/08/statistics-in-python-bootstrap-resampling-with-numpy-and-optionally-pandas/
-
-#fatigue overtreatment
-#http://www.healthmetricsandevaluation.org/news-events/seminar/overdiagnosed-making-people-sick-pursuit-health
-
-
-from private import private_data
-th_data = private_data(th_data)
-
-# - parse time
-#--TODO-----
-# -- avg time (dt1,dt2,dt3) 
-# take timedelta of max3 - min3
-# then divide that by 2, add it to min3, convert back to time
-##def avgT(x):
-##	#time delta object has days
-##	return (x['dt1'] + x['dt2'] + x['dt3'] / 3 )
-##th_data['avgT'] = th_data.apply(avgT) #, axis=1)
-##
-##print('$$ ', th_data['avgT'].dytpe )
-# -- parse date time
-#print 'date ', th_data['dt1'].head()
-#th_data['dt1'] = th_data['dt1'].apply( lambda x: dateutil.parser.parse(x ) )
-#pd.to_datetime( th_data['dt1'] )
-#print ('&&dt ', th_data['dt1'].dtype, type(th_data['dt1']) )
-#-----------
-
-#long format
-# -- melt
-#th_data = pd.melt(th_data, value_vars=[('sys','dia','hr1','ox','hr2','wht')]) #, var_name='vitals', value_name='vals' )
-th_data_stack = th_data.stack()
-#print 'TH stacked ', th_data.head(5) #, th_data.describe()
 
 #---industry------------------------------------------------------------------------------------
 #http://careers.stackoverflow.com/jobs/55871/senior-principal-software-data-engineer-dc-audax-health?a=168IKtple
@@ -207,14 +67,14 @@ th_data_stack = th_data.stack()
 #http://docs.python-guide.org/en/latest/writing/reading/
 #https://github.com/gleitz/howdoi/blob/master/howdoi/howdoi.py
 
-'''
-bad: 
-def a(*args):
-	x,y=args	
-	return dict(**locals)
-def b(x,y ):
-	return({'x':x,'y':y}) 
-'''	
+#'''
+#bad: 
+#def a(*args):
+#	x,y=args	
+#	return dict(**locals)
+#def b(x,y ):
+#	return({'x':x,'y':y}) 
+#'''	
 
 #python broad guide
 #http://docs.python-guide.org/en/latest/
@@ -234,87 +94,14 @@ def b(x,y ):
 
 #>-------------------------------------------------------------------------------------------------<
 
-# - time interval
-def timeplotH(dt, title='mimic'):
-	#group subject_id
-	# -- reset index
-	dt.reset_index(inplace=True)
-	dt['realtime'] = dt['realtime'].apply(pd.to_datetime )   
-	#print 'type ', dt.dtypes 
-	#print type(dt.realtime)
-
-	# --  min, max timestamps
-	grpt = dt.groupby('subject_id')['realtime']
-	subj_min  = grpt.min() ; 
-	subj_max  =  grpt.max() ;
-	descr = grpt.describe() #df['delta'] = (df['tvalue']-df['tvalue'].shift()).fillna(0)
-	
-	
-	# subject min max 
-	mn = subj_max - subj_min
-	intdy = mn.map(lambda x: int(x.days) < 7 and 7 or int(x.days) < 365 and int(x.days) or int(0) )
-	
-	#mean stats
-	mm = mn.map(lambda x: int(x.days) )
-	mu = mm.mean()
-	ms = mm.std()
-	#print('day as int**: ', mm, mu, ms )
-	#print('#deltaT', mn) #print('days ', mn.map(type) ) 
-	
-	#global min max
-	# -- y is number of subjects, 
-	y = list( xrange( dt.subject_id.nunique() ) )
-	# -- x is days int 
-	mmin = dt.realtime.min();
-	mmax = dt.realtime.max()
-	mlen = mmax - mmin;
-	totdys = int(mlen.days)
-	
-	#plot model:: [mmin ..  (min ..  x1/2 .. max) .. mmax]
-	subrange = subj_min - mmin
-	subrdays = subrange.map(lambda x: int(x.days) )   #print('##! ', len(subrdays), subrdays[:10]) 
-	x5raw = subrdays + intdy/2
-	x5raw.sort()
-	x5 = x5raw.map(lambda x: x%365 )  #int(x) < 365 and int(x) or int(365/2))
-	
-	# plot dashed year-lines
-	# -- use x5raw as no of days -> year 
-	x55 = x5raw.copy()
-	
-	#chop up the x55 days
-	x55.sort() 
-	xdz = [ d/365 for d in x55]
-	yrs = []; xz =0
-	for i,x in enumerate(xdz):
-		if x != xz:
-			yrs.append(i)
-			xz=xz+1
-
-		
-	#print x55
-	#print('###chopped ', xdz )
-	#print('###years ', yrs )
-
-	# plot
-	sns.axes_style("darkgrid")
-	fig, ax = plt.subplots()
-	ax.errorbar( x5, y, xerr=intdy, fmt='ok', ecolor='grey',elinewidth=2, alpha=0.5)
-	ax.set_xlabel("365_days, day_range");ax.set_ylabel("subjects incr_by_year");
-	#for i,x in enumerate(xdz):
-	#   ax.plot( [0,i] , [365,i], 'k_', lw=1 )
-	#   ax.text(1, -0.6, r'$\sum_{i=0}^\infty x_i$', fontsize=20)
-	ax.set_title(r'$%s \/\ days : \/\ \mu = %0.0f ,\/\ \sigma = %0.0f$' % (title, mu , ms), fontsize=25)
-	#for i,y in enumerate(yrs):
-	#	ax.text(-0.1, y, 'year%d' % i, fontsize=12) # ha='center', va='center')	
-
-	#plt.axis=((0,500,0,45))
-	#fig.autofmt_xdate()
-	#plt.show()
-	
 
 
-#--plotting------------------------------------------------------------------------------------------------------------------
-#perl 
+#----------------
+#-- refs --#
+#---plotting ---
+#boxplot pandas day of week
+#http://stackoverflow.com/questions/17194581/best-way-to-generate-day-of-week-boxplots-from-a-pandas-timeseries
+#perl  
 #http://en.wikipedia.org/wiki/Xmgrace
 #**VERY-GOOD matplotlib tutorial/summary: GOTO
 #http://www.loria.fr/~rougier/teaching/matplotlib/
@@ -348,6 +135,20 @@ def timeplotH(dt, title='mimic'):
 
 #--------------------------------------------------------------------------------------------------------------------------------<
 
+#-----#distributions---------------------------------------------
+#http://pages.stern.nyu.edu/~adamodar/New_Home_Page/StatFile/statdistns.htm#_ftnref2
+
+#stat reference:
+#http://inperc.com/wiki/index.php?title=Elementary_Statistics_by_Bluman
+
+#qq-plot rule out normal
+#ks to see if normal, lognormal, weibull, etc
+#pass gender grouped
+#http://stackoverflow.com/questions/15630647/fitting-lognormal-distribution-using-scipy-vs-matlab?rq=1
+#http://stackoverflow.com/questions/8870982/how-do-i-get-a-lognormal-distribution-in-python-with-mu-and-sigma?lq=1
+#exploratory:
+#http://nbviewer.ipython.org/github/herrfz/dataanalysis/blob/master/week3/exploratory_graphs.ipynb
+
 #---time-series analysis-----------------------------------------------------------------------------------------------------------
 #fitting model to long time series
 #http://robjhyndman.com/hyndsight/long-time-series/
@@ -370,7 +171,6 @@ def timeplotH(dt, title='mimic'):
 
 #make time stationary
 #http://stats.stackexchange.com/questions/2077/how-to-make-a-time-series-stationary?rq=1
-
 
 #---alerts-----------------------------------------------------------------------------------------------------------------------------<
 
@@ -442,11 +242,878 @@ http://nbviewer.ipython.org/github/olafSmits/MonteCarloMethodsInFinance/blob/mas
 http://www.robots.ox.ac.uk/~misard/condensation.html
 '''
 
+#----model reliability----------------------------------------------------------------------------
+#data sources:
+#http://apps.who.int/gho/data/?theme=main
+
+#OLS R-language statsmodel
+#http://statsmodels.sourceforge.net/devel/examples/notebooks/generated/robust_models_1.html
+
+# http://en.wikipedia.org/wiki/Micromort
+#datamining hyperloglog (very good)
+#incoming streaming data probabilistic counting by bits not order stats
+#http://research.neustar.biz/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/
+'''
+st like all the other DV sketches, HyperLogLog looks for interesting things in the hashed values of your incoming data.  However, unlike other DV sketches HLL is based on bit pattern observables as opposed to KMV (and others) which are based on order statistics of a stream.  As Flajolet himself states:
+'''
+
+
+#ML application p >> n
+#refs/papers/applyingMLtoclnical*.pdf victoria stodden stanford 2008
+#http://sparselab.stanford.edu/
+
+#http://nbviewer.ipython.org/github/mwaskom/Psych216/blob/master/week6_tutorial.ipynb
+#http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Compressive_Sampling.ipynb
+#http://nbviewer.ipython.org/url/perrin.dynevor.org/exploring_r_formula_evaluated.ipynb
+#survival curves
+#http://nbviewer.ipython.org/github/CamDavidsonPilon/lifelines/blob/master/docs/Survival%20Analysis%20intro.ipynb
+#psych model weibull distribution**
+#http://nbviewer.ipython.org/github/arokem/teach_optimization/blob/master/optimization.ipynb
+#image models neuro
+#http://nbviewer.ipython.org/github/jonasnick/ReceptiveFields/blob/master/receptiveFields.ipynb
+
+#stat basic stats in pandas
+#http://www.randalolson.com/2012/08/06/statistical-analysis-made-easy-in-python/
+#http://people.duke.edu/~ccc14/pcfb/analysis.html
+
+#overfitting
+#http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/
+
+#R-formula
+#refs/imm6614.pdf statsmodel patsy R-formula slide30_34
+
+#---disease model--------------------------------------------------------------------------------------------------
+#clustering
+#http://nbviewer.ipython.org/github/herrfz/dataanalysis/blob/master/week4/clustering_example.ipynb
+#http://www.windml.org/examples/visualization/clustering.html
+
+#---bayesian--------------------------------------------------------------------------------------------------------
+#http://nbviewer.ipython.org/github/twiecki/pymc3_talk/blob/master/bayesian_pymc3.ipynb
+# radon example
+#http://nbviewer.ipython.org/github/fonnesbeck/multilevel_modeling/blob/master/multilevel_modeling.ipynb
+#http://jakevdp.github.io/blog/2014/03/11/frequentism-and-bayesianism-a-practical-intro/
+
+'''
+http://jakevdp.github.io/blog/2014/03/11/frequentism-and-bayesianism-a-practical-intro/
+
+hypoth test(correlation)
+1. null  hypoth r=0 (2-sided r neq 0)
+2. null distr
+3. collect data (r=0.15)
+4. calculate pval for data
+5. reject/or fail reject null(not enough evidence to reject)
+if reject, saying that if that observing random is unlikely given null-true, so its false)
+
+p-val and ci duals
+
+p = effect-size(diff of obsMean from nullmean) / sample size
+
+
+apply bayes : P(null/data) = P(d|null)P(null) / P(D)
+if p<0.05, says when no effect, will see signficant(but really random) 5% of time, so can reject the null, or say not enough evidence to rule out the null
+
+stat power = 1-specificity(typeII error)o
+lecture 6 **
+report between group differences not within group stanfordmedstatsL6
+interaction(cant prove null, can do equivalence trial)
+
+correlation: 
+if ignore overestimate within group p-val
+underestimate(overly optimistic) p-val between groups
+McMemar's exact test, differentiate between 1/0 of each factor
+
+so change level of interaction(ie stores vs people)
+GEE modeling, mulivariate regression
+
+time to event model:rate ratio, cox regression, kaplan-meier, frailty model 
+### assumptions:
+n>30 to 100 assume normal (can do t-test of means)
+equality of variances to pool variances(check that groups have equal variances, of p<0.5, then suggest unequal variances)
+pooled more precise std(=> t-distribution more dof)
+1.define hypoth
+2.get null distribution(pool) ie m and w equal at math, same std/var 
+(difference of mean= t-distribution for small, z-distr for large)
+get se for diff of two means
+3.effect size
+4.calc p-val
+5. 
+
+### for patient data ###
+## compar icu to telehealth using paired ttest (L7)
+compare mean of the difference between groups
+null hypothesis is for average change
+
+## compare more groups, more time points
+3 groups: 3 pair-wise test(of mean) increase typeI error
+so want to look at all differences at once; by looking at variance
+'is difference in mean of groups more than noise(ie var (in group) )
+F = var(between-groups)'summarize mean differences'/ var(in-group)'analogous to pooled variances from ttest'
+f-test test if two variances are equal(this is null, f close to 1 if true)
+anova(f-test) only tells at least 2 groups differ, but not which one
+
+#correct post-hoc
+bonferroni
+tukey (adjust p)
+
+# repeated measures
+sig differences across time periods? significant diff between groups(ctg predictor)? sig diff bewteen groups over time?
+
+#non parametric tests
+rank the tests
+if null:(no diff) then difference between sum of ranks(series)n*n+1/2, is equal to difference between sums
+can get E(u) and -> pvalue
+
+# non-parametric anova (kruskal-wallis) pg112
+stas question, do alerts vary by group 
+
+#relative risk between groups
+p118
+logistic-regression -> adjusted odds ratio
+(x2 chi squared) observed-expected/expected  .. effect size
+
+#t-event
+event or censoring (time to).. generate survival curve from this
+without censoring survivalcurve(kaplan-meier) is just the proportion survive study
+variance of chi-square is hypergeometric
+
+#confounding
+l8 pg93
+#logistic regression -> from betas to odds-ratio
+multivariate model testing
+'''
+'''
+Sound It Out:(math-phonics)
+ditta
+The Probability of A * Probability of new data | A =   P(new data) * P(A|new data)    
+
+
+'''
+
+#----boosting-------------------------------------------------------------------------------------
+#http://www.metacademy.org/graphs/concepts/boosting_as_optimization#focus=boosting_as_optimization&mode=explore
+#http://130.203.133.150/viewdoc/summary;jsessionid=86C1563E69B2FB2794C36B6BE961F95F?doi=10.1.1.170.2812 Fast boosting using adversarial bandits
+#http://stats.stackexchange.com/questions/ask","Adaboost feature weight calculation - Cross Validated - Stack Exchange
+#http://stats.stackexchange.com/questions/40568/adaboost-feature-weight-calculation - Adaboost feature weight calculation - Cross Validated
+#http://stats.stackexchange.com/questions/25699/feature-selection-without-target-variable?rq=1","Feature selection without target variable - Cross Validated
+#http://www.pnas.org/content/105/39/14790.full","Higher criticism thresholding: Optimal feature selection when useful features are rare and weak
+#https://github.com/jbeard4/pySCION/commit/0b09590e8e6561f13e72a874d2ce60c4ed304fb2
+#http://stats.stackexchange.com/questions/23382/best-bandit-algorithmmachine learning - Best bandit algorithm? - Cross Validated
+
+#dataming
+#http://stats.stackexchange.com/questions/1856/application-of-machine-learning-techniques-in-small-sample-clinical-studies?rq=1
+#http://en.wikipedia.org/wiki/Thompson_sampling","Thompson sampling - Wikipedia,
+#http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection?rq=1
+
+#collinearity
+#http://learnitdaily.com/six-ways-to-address-collinearity-in-regression-mVodels/
+
+#-------------------------------------------------------------------------------------------------------------
+
+#mimic2
+#http://physionet.org/mimic2/UserGuide/node14.html
+
+#-- sequential --
+
+
+
+#----------------
+#-- code snips --#
+#-- _python --#
+#recursive generators
+#http://linuxgazette.net/100/pramode.html
+#def boostrs(vc):
+#	obsno = len(vc)
+#	i=0
+#	while T:
+#		if i==0:
+#			c0=np.random.choice(vc, size=obsno, replace=True )
+#			yield c0
+#			i = 1;
+#			continue
+#		c1 = np.random.choice(c0, size=obsno, replace=True )	
+#		yield c1
+#		c0,c1 = c1, c1.next()
+#
+#def boostrs2(vc):
+#	obsno = len(vc)
+#	vc = vc[:] #local copy
+#	i=0
+#	if i==0:
+#		c0=np.random.choice(vc, size=obsno, replace=True )
+#		yield c0
+#		i = 1;
+#	c1 = np.random.choice(c0, size=obsno, replace=True )	
+#	yield c1
+#	c0,c1 = c1, c1.next()
+#
+#def boostvc( dt, header, samples=100 ):
+#	#1x100 array [mean,std]
+#	for vc in header:
+#		bvc = 'boost' + vc 
+#		bvc = [];
+#		for s in range(samples):
+#			rs = boostrs2(dt[vc])
+#			rsmean = rs.mean() # np.mean(rs, axis=0)
+#			rsstd = rs.std() # np.std(rs, axis=0)
+#			bvc.append([rsmean, rsstd])
+#
+#iv6 = ['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']
+#boostvc(th_data, header=iv6)
+
+# - parse time
+#--TODO-----
+# -- avg time (dt1,dt2,dt3) 
+# take timedelta of max3 - min3
+# then divide that by 2, add it to min3, convert back to time
+##def avgT(x):
+##	#time delta object has days
+##	return (x['dt1'] + x['dt2'] + x['dt3'] / 3 )
+##th_data['avgT'] = th_data.apply(avgT) #, axis=1)
+##
+##print('$$ ', th_data['avgT'].dytpe )
+# -- parse date time
+#print 'date ', th_data['dt1'].head()
+#th_data['dt1'] = th_data['dt1'].apply( lambda x: dateutil.parser.parse(x ) )
+#pd.to_datetime( th_data['dt1'] )
+#print ('&&dt ', th_data['dt1'].dtype, type(th_data['dt1']) )
+#-----------
+
+#-- _pandas ---
+#booststrapping private
+#---private data-----
+#bootstrap data make private
+#http://healthyalgorithms.com/2013/10/08/statistics-in-python-bootstrap-resampling-with-numpy-and-optionally-pandas/
+ 
+#fatigue overtreatment
+ #http://www.healthmetricsandevaluation.org/news-events/seminar/overdiagnosed-making-people-sick-pursuit-health
+#-- test merge vitals and metadata
+##vtl = pd.DataFrame({'subject_id': range(10), 'vals':np.random.randn(10)})
+##gndr = [ random.choice(['M','F']) for i in range(10)]
+##sid = range(10)
+##meta = pd.DataFrame(gndr, index=sid, columns=['sex'])
+##vtl = vtl.join(meta, on='subject_id')
+
+# melt to long format
+#th_data = pd.melt(th_data, value_vars=[('sys','dia','hr1','ox','hr2','wht')]) 
+#, var_name='vitals', value_name='vals' )
+
+#dataframe
+#th_data = pd.DataFrame(out, columns=header)
+#th_data.columns = header 
+
+#-- _seaborn ---
+#facets
+#g = sns.FacetGrid(tips, row="sex", col="smoker", margin_titles=True, size=2.5)
+#g.map(plt.scatter, "total_bill", "tip", color="#334488", edgecolor="white", lw=.5);
+#g.set_axis_labels("Total bill (US Dollars)", "Tip");
+#g.set(xticks=[10, 30, 50], yticks=[2, 6, 10]);
+#g.fig.subplots_adjust(wspace=.02, hspace=.02);
+
+#context
+#sns.set_context('talk') #paper,notebook,poster
+
+#color
+#sns.set(palette='Set2')
+#sns.set_palette("deep", desat=.6)
+
+#sns.set_style("whitegrid")
+#data = 1 + np.random.randn(20, 6)
+#sns.boxplot(data);
+# test statistic: generalized likelihood ratio
+
+#distrbutions
+
+	#sns.distplot( males['wht'].values, kde=False, fit=stats.lognorm );
+	#sns.distplot( np.log( males['wht'].values), kde=False, fit=stats.norm );
+
+	#genderex = [ 1,1,1,1,1,0,0,0,0,0 ]
+	#hexample = pd.DataFrame({'subject_id': range(10), 'vals':np.random.randn(10), 'gender':genderex})
+	#g = sns.FacetGrid(hexample, col="gender")	
+	#g.map( sns.distplot, "vals", kde=True, fit=stats.lognorm )
+	#print 'gender ', hexample.describe()
+
+#-- _postgresql ---
+
+
+#-- _sql ---
+
+
+
+
+#----------------
+#-- TODO --#
+'''  
+# countdown
+a. alr fatigue, real-time threshold
+b. biosurveillance as prior art
+1. cli: %_method,credible_interval, fft, online(sprt), alert pie{kern-reg, 
+2. weights: make red the hard
+3. bayes: monyhallgame in d3(betty drawing), kreske, event-model:pr(#)+t.t.event
+
+
+# parse the telehealth html files
+~/confs-papers-sldes/DMHI-2012-current/reports/*.html  (51)
+~/confs-papers-sldes/DMHI-2012-current/server-files txt json files incomplete (33)... but may just be due to low data count
+
+~/BOOKS/bk2/BOOKS/kingston082011
+# load pandas --wide-format
+sex, age, date-time, sys,dia,hr1,ox,hr2,wht 
+
+'''
+
+
+
+#----------------
+#-- import --#
+import pylab
+import pandas as pd
+import random
+import csv
+import dateutil
+import os
+import numpy as np
+from operator import add, sub
+from StringIO import StringIO
+import prettytable    
+
+from scipy import stats
+import statsmodels.api as sm
+import scipy  
+import scikits.bootstrap as bootstrap
+from math import log
+from scipy.stats import lognorm, norm
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+from statsmodels.graphics.gofplots import qqplot
+
+
+
+#----------------
+#-- data --#
+# 1.  _telehealth
+#otter_data.py (took parse.py->all.csv {web sql queries} -> all.csv) -> dataframe
+# ~/project/data/load_data_th/reports2/*.txt csv
+header = ['fname','lname', 'dt1', 'sys', 'dia', 'hr1', 'dt2', 'ox', 'hr2', 'dt3', 'wht']
+drcty = '/home/solver/project/data/load_data_th/reports2/'
+
+flw = drcty + 'all.csv'
+if flw !=1:
+	# extract Data: section
+	# Meds: Data: Notes:
+	start = False
+	out = []
+	for fls in os.listdir( drcty):
+		fls = os.path.join(drcty,fls)
+		with open(fls ,'r') as f:
+			rdr = csv.reader(f, delimiter='\t')
+			for row in rdr: 
+				if 'data:' in [r.lower() for r in row]: 
+					start = f.tell()
+					continue
+				if 'notes:' in [r.lower() for r in row]: 
+					start = False
+				if start:
+					out.append(row)
+	# csv writer
+	with open(flw, 'wb') as csvfile:
+		pndwrt = csv.writer(csvfile, delimiter=';')
+		pndwrt.writerows(out)
+	
+# load dataframe from csv
+th_data = pd.read_csv(flw, encoding='latin1', names=header, sep=';', parse_dates=True, dayfirst=False, index_col='dt1')
+th_data.index.names=['realtime']
+
+# clean data --(null) na
+def cleanr(x):
+    if x==r"NULL":
+        return "NaN"
+    else:
+        return x
+th_data = th_data.applymap(lambda x: cleanr(x))
+#any(th_data is "null")
+th_data = th_data.dropna()
+if any( pd.isnull( th_data) ):
+	print 'telehealth not null'
+
+#private (m/f)
+from private import private_data
+th_data = private_data(th_data)
+th_data_stack = th_data.stack()
+
+#clean
+vitalmap={'sys':1, 'dia':2 }	
+
+
+# 2. _mimic2v26
+# flatfiles 1 through 6, can import more records at 
+# /home/solver/MIMIC-Importer-2.6/
+#otter_data.py takes ( parse.py->all.csv {web sql queries} -> all.csv ) -> dataframe
+#from otter_data import m2d
+#mc_data = m2d()
+from mimic_pandas import mimicpostgresql
+
+# a. mimic_pandas.py queries postgresql -> write to csv
+drcty2 = '/home/solver/project/data/'
+mimicfile = drcty2 + 'mimic2v26_1_6.csv'
+
+# load directly (+ query also)
+#mc_data = mimicpostgresql()
+if not os.path.exists( mimicfile ) :
+	print '\n:::you are querying the database:::\n'
+	#dataframe from postgresql
+	dt = mimicpostgresql()
+	dt.to_csv(mimicfile, sep='\t', encoding='utf-8')
+if os.path.exists( mimicfile ):
+	print '\nmimic file exists, not querying\n '
+
+# b. load (pre-query) csv to pandas
+hdr =['index','subject_id','sex','dob','dod','hospital_expire_flg', \
+	         'itemid', 'description', 'charttime', 'realtime', 'value1num',\
+	          'value1uom', 'value2num','value2uom']
+##MCD##	
+mc_data = pd.read_csv("./data/mimic2v26_1_6.csv",encoding='utf-8',names=hdr,sep='\t',skiprows=1, index_col='realtime', parse_dates=True, \
+		dayfirst=False, nrows=5000)
+mc_data.index.names=['realtime']
+
+# clean data --(null) na
+if any( pd.isnull( mc_data) ):
+	print '\nmimic null \n'
+
+
+# 4. bootstrap values for data sharing
+
+
+
+
+#----------------
+#--- summary ---#
+# - _time intervals
+def census(dt):
+	'''
+		dt is the merged frame thmi
+		shows frequencies and change in any-values
+		mimic is irregular and goes to final reading
+	'''
+	#check diff from prior reading hr
+	ts = dt.groupby(['subject_id','variable'])['value']
+	ts = dt[dt['variable']=='hr']
+	#ts = dt
+	percent = ts/ ts.shift - 1 #%shift	
+	mu = percent.mean()
+	std = percent.std()
+	sm = mu-std; lg = mu+std
+
+	chk = lambda x: x<sm and 'small' or x>lg and 'large' or 'medium'
+	ts['delta'] = ts['value'].map(chk )
+	pri('delta',ts['delta'].head() )
+
+	#assign frequency[0,1,2,3,4,,5]
+	grpt = dt.groupby('subject_id').index
+	fr = lambda x: x.days
+	vc = fr.value_counts()
+	daymatch = lambda x: x.days == vc.index and vc
+
+	ts['frequency'] = ts['realtime'].map( daymatch )
+	ts.unstack()
+	#sns plot
+	sns.factorplot("delta", data=ts,row="frequency",\
+			        hue="source",\
+					x_order=list('large','medium','small') )
+
+
+
+def timeplotH(dt, title='mimic'):
+	#group subject_id
+	# -- reset index
+	dt.reset_index(inplace=True)
+	dt['realtime'] = dt['realtime'].apply(pd.to_datetime )   
+	#print 'type ', dt.dtypes 
+	#print type(dt.realtime)
+
+	# --  min, max timestamps
+	grpt = dt.groupby('subject_id')['realtime']
+	subj_min  = grpt.min() ; 
+	subj_max  =  grpt.max() ;
+	descr = grpt.describe() #df['delta'] = (df['tvalue']-df['tvalue'].shift()).fillna(0)
+	
+	
+	# subject min max 
+	mn = subj_max - subj_min
+	intdy = mn.map(lambda x: int(x.days) < 7 and 7 or int(x.days) < 365 and int(x.days) or int(0) )
+	
+	#mean stats
+	mm = mn.map(lambda x: int(x.days) )
+	mu = mm.mean()
+	ms = mm.std()
+	#print('day as int**: ', mm, mu, ms )
+	#print('#deltaT', mn) #print('days ', mn.map(type) ) 
+	
+	#global min max
+	# -- y is number of subjects, 
+	y = list( xrange( dt.subject_id.nunique() ) )
+	y=np.asarray(y)
+	print ' y type ', type(y)
+	# -- x is days int 
+	mmin = dt.realtime.min();
+	mmax = dt.realtime.max()
+	mlen = mmax - mmin;
+	totdys = int(mlen.days)
+	
+	#plot model:: [mmin ..  (min ..  x1/2 .. max) .. mmax]
+	subrange = subj_min - mmin
+	subrdays = subrange.map(lambda x: int(x.days) )   #print('##! ', len(subrdays), subrdays[:10]) 
+	x5raw = subrdays + intdy/2
+	x5raw.sort()
+	x5 = x5raw.map(lambda x: x%365 )  #int(x) < 365 and int(x) or int(365/2))
+	
+	# plot dashed year-lines
+	# -- use x5raw as no of days -> year 
+	x55 = x5raw.copy()
+	
+	#chop up the x55 days
+	x55.sort() 
+	xdz = [ d/365 for d in x55]
+	yrs = []; xz =0
+	for i,x in enumerate(xdz):
+		if x != xz:
+			yrs.append(i)
+			xz=xz+1
+		
+	#print x55
+	#print('###chopped ', xdz )
+	#print('###years ', yrs )
+
+	#gender
+	#yf = dt[dt['gender']=='Female']
+	##yf = list( xrange( yf.subject_id.nunique() ) )
+	##yf = np.asarray(yf)
+
+	#print 'yf ',len(yf) #yf[:10]
+	#print ' ## x5 ', x5[:10], x5.values[:10], len(x5)
+	#print ' ## y ' , y[:10], len(y)
+	#set female index to its number
+	#findex = [ i for i,v in enumerate(y[female]) if v ]
+	#x5v = x5.values
+	#print '$x5 vals ', x5v[:10], x5v[female][:10]
+	#fval = [ v for i,v in enumerate(x5v[female]) if v ]
+	#print '\nfindex, fval ', findex[:10], fval[:10] 
+
+	# plot
+	sns.axes_style("darkgrid")
+	sns.set_palette("deep", desat=.6)
+	
+	fig, ax = plt.subplots()
+	ax.errorbar( x5, y, xerr=intdy, fmt='ok', ecolor='grey',elinewidth=2, alpha=0.4)
+#	ax.errorbar( fval, findex, xerr=intdy, fmt='ok', ecolor='seagreen',elinewidth=2, alpha=0.4)
+#	ax.plot( x5, y, marker='o', color='seagreen',alpha=0.2)
+	ax.set_xlabel("365_days, day_range");ax.set_ylabel("subjects incr_by_year");
+	ax.set_title(r'$%s \/\ days : \/\ \mu = %0.0f ,\/\ \sigma = %0.0f$' % (title, mu , ms), fontsize=25)
+	ax.set_xlim(0,400 )
+	plt.show()
+	#for i,x in enumerate(xdz):
+	#   ax.plot( [0,i] , [365,i], 'k_', lw=1 )
+	#   ax.text(1, -0.6, r'$\sum_{i=0}^\infty x_i$', fontsize=20)
+	#for i,y in enumerate(yrs):
+	#	ax.text(-0.1, y, 'year%d' % i, fontsize=12) # ha='center', va='center')	
+	#plt.axis=((0,500,0,45))
+	#fig.autofmt_xdate()
+	
+# - normal vs lognormal
+#def vitalsdistplot(dt):
+#	''' male female log-norm fit of vitals '''
+#	#g = sns.FacetGrid(tips, row="sex",col="itemid" hue="itemid")
+#	#g.map(
+#	pass
+
+# - _distributions FacetGrid
+def distributionsFG(dt,row="gender",col="variable", val="value"):
+	g = sns.FacetGrid(dt, row=row, hue="gender",col=col, margin_titles=True, xlim=(0,300), ylim=(0,0.05), despine=True )
+	g.map( sns.distplot, val , kde=False, fit=stats.norm, 
+			kde_kws={"color": "seagreen", "lw": 3, "label": "KDE"}, 
+			hist_kws={"histtype": "stepfilled","alpha":0.7},
+			fit_kws={"color":".2", "lw": 3}
+			); 
+	plt.show()
+	#stats.pearsonr
+	#g.map(sns.kde
+	#g.set_axis_labels("Total bill (US Dollars)", "Tip");
+	#g.set(xticks=[10, 30, 50], yticks=[2, 6, 10]);
+	#g.fig.subplots_adjust(wspace=.02, hspace=.02);
+
+
+	#malesgrp = males.groupby('subject_id')['whtlog'].values
+	#print 'data ', maleid19['wht'].values
+	#sns.kdeplot(maleid19['wht'].values)
+#	log
+#	#100x27
+#	smp = [  [w[ np.random.randint(1,len(w)) ] for (w) in malesgrp ] for i in range(100) ] 
+#	print 'smple ', len(smp)
+#	smple = np.asarray( smp)
+#	print 'type *', type(smple)#, smple.dtypes
+
+def lognormal(x,sex='male'):
+	''' fits data to log-distribution, with fixed parameters '''
+	#1.explicit(take log(x) and get m,s); 2.fit a normal distribution to log(x); 3.fit x to lognormal distribution
+	#ddof=1 uncensored, uses unbiased estimator(expected err=0)
+	x = x['wht'].values
+	def lognfit(x, ddof=0):
+		x = np.asarray(x)
+		logx = np.log(x)
+		mu = logx.mean()
+		sig = logx.std(ddof=ddof)
+		return mu, sig
+	#lognorm
+	mean, stddev = lognfit(x)
+	print '** std, men **', stddev, mean
+	dist = lognorm([stddev],loc=mean)
+	#fit
+	shape,loc, scale = lognorm.fit(x, floc=0)
+	d2 = lognorm([scale], loc=loc)
+	#plot
+	fig, ax = plt.subplots(1, 1, figsize=(6, 5))
+	xi=np.linspace(0,10,5000)
+
+	#fit
+	plt.plot(xi,d2.pdf(xi), label='log norm fitted')
+	
+	#original
+	ln = len(x)+1
+	#n,bins,patches = 
+	plt.hist( np.log(x) , ln, normed=1, label='sample log(x)' ) 
+	#np.log(x).hist(bins=ln, ax=ax, alpha=.5,normed=1,label='sample,log(x)' )
+	plt.plot(xi,dist.pdf(xi), label='lognorm pdf')
+	plt.plot(xi,dist.cdf(xi), label='lognorm cdf')
+
+	#title
+	ax.set_xlim(4,8 )
+	ax.set_title(r"$lognormal \/\ distribution \/\ weight \/\ %s$" % sex,fontsize=18)
+	plt.legend(loc='upper right')
+	ax.set_ylabel('frequency log(x)')	
+	ax.set_xlabel(r'log(x) n= %d' % ln, fontsize=12)
+#	ax.set_title(r'$%s \/\ days : \/\ \mu = %0.0f ,\/\ \sigma = %0.0f$' % (title, mu , ms), fontsize=25)
+	plt.show()
+
+def logfitcdf( dt ):
+	'''
+		plots distribution, and fits
+	   	plots cdf and fit
+	'''
+	#sns.axes_style("darkgrid")
+	sns.set_palette("deep", desat=.6)
+	#sns.set_context(rc={"figure.figsize": (200, 3)})
+	sns.set()
+	#current_palette = sns.color_palette("coolwarm", 7)
+	#sns.set_style("whitegrid")
+	#sns.set_context("notebook")
+	#sns.color_palette("muted", 8)
+	#sns.set_style("dark")
+	#sns.despine(left=True)
+
+	#data
+	dtraw = dt.copy().values.flatten()
+	dtlog = dt['wht'].apply(lambda x:np.log(x) ).values.flatten()
+
+	# Set up the plots
+	f, (ax1, ax2, ax3) = plt.subplots(1,3) 
+	c1, c2, c3 = sns.color_palette("dark", 4)[:3]	
+
+	#linear
+	maxd = dtraw.max()
+	bins = np.linspace(0,maxd, maxd+1)
+	ax1.hist(dtraw, bins/4, normed=True, alpha=0.5, histtype="stepfilled")
+
+	shape, loc, scale = stats.lognorm.fit(dtraw, floc=0) 
+	mu = np.log(scale) 	# Mean of log(X)
+	sigma = shape 		# Standard deviation of log(X)
+	M = np.exp(mu) 		# Geometric mean == median
+	s = np.exp(sigma) 	# Geometric standard deviation
+
+	x = np.linspace( dtraw.min(), dtraw.max(), dtraw.max()+1 )
+	ax1.plot(x, stats.lognorm.pdf(x, shape, loc=0, scale=scale), linewidth=3) 
+
+	ax1.set_xlabel('weight(lbs)')
+	ax1.set_ylabel('P(x)')
+	ax1.set_title('Linear')
+	#leg=ax1.legend()	
+
+	#log
+	maxl = dtlog.max()
+	bins = np.linspace(0,maxl, maxl+1)
+	ax2.hist(dtlog, bins*3, normed=True,alpha=0.3, histtype="stepfilled")
+
+	shape2, loc2, scale2 = stats.lognorm.fit(dtlog, floc=0) 
+	mu = np.log(scale)  # Mean of log(X)
+	sigma = shape 		# Standard deviation of log(X)
+	M = np.exp(mu) 		# Geometric mean == median
+	s = np.exp(sigma) 	# Geometric standard deviation
+
+	x = np.linspace(dtlog.min(), dtlog.max(), num=400)
+	ax2.plot(x, stats.lognorm.pdf(x, shape2, loc=0, scale=scale2), linewidth=3 ) 
+	#sns.kdeplot(dtlog,shade=True,ax=ax2)
+	ax2.set_xlabel('log weight(lbs)')
+	ax2.set_ylabel('P(x)')
+	ax2.set_title('Logs')
+
+	#cdf
+	ecdf = sm.distributions.ECDF(dtlog)
+	x = np.linspace(min(dtlog ), max(dtlog ))
+	y = ecdf(x)
+	ax3.step(x, y)
+	shape, loc, scale = stats.lognorm.fit(dtlog, floc=0) 
+	ax3.plot(x,stats.lognorm.cdf(x, shape, loc=0, scale=scale), linewidth=3)
+	
+	ax3.set_xlabel('log weight(lbs)')
+	ax3.set_ylabel('$\sum P(x)$')
+	ax3.set_title('Cumulative')
+	f.tight_layout()
+	plt.show()
+
+def logfitcdfold( dt ):
+	'''
+		plots distribution, and fits
+	   	plots cdf and fit
+	'''
+	#data
+	#sns.axes_style("darkgrid")
+	sns.set()
+	current_palette = sns.color_palette("coolwarm", 7)
+	
+	sns.set_style("whitegrid")
+	sns.set_context("notebook")
+	#sns.color_palette("muted", 8)
+	#sns.set_style("dark")
+	#sns.despine(left=True)
+	dtraw = dt.copy().values.flatten()
+	dtlog = dt['wht'].apply(lambda x:np.log(x) ).values.flatten()
+	
+	#plt.figure( figsize=(12,4.5))
+	#raw: hist + fit
+	ax1 = plt.subplot(131)
+	n, bins, patches = plt.hist(dtraw, bins=100, normed=True)
+	#dtraw.hist(bins=100, alpha=.5,label='all male',normed=1) #,cumulative=True)
+
+	shape, loc, scale = stats.lognorm.fit(dtraw, floc=0) # Fit a curve to the variates
+	mu = np.log(scale) # Mean of log(X)
+	sigma = shape # Standard deviation of log(X)
+	M = np.exp(mu) # Geometric mean == median
+	s = np.exp(sigma) # Geometric standard deviation
+
+	x = np.linspace(dtraw.min(), dtraw.max(), num=400)
+	plt.plot(x, stats.lognorm.pdf(x, shape, loc=0, scale=scale), linewidth=2 )
+	ax = plt.gca() # Get axis handle for text positioning
+	txt = plt.text(0.9, 0.9, 'M = %.2f\ns = %.2f' % (M, s), horizontalalignment='right', 
+	                size='large', verticalalignment='top', transform=ax.transAxes)	
+	#plt.xlim(0,150)
+	plt.xlabel('weight(lbs)')
+	plt.ylabel('P(x)')
+	plt.title('Linear')
+	leg=ax1.legend()	
+
+	#log
+	ax1 = plt.subplot(132)
+	n, bins, patches = plt.hist(dtlog, bins=100, normed=True)
+	#dtlog.hist(bins=100, alpha=.5,label='all male',normed=1) #,cumulative=True)
+
+	shape, loc, scale = stats.lognorm.fit(dtlog, floc=0) # Fit a curve to the variates
+	mu = np.log(scale) # Mean of log(X)
+	sigma = shape # Standard deviation of log(X)
+	M = np.exp(mu) # Geometric mean == median
+	s = np.exp(sigma) # Geometric standard deviation
+
+	x = np.linspace(dtlog.min(), dtlog.max(), num=400)
+	plt.plot(x, stats.lognorm.pdf(x, shape, loc=0, scale=scale), 'b', linewidth=2 ) 
+	ax = plt.gca() # Get axis handle for text positioning
+	txt = plt.text(0.9, 0.9, 'M = %.2f\ns = %.2f' % (M, s), horizontalalignment='right', 
+	                size='large', verticalalignment='top', transform=ax.transAxes)	
+	#plt.xlim(0,150)
+	plt.xlabel('log weight(lbs)')
+	plt.ylabel('P(x)')
+	plt.title('Logs')
+	leg=ax1.legend()	
+
+	#cdf
+	ax2 = plt.subplot(133)
+	ecdf = sm.distributions.ECDF(dtlog)
+	x = np.linspace(min(dtlog ), max(dtlog ))
+	y = ecdf(x)
+	ax2.step(x, y)
+	shape, loc, scale = stats.lognorm.fit(dtlog, floc=0) 
+	ax2.plot(x,stats.lognorm.cdf(x, shape, loc=0, scale=scale), '--', linewidth=2)
+	
+	plt.xlabel('log weight(lbs)')
+	plt.ylabel('$\sum P(x)$')
+	plt.title('Cumulative')
+
+	plt.show()
+
+	#x = np.linspace(lognorm.ppf(0.01, s), lognorm.ppf(0.99, s), 100)
+	#plt.plot(x,cum,'r--')
+	#plt.plot(x, lognorm.pdf(x, s), 'r-', lw=5, alpha=0.6, label='lognorm pdf')
+	#rv = lognorm(s)
+	#plt.plot(x, rv.cdf(x), 'k-', lw=2, label='frozen pdf')
+
+def normalfit(x):
+	#normV
+	x = x['wht'].values
+	nm, ns = norm.fit(x)
+	print '** std, men norm **', nm, ns, x[:3]
+	#normdist = norm([ns],loc=nm)
+
+	#plot
+	ln = len(x)+1
+	fig, ax = plt.subplots(1, 1, figsize=(6, 5))
+	xi=np.linspace(0,200,500)
+	plt.hist( x , normed=1, alpha=0.3 ) 
+	#x.hist(bins=ln, ax=ax, alpha=.5,normed=1,label='sample,x' )
+	plt.plot(xi,norm.pdf(xi,loc=nm,scale=ns), label='norm fitted')
+	#plt.plot(xi,norm.pdf(xi), label='norm original')
+	
+	ax.set_title("fit normal distribution",fontsize=18)
+	plt.legend(loc='upper left')
+	plt.show()
+
+def qqlog(x):
+	'''log-norm take log(x)
+		#http://stats.stackexchange.com/questions/77752/how-to-check-if-my-data-fits-log-normal-distribution
+	'''
+	x = x['wht'].values
+	x = np.log(x)
+	print 'x ** ', x
+	qqplot( x , dist=stats.t,line='45', fit=True);
+	pylab.show()
+def qqnorm(x):
+	'''gauss.norm , ks-stat'''
+	x = x['wht'].values
+	print 'x ** ', x
+	qqplot( x , line='45', fit=True);
+	pylab.show()
+	
+		
+# - _jet plot (time ensemble)
+def ensembleaverage(dt):
+	'''
+	time normalized
+	http://nbviewer.ipython.org/github/duartexyz/BMC/blob/master/Ensemble%20average.ipynb
+	'''
+
+# - box-plot {age, pt, demographic, time}
+ 
+
+
+
+#--- alerts --#
+
+# - _rugplot, 
+
+# - _exp_cdf(arrival time)
+
+# - _CI
 # Confidence interval is the mean,variance over a population; so that given 100 random samples and a 95%CI, 5 CIs should be expected to not contain the normal mean(0) variance(1).  Prediction interval is the probability the next point is within the population mean,variance. 
 
-#http://statsmodels.sourceforge.net/devel/examples/generated/example_ols.html	
 def confidenceinterval(dt):
 	'''
+	#http://statsmodels.sourceforge.net/devel/examples/generated/example_ols.html	
 	#http://nbviewer.ipython.org/github/duartexyz/BMC/blob/master/ConfidencePredictionIntervals.ipynb
 	calculate all samples mean, std
 	calculate ci for 1 sample group by subject_id
@@ -546,50 +1213,9 @@ def confidenceinterval(dt):
              fontsize=18)
 	ax.set_xlabel('Sample (with %d observations)' %n, fontsize=18)
 	plt.show()
-
 	
 #confidenceinterval(th_data)
 
-#recursive generators
-#http://linuxgazette.net/100/pramode.html
-#def boostrs(vc):
-#	obsno = len(vc)
-#	i=0
-#	while T:
-#		if i==0:
-#			c0=np.random.choice(vc, size=obsno, replace=True )
-#			yield c0
-#			i = 1;
-#			continue
-#		c1 = np.random.choice(c0, size=obsno, replace=True )	
-#		yield c1
-#		c0,c1 = c1, c1.next()
-#
-#def boostrs2(vc):
-#	obsno = len(vc)
-#	vc = vc[:] #local copy
-#	i=0
-#	if i==0:
-#		c0=np.random.choice(vc, size=obsno, replace=True )
-#		yield c0
-#		i = 1;
-#	c1 = np.random.choice(c0, size=obsno, replace=True )	
-#	yield c1
-#	c0,c1 = c1, c1.next()
-#
-#def boostvc( dt, header, samples=100 ):
-#	#1x100 array [mean,std]
-#	for vc in header:
-#		bvc = 'boost' + vc 
-#		bvc = [];
-#		for s in range(samples):
-#			rs = boostrs2(dt[vc])
-#			rsmean = rs.mean() # np.mean(rs, axis=0)
-#			rsstd = rs.std() # np.std(rs, axis=0)
-#			bvc.append([rsmean, rsstd])
-#
-#iv6 = ['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']
-#boostvc(th_data, header=iv6)
 
 #bootstrap procedure vs t-test
 #*** very good ! http://courses.washington.edu/matlab1/Bootstrap_examples.html
@@ -670,7 +1296,7 @@ def boostci(dt, samples=100):
 	return dtboost
 
 def logboostci(dt, samples=100):
-	''' generates 100 bootstrap samples from observations
+  	''' generates 100 bootstrap samples from observations
 		** 1.log(x) : 2.B[mean +- T*std] 3.vs normal_mean
 		1.x : 2.b[log(mean) +- log(T)*std] 3.vs mean
 	#log-normal is not log of normal, but distribution whose log is normal
@@ -1034,6 +1660,7 @@ def percent_method( empirical_distribution ):
 	print 'ci ', ci
 	return ci
 
+
 def toyplotpm(boostci):
 	# plot 100 total from empirical_distribution
 	n=100; ind = ed[:]
@@ -1058,272 +1685,6 @@ def toyplotpm(boostci):
 	ax.set_xlabel('100 Samples' %n, fontsize=18)
 	
 	plt.show()
-
-
-
-#-----#distributions---------------------------------------------
-#http://pages.stern.nyu.edu/~adamodar/New_Home_Page/StatFile/statdistns.htm#_ftnref2
-
-#stat reference:
-#http://inperc.com/wiki/index.php?title=Elementary_Statistics_by_Bluman
-
-#qq-plot rule out normal
-#ks to see if normal, lognormal, weibull, etc
-#pass gender grouped
-#http://stackoverflow.com/questions/15630647/fitting-lognormal-distribution-using-scipy-vs-matlab?rq=1
-#http://stackoverflow.com/questions/8870982/how-do-i-get-a-lognormal-distribution-in-python-with-mu-and-sigma?lq=1
-#exploratory:
-#http://nbviewer.ipython.org/github/herrfz/dataanalysis/blob/master/week3/exploratory_graphs.ipynb
-
-def lognormal(x,sex='male'):
-	''' fits data to log-distribution, with fixed parameters '''
-	#1.explicit(take log(x) and get m,s); 2.fit a normal distribution to log(x); 3.fit x to lognormal distribution
-	#ddof=1 uncensored, uses unbiased estimator(expected err=0)
-	x = x['wht'].values
-	def lognfit(x, ddof=0):
-		x = np.asarray(x)
-		logx = np.log(x)
-		mu = logx.mean()
-		sig = logx.std(ddof=ddof)
-		return mu, sig
-	#lognorm
-	mean, stddev = lognfit(x)
-	print '** std, men **', stddev, mean
-	dist = lognorm([stddev],loc=mean)
-	#fit
-	shape,loc, scale = lognorm.fit(x, floc=0)
-	d2 = lognorm([scale], loc=loc)
-	#plot
-	fig, ax = plt.subplots(1, 1, figsize=(6, 5))
-	xi=np.linspace(0,10,5000)
-
-	#fit
-	plt.plot(xi,d2.pdf(xi), label='log norm fitted')
-	
-	#original
-	ln = len(x)+1
-	#n,bins,patches = 
-	plt.hist( np.log(x) , ln, normed=1, label='sample log(x)' ) 
-	#np.log(x).hist(bins=ln, ax=ax, alpha=.5,normed=1,label='sample,log(x)' )
-	plt.plot(xi,dist.pdf(xi), label='lognorm pdf')
-	plt.plot(xi,dist.cdf(xi), label='lognorm cdf')
-
-	#title
-	ax.set_xlim(4,8 )
-	ax.set_title(r"$lognormal \/\ distribution \/\ weight \/\ %s$" % sex,fontsize=18)
-	plt.legend(loc='upper right')
-	ax.set_ylabel('frequency log(x)')	
-	ax.set_xlabel(r'log(x) n= %d' % ln, fontsize=12)
-#	ax.set_title(r'$%s \/\ days : \/\ \mu = %0.0f ,\/\ \sigma = %0.0f$' % (title, mu , ms), fontsize=25)
-	plt.show()
-
-
-
-def logfitcdf( dt ):
-	'''
-		plots distribution, and fits
-	   	plots cdf and fit
-	'''
-	#sns.axes_style("darkgrid")
-	sns.set_palette("deep", desat=.6)
-	#sns.set_context(rc={"figure.figsize": (200, 3)})
-	sns.set()
-	#current_palette = sns.color_palette("coolwarm", 7)
-	#sns.set_style("whitegrid")
-	#sns.set_context("notebook")
-	#sns.color_palette("muted", 8)
-	#sns.set_style("dark")
-	#sns.despine(left=True)
-
-	#data
-	dtraw = dt.copy().values.flatten()
-	dtlog = dt['wht'].apply(lambda x:np.log(x) ).values.flatten()
-
-	# Set up the plots
-	f, (ax1, ax2, ax3) = plt.subplots(1,3) 
-	c1, c2, c3 = sns.color_palette("dark", 4)[:3]	
-
-	#linear
-	maxd = dtraw.max()
-	bins = np.linspace(0,maxd, maxd+1)
-	ax1.hist(dtraw, bins/4, normed=True, alpha=0.5, histtype="stepfilled")
-
-	shape, loc, scale = stats.lognorm.fit(dtraw, floc=0) 
-	mu = np.log(scale) 	# Mean of log(X)
-	sigma = shape 		# Standard deviation of log(X)
-	M = np.exp(mu) 		# Geometric mean == median
-	s = np.exp(sigma) 	# Geometric standard deviation
-
-	x = np.linspace( dtraw.min(), dtraw.max(), dtraw.max()+1 )
-	ax1.plot(x, stats.lognorm.pdf(x, shape, loc=0, scale=scale), linewidth=3) 
-
-	ax1.set_xlabel('weight(lbs)')
-	ax1.set_ylabel('P(x)')
-	ax1.set_title('Linear')
-	#leg=ax1.legend()	
-
-	#log
-	maxl = dtlog.max()
-	bins = np.linspace(0,maxl, maxl+1)
-	ax2.hist(dtlog, bins*3, normed=True,alpha=0.3, histtype="stepfilled")
-
-	shape2, loc2, scale2 = stats.lognorm.fit(dtlog, floc=0) 
-	mu = np.log(scale)  # Mean of log(X)
-	sigma = shape 		# Standard deviation of log(X)
-	M = np.exp(mu) 		# Geometric mean == median
-	s = np.exp(sigma) 	# Geometric standard deviation
-
-	x = np.linspace(dtlog.min(), dtlog.max(), num=400)
-	ax2.plot(x, stats.lognorm.pdf(x, shape2, loc=0, scale=scale2), linewidth=3 ) 
-	#sns.kdeplot(dtlog,shade=True,ax=ax2)
-	ax2.set_xlabel('log weight(lbs)')
-	ax2.set_ylabel('P(x)')
-	ax2.set_title('Logs')
-
-	#cdf
-	ecdf = sm.distributions.ECDF(dtlog)
-	x = np.linspace(min(dtlog ), max(dtlog ))
-	y = ecdf(x)
-	ax3.step(x, y)
-	shape, loc, scale = stats.lognorm.fit(dtlog, floc=0) 
-	ax3.plot(x,stats.lognorm.cdf(x, shape, loc=0, scale=scale), linewidth=3)
-	
-	ax3.set_xlabel('log weight(lbs)')
-	ax3.set_ylabel('$\sum P(x)$')
-	ax3.set_title('Cumulative')
-	f.tight_layout()
-	plt.show()
-
-
-def logfitcdfold( dt ):
-	'''
-		plots distribution, and fits
-	   	plots cdf and fit
-	'''
-	#data
-	#sns.axes_style("darkgrid")
-	sns.set()
-	current_palette = sns.color_palette("coolwarm", 7)
-	
-	sns.set_style("whitegrid")
-	sns.set_context("notebook")
-	#sns.color_palette("muted", 8)
-	#sns.set_style("dark")
-	#sns.despine(left=True)
-	dtraw = dt.copy().values.flatten()
-	dtlog = dt['wht'].apply(lambda x:np.log(x) ).values.flatten()
-	
-	#plt.figure( figsize=(12,4.5))
-	#raw: hist + fit
-	ax1 = plt.subplot(131)
-	n, bins, patches = plt.hist(dtraw, bins=100, normed=True)
-	#dtraw.hist(bins=100, alpha=.5,label='all male',normed=1) #,cumulative=True)
-
-	shape, loc, scale = stats.lognorm.fit(dtraw, floc=0) # Fit a curve to the variates
-	mu = np.log(scale) # Mean of log(X)
-	sigma = shape # Standard deviation of log(X)
-	M = np.exp(mu) # Geometric mean == median
-	s = np.exp(sigma) # Geometric standard deviation
-
-	x = np.linspace(dtraw.min(), dtraw.max(), num=400)
-	plt.plot(x, stats.lognorm.pdf(x, shape, loc=0, scale=scale), linewidth=2 )
-	ax = plt.gca() # Get axis handle for text positioning
-	txt = plt.text(0.9, 0.9, 'M = %.2f\ns = %.2f' % (M, s), horizontalalignment='right', 
-	                size='large', verticalalignment='top', transform=ax.transAxes)	
-	#plt.xlim(0,150)
-	plt.xlabel('weight(lbs)')
-	plt.ylabel('P(x)')
-	plt.title('Linear')
-	leg=ax1.legend()	
-
-	#log
-	ax1 = plt.subplot(132)
-	n, bins, patches = plt.hist(dtlog, bins=100, normed=True)
-	#dtlog.hist(bins=100, alpha=.5,label='all male',normed=1) #,cumulative=True)
-
-	shape, loc, scale = stats.lognorm.fit(dtlog, floc=0) # Fit a curve to the variates
-	mu = np.log(scale) # Mean of log(X)
-	sigma = shape # Standard deviation of log(X)
-	M = np.exp(mu) # Geometric mean == median
-	s = np.exp(sigma) # Geometric standard deviation
-
-	x = np.linspace(dtlog.min(), dtlog.max(), num=400)
-	plt.plot(x, stats.lognorm.pdf(x, shape, loc=0, scale=scale), 'b', linewidth=2 ) 
-	ax = plt.gca() # Get axis handle for text positioning
-	txt = plt.text(0.9, 0.9, 'M = %.2f\ns = %.2f' % (M, s), horizontalalignment='right', 
-	                size='large', verticalalignment='top', transform=ax.transAxes)	
-	#plt.xlim(0,150)
-	plt.xlabel('log weight(lbs)')
-	plt.ylabel('P(x)')
-	plt.title('Logs')
-	leg=ax1.legend()	
-
-	#cdf
-	ax2 = plt.subplot(133)
-	ecdf = sm.distributions.ECDF(dtlog)
-	x = np.linspace(min(dtlog ), max(dtlog ))
-	y = ecdf(x)
-	ax2.step(x, y)
-	shape, loc, scale = stats.lognorm.fit(dtlog, floc=0) 
-	ax2.plot(x,stats.lognorm.cdf(x, shape, loc=0, scale=scale), '--', linewidth=2)
-	
-	plt.xlabel('log weight(lbs)')
-	plt.ylabel('$\sum P(x)$')
-	plt.title('Cumulative')
-
-	plt.show()
-
-	#x = np.linspace(lognorm.ppf(0.01, s), lognorm.ppf(0.99, s), 100)
-	#plt.plot(x,cum,'r--')
-	#plt.plot(x, lognorm.pdf(x, s), 'r-', lw=5, alpha=0.6, label='lognorm pdf')
-	#rv = lognorm(s)
-	#plt.plot(x, rv.cdf(x), 'k-', lw=2, label='frozen pdf')
-
-
-def normalfit(x):
-	#normV
-	x = x['wht'].values
-	nm, ns = norm.fit(x)
-	print '** std, men norm **', nm, ns, x[:3]
-	#normdist = norm([ns],loc=nm)
-
-	#plot
-	ln = len(x)+1
-	fig, ax = plt.subplots(1, 1, figsize=(6, 5))
-	xi=np.linspace(0,200,500)
-	plt.hist( x , normed=1, alpha=0.3 ) 
-	#x.hist(bins=ln, ax=ax, alpha=.5,normed=1,label='sample,x' )
-	plt.plot(xi,norm.pdf(xi,loc=nm,scale=ns), label='norm fitted')
-	#plt.plot(xi,norm.pdf(xi), label='norm original')
-	
-	ax.set_title("fit normal distribution",fontsize=18)
-	plt.legend(loc='upper left')
-	plt.show()
-
-#http://stats.stackexchange.com/questions/77752/how-to-check-if-my-data-fits-log-normal-distribution
-def qqlog(x):
-	'''log-norm take log(x)'''
-	x = x['wht'].values
-	x = np.log(x)
-	print 'x ** ', x
-	qqplot( x , dist=stats.t,line='45', fit=True);
-	pylab.show()
-def qqnorm(x):
-	'''gauss.norm , ks-stat'''
-	x = x['wht'].values
-	print 'x ** ', x
-	qqplot( x , line='45', fit=True);
-	pylab.show()
-	
-
-#def vitalsdistplot(dt):
-#	''' male female log-norm fit of vitals '''
-#	#g = sns.FacetGrid(tips, row="sex",col="itemid" hue="itemid")
-#	#g.map(
-#	pass
-		
-			
-
 
 
 def radarplot():
@@ -1354,11 +1715,6 @@ def predictioninterval(dt):
 	can use duartexyz or seaborn
 	''' 
 
-def ensembleaverage(dt):
-	'''
-	time normalized
-	http://nbviewer.ipython.org/github/duartexyz/BMC/blob/master/Ensemble%20average.ipynb
-	'''
 
 import ellipsoid     
 def multivariate_prediction_interval(dt):
@@ -1375,6 +1731,7 @@ def multivariate_prediction_interval(dt):
 #dt['cisingle'] = th_data[['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']].apply(lambda x: single(x))
 #print 'SINGLE ', cisingle
 
+#--- _fft --#
 def fft(x):
     def detect_outlier_position_by_fft(signal, threshold_freq=.1, frequency_amplitude=.01):
         fft_of_signal = np.fft.fft(signal)
@@ -1402,6 +1759,7 @@ def fft(x):
 def cp(x):
 	pass
 
+#--- _kern-reg --#
 #kernelregression http://scikit-learn.org/stable/auto_examples/gaussian_process/plot_gp_regression.html#example-gaussian-process-plot-gp-regression-py
 def kernreg(x):
 	pass
@@ -1426,163 +1784,100 @@ def time3d(data):
 	ax.set_zlabel('Z')
 	plt.show()
 
-#----boosting-------------------------------------------------------------------------------------
-#http://www.metacademy.org/graphs/concepts/boosting_as_optimization#focus=boosting_as_optimization&mode=explore
-#http://130.203.133.150/viewdoc/summary;jsessionid=86C1563E69B2FB2794C36B6BE961F95F?doi=10.1.1.170.2812 Fast boosting using adversarial bandits
-#http://stats.stackexchange.com/questions/ask","Adaboost feature weight calculation - Cross Validated - Stack Exchange
-#http://stats.stackexchange.com/questions/40568/adaboost-feature-weight-calculation - Adaboost feature weight calculation - Cross Validated
-#http://stats.stackexchange.com/questions/25699/feature-selection-without-target-variable?rq=1","Feature selection without target variable - Cross Validated
-#http://www.pnas.org/content/105/39/14790.full","Higher criticism thresholding: Optimal feature selection when useful features are rare and weak
-#https://github.com/jbeard4/pySCION/commit/0b09590e8e6561f13e72a874d2ce60c4ed304fb2
-#http://stats.stackexchange.com/questions/23382/best-bandit-algorithmmachine learning - Best bandit algorithm? - Cross Validated
-
-#dataming
-#http://stats.stackexchange.com/questions/1856/application-of-machine-learning-techniques-in-small-sample-clinical-studies?rq=1
-#http://en.wikipedia.org/wiki/Thompson_sampling","Thompson sampling - Wikipedia,
-#http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection?rq=1
-
-#collinearity
-#http://learnitdaily.com/six-ways-to-address-collinearity-in-regression-mVodels/
-
-#-------------------------------------------------------------------------------------------------------------
 
 
 
-#----model reliability----------------------------------------------------------------------------
-#OLS R-language statsmodel
-#http://statsmodels.sourceforge.net/devel/examples/notebooks/generated/robust_models_1.html
-
-# http://en.wikipedia.org/wiki/Micromort
-#datamining hyperloglog (very good)
-#incoming streaming data probabilistic counting by bits not order stats
-#http://research.neustar.biz/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/
-'''
-st like all the other DV sketches, HyperLogLog looks for interesting things in the hashed values of your incoming data.  However, unlike other DV sketches HLL is based on bit pattern observables as opposed to KMV (and others) which are based on order statistics of a stream.  As Flajolet himself states:
-'''
+#----------------
+#--- boosting --#
 
 
-#ML application p >> n
-#refs/papers/applyingMLtoclnical*.pdf victoria stodden stanford 2008
-#http://sparselab.stanford.edu/
 
-#http://nbviewer.ipython.org/github/mwaskom/Psych216/blob/master/week6_tutorial.ipynb
-#http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Compressive_Sampling.ipynb
-#http://nbviewer.ipython.org/url/perrin.dynevor.org/exploring_r_formula_evaluated.ipynb
-#survival curves
-#http://nbviewer.ipython.org/github/CamDavidsonPilon/lifelines/blob/master/docs/Survival%20Analysis%20intro.ipynb
-#psych model weibull distribution**
-#http://nbviewer.ipython.org/github/arokem/teach_optimization/blob/master/optimization.ipynb
-#image models neuro
-#http://nbviewer.ipython.org/github/jonasnick/ReceptiveFields/blob/master/receptiveFields.ipynb
+#----------------
+#--- model --#
 
-#stat basic stats in pandas
-#http://www.randalolson.com/2012/08/06/statistical-analysis-made-easy-in-python/
-#http://people.duke.edu/~ccc14/pcfb/analysis.html
+# - _coefficient plot
 
-#overfitting
-#http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/
+# - _effect size 
 
-#R-formula
-#refs/imm6614.pdf statsmodel patsy R-formula slide30_34
-
-#---disease model--------------------------------------------------------------------------------------------------
-#clustering
-#http://nbviewer.ipython.org/github/herrfz/dataanalysis/blob/master/week4/clustering_example.ipynb
-#http://www.windml.org/examples/visualization/clustering.html
-
-#---bayesian--------------------------------------------------------------------------------------------------------
-#http://nbviewer.ipython.org/github/twiecki/pymc3_talk/blob/master/bayesian_pymc3.ipynb
-# radon example
-#http://nbviewer.ipython.org/github/fonnesbeck/multilevel_modeling/blob/master/multilevel_modeling.ipynb
-'''
-Sound It Out:(math-phonics)
-ditta
-The Probability of A * Probability of new data | A =   P(new data) * P(A|new data)    
+# - _monty hall
 
 
-'''
+#data/otter_bayes.py
+#----------------
+def pri(msg, dt):
+   output = StringIO()
+   dt.to_csv(output)
+   output.seek(0)
+   pt = prettytable.from_csv(output)
+   print '\n**',msg,'\n',pt
 
-
-#normal distribution
-#sns.set_style("whitegrid")
-#data = 1 + np.random.randn(20, 6)
-#sns.boxplot(data);
-# test statistic: generalized likelihood ratio
-
-
-#--------------------------------------------------------------
 def main():
-	#data
-	#gendergroup = th_data.groupby(['gender','subject_id'])['wht']
+#-format data for fnc------------------------------------------------------
+	#format
+	# -- gender
+	th_data['gender'] = th_data['gender'].apply(lambda x:x==' m' and str('Male') or str('Female') )
+	mc_data['gender'] = mc_data['sex'].apply(lambda x:x=='M' and str('Male') or str('Female') )
 
-	gender = th_data[th_data['gender']==' m']	##SELECT GENDER
+	# -- source
+	th_data['source'] = th_data['subject_id'].map(lambda x: 'telehealth') 
+	mc_data['source'] = mc_data['subject_id'].map(lambda x: 'mimic') 
+
+	# -- age time-delta days
+	#def age(x):
+	#	d = x.to_datetime(['dod']) - x.to_datetime(['dob'])
+	#	return d.days%365
+	#print 'type ',  type( mc_data['dod'] )
+	#mc_data['age'] = mc_data.apply(age) 
+	pri('telehealth', th_data.head() )
+	pri('mimic', mc_data.head() )
+
+	#melt to long-form
+	thm = th_data.reset_index(drop=True)
+	pri('telehealth dropped', th_data.head() )
+	thd = thm.drop(['dt2','dt3'],axis=1 ) #,inplace=True)
+	thmelt = pd.melt(thd, id_vars=['subject_id','gender','source']) #,var_name=['itemid'] )
+	thmelt['value'].map(lambda x : np.log(x) )
+	pri('th long', thmelt.head())
+
+	#mimic(long default) , merge
+	mcm = mc_data.reset_index(drop=True)
+	mc_data['variable']=mc_data['itemid'].map(lambda x:x)
+	mc_data['value']=mc_data['value1num'].map(lambda x:x)
+	mcd = mc_data.drop(['itemid','value1num','value2num','index','charttime','sex','dob','dod','hospital_expire_flg','description','value1uom','value2uom'],axis=1 )
+	pri('mimic dropped', mcd.head() )
+
+	mcd = mcd.dropna()
+	if any( pd.isnull( mcd) ):
+		print 'mcd dropped not null'
+	#merge
+	thmi = pd.merge(thmelt,mcd,on=['subject_id','gender','source','variable','value'], how='outer' )
+	pri('merged', thmi.head() )
+
+
+	#gender	 
+	gender = th_data[th_data['gender']==' m']	
 	males = gender[['wht','subject_id']];	
 	maleid19 = males[males['subject_id']==19]
 
-	#sns.distplot( males['wht'].values, kde=False, fit=stats.lognorm );
-	#sns.distplot( np.log( males['wht'].values), kde=False, fit=stats.norm );
 
-	#genderex = [ 1,1,1,1,1,0,0,0,0,0 ]
-	#hexample = pd.DataFrame({'subject_id': range(10), 'vals':np.random.randn(10), 'gender':genderex})
-	#g = sns.FacetGrid(hexample, col="gender")	
-	#g.map( sns.distplot, "vals", kde=True, fit=stats.lognorm )
-	#print 'gender ', hexample.describe()
-
-	header = ['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']
-	vitalmap={'sys':1, 'dia':2 }	
-	th_data['gender'] = th_data['gender'].apply(lambda x:x==' m' and str('Male') or str('Female') )
-	th_data.reset_index(drop=True,inplace=True)
-	thd = th_data.drop(['dt2','dt3'],axis=1 ) #,inplace=True)
-
-	print 'th_data\n ', thd.head() 
-
-	#th_melt = th_data.drop('realtime',axis=0)
-	thmelt = pd.melt(thd, id_vars=['subject_id','gender'] ) #, var_name='vitals' )
-	print ' dropped ** ', thmelt.head()
-	thmelt['value'].map(lambda x : np.log(x) )
-
-	#print 'melt\n ' , thmelt.head()
-	#print 'gender type\n ', type(thmelt['value'])
-
-	#pal = dict(Male=
-	g = sns.FacetGrid(thmelt, row="gender", hue="gender",col="variable", margin_titles=True, xlim=(0,300), ylim=(0,0.05), despine=True )
-	g.map( sns.distplot, "value" , kde=False, fit=stats.norm, 
-			kde_kws={"color": "seagreen", "lw": 3, "label": "KDE"}, 
-			hist_kws={"histtype": "stepfilled","alpha":0.7},
-			fit_kws={"color":".2", "lw": 3}
-			); 
-	#stats.pearsonr
-	#g.map(sns.kde
-	#g.set_axis_labels("Total bill (US Dollars)", "Tip");
-	#g.set(xticks=[10, 30, 50], yticks=[2, 6, 10]);
-	#g.fig.subplots_adjust(wspace=.02, hspace=.02);
-
-
-	#malesgrp = males.groupby('subject_id')['whtlog'].values
-	#print 'data ', maleid19['wht'].values
-	#sns.kdeplot(maleid19['wht'].values)
-#	log
-#	#100x27
-#	smp = [  [w[ np.random.randint(1,len(w)) ] for (w) in malesgrp ] for i in range(100) ] 
-#	print 'smple ', len(smp)
-#	smple = np.asarray( smp)
-#	print 'type *', type(smple)#, smple.dtypes
-
-
-
-#--------------------------------------------------------------
-	if(0):
-		#fit lognormal distribution
-		m1 = maleid19.copy()
-		lognormal(m1)
-		normalfit(m1)	
-		qqlog(m1)
-		qqnorm(m1)
-
+#-summary------------------------------------------------------
+	if(1):
 		#average days of sample
 		timeplotH(th_data, title='telehealth')
-#--------------------------------------------------------------
-	if(1):
+		timeplotH(mc_data, title='mimic2')
+		census(thmi)
+		#fit lognormal distribution
+		#distributionsFG(thmi,row='source',col='variable', val='value')
+
+
+		##m1 = maleid19.copy()
+		##lognormal(m1)
+		##normalfit(m1)	
+		##qqlog(m1)
+		##qqnorm(m1)
+
+#-alerts--------------------------------------------------------
+	if(0):
 		m2 = maleid19.copy()
 		logfitcdf(males)
 		exit(0)
@@ -1602,7 +1897,12 @@ def main():
 
 		#ci = percent_method(empirical_distribution)
 		#toyplotpm(ci)
-#--------------------------------------------------------------
+
+#-boosting-----------------------------------------------------
+
+#-hypothesis model---------------------------------------------
+
+#-bayes---------------------------------------------
 	
 
 if __name__=="__main__":
