@@ -684,42 +684,107 @@ if any( pd.isnull( mc_data) ):
 # 4. bootstrap values for data sharing
 
 
+	#get counts for each day by subject_id in column value
+	#resample
+	##cn = cn.groupby(['subject_id']).resample('D',how='count')
+	##print 'resampled', cn.head()
+	##
+	###reset_index
+	##cn = cn.reset_index()
+	##print 'wrk_a ', cn.head()
+	##cn.columns = cn.columns.get_level_values(0)
+	##print 'set level ', cn.head()
+	##print 'cols', cn.columns['level_1']
+	##exit(0)
+	##cn = cn.columns.droplevel(0)
+	##print 'wrk_a ', cn.head()
+	##cn=cn.unstack()
+	##print 'wrk ', cn.head()
+	##frequency = cn2['value']
+	##print 'yo ',frequency[:10] #cnt['value'][:10]
+	#cn2.columns = cn2.columns.droplevel(0)
+	#cn2 = cn2.reset_index()
+	#cnt = cnt.unstack() #first level
+	#cnt = cnt.unstack('subject_id') #subject id groups
 
 
 #----------------
 #--- summary ---#
 # - _time intervals
 def census(dt):
+	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
+	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
+	#http://stackoverflow.com/questions/23530665/count-the-number-of-observations-that-occur-per-day
 	'''
-		dt is the merged frame thmi
+		dt is telehealth long
+		plots factorplot with col=frequency and rows=delta percent
 		shows frequencies and change in any-values
 		mimic is irregular and goes to final reading
 	'''
-	#check diff from prior reading hr
-	ts = dt.groupby(['subject_id','variable'])['value']
-	ts = dt[dt['variable']=='hr']
-	#ts = dt
-	percent = ts/ ts.shift - 1 #%shift	
-	mu = percent.mean()
-	std = percent.std()
+	#input: format the data
+	dt = dt.drop(['gender','source'],1)
+	pri('input',dt.head() )
+
+	#counts format
+	fr = dt.drop_duplicates(['realtime','subject_id','variable']) 
+	fr = fr.set_index(['realtime','subject_id','variable'])
+	fr3 = fr.copy()
+	fr3 = fr3.unstack() #unstacks variable(last is default) 
+	fr3.columns = fr3.columns.droplevel(0) #flattens index
+	fr3 = fr3.reset_index()
+	fr3['realtime'] = pd.to_datetime( fr3['realtime'] )
+	pri('fr3',fr3.head() )
+	print '$$$ dropped', len(dt), len(fr)
+	
+	#counts
+	cn = fr3.copy()
+	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
+
+	#group by --or frequency goes up to like 12
+	cn = cn.set_index('realtime').groupby(['subject_id']).resample('D',how='count')
+	pri( 'cn',cn.head(10) )
+	cn = cn.unstack()
+	cn = cn.reset_index(drop=True)
+	pri('resampled', cn[:10] )
+	print len( cn[cn['freq']>3] ), len(cn)
+	print 'mean', cn['freq'].mean()
+
+	#delta (percent change) by subject_id
+	#just have to get the value change for HR1
+	th= fr3.copy()
+	#raw data long form
+	#th = dt.copy()
+	print('fr3\n ', fr3.head(10))
+	th = th.set_index('realtime') #.groupby('subject_id')
+	pri('th ', th.head(5) )
+	th['percent'] = th['hr1']/th['hr1'].shift(1) - 1 #%shift	
+	pri('percent ', th['percent'][:5] )
+
+	mu = th['percent'].mean()
+	std = th['percent'].std()
 	sm = mu-std; lg = mu+std
+	print 'sm lg ', sm, lg
+	chk = lambda x: x<sm and 'small'\
+		   			or x>lg and 'large'\
+				   	or 'medium'
 
-	chk = lambda x: x<sm and 'small' or x>lg and 'large' or 'medium'
-	ts['delta'] = ts['value'].map(chk )
-	pri('delta',ts['delta'].head() )
+	th['delta'] = th['percent'].map(chk)
+	th=th.reset_index()
+	pri('delta', th.head() )
+	#print th[th['delta']=='large'][:10]
 
-	#assign frequency[0,1,2,3,4,,5]
-	grpt = dt.groupby('subject_id').index
-	fr = lambda x: x.days
-	vc = fr.value_counts()
-	daymatch = lambda x: x.days == vc.index and vc
+	#merge on realtime diff lengths
+	mrg = pd.merge(cn,th,left_index=True,right_index=True)
+	pri('mrg',mrg.head())
+	print mrg[mrg['delta']=='large'][:10]
+	print('len', len(cn), len(th) )
+	print('len mrg ', len(mrg) )
 
-	ts['frequency'] = ts['realtime'].map( daymatch )
-	ts.unstack()
-	#sns plot
-	sns.factorplot("delta", data=ts,row="frequency",\
-			        hue="source",\
-					x_order=list('large','medium','small') )
+	#sns plot ['delta'] ['freq']
+	sns.factorplot("freq", data=mrg,row="delta",\
+				margin_titles=True, aspect=3, size=2, palette="BuPu_d");	
+	plt.show()
+				#	x_order=list('large','medium','small') )
 
 
 
@@ -1832,10 +1897,10 @@ def main():
 	pri('mimic', mc_data.head() )
 
 	#melt to long-form
-	thm = th_data.reset_index(drop=True)
+	thm = th_data.reset_index(drop=False) #dont drop realtime
 	pri('telehealth dropped', th_data.head() )
 	thd = thm.drop(['dt2','dt3'],axis=1 ) #,inplace=True)
-	thmelt = pd.melt(thd, id_vars=['subject_id','gender','source']) #,var_name=['itemid'] )
+	thmelt = pd.melt(thd, id_vars=['subject_id','gender','source','realtime']) #,var_name=['itemid'] )
 	thmelt['value'].map(lambda x : np.log(x) )
 	pri('th long', thmelt.head())
 
@@ -1863,9 +1928,12 @@ def main():
 #-summary------------------------------------------------------
 	if(1):
 		#average days of sample
-		timeplotH(th_data, title='telehealth')
-		timeplotH(mc_data, title='mimic2')
-		census(thmi)
+		#timeplotH(th_data, title='telehealth')
+		#timeplotH(mc_data, title='mimic2')
+		census(thmelt)
+		#distplot
+		#cdfthmm
+
 		#fit lognormal distribution
 		#distributionsFG(thmi,row='source',col='variable', val='value')
 
