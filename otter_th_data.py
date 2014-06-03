@@ -175,6 +175,8 @@
 #---alerts-----------------------------------------------------------------------------------------------------------------------------<
 
 '''
+#python module for anomaly detection
+#https://github.com/mihaibivol/Graphite-Anomaly-Detector/
 #median-deviation
 #http://stackoverflow.com/questions/22354094/pythonic-way-of-detecting-outliers-in-one-dimensional-observation-data
 #power-law
@@ -502,6 +504,7 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 #th_data.columns = header 
 
 #-- _seaborn ---
+#http://stackoverflow.com/questions/22637547/what-was-the-default-color-palette-for-images-in-seaborn-version-0-2
 #facets
 #g = sns.FacetGrid(tips, row="sex", col="smoker", margin_titles=True, size=2.5)
 #g.map(plt.scatter, "total_bill", "tip", color="#334488", edgecolor="white", lw=.5);
@@ -566,6 +569,7 @@ sex, age, date-time, sys,dia,hr1,ox,hr2,wht
 #----------------
 #-- import --#
 import pylab
+import math
 import pandas as pd
 import random
 import csv
@@ -574,7 +578,6 @@ import os
 import numpy as np
 from operator import add, sub
 from StringIO import StringIO
-import prettytable    
 
 from scipy import stats
 import statsmodels.api as sm
@@ -583,10 +586,11 @@ import scikits.bootstrap as bootstrap
 from math import log
 from scipy.stats import lognorm, norm
 
+import prettytable    
 import seaborn as sns
 import matplotlib.pyplot as plt
 from statsmodels.graphics.gofplots import qqplot
-
+#http://olgabot.github.io/prettyplotlib/
 
 
 #----------------
@@ -673,7 +677,7 @@ hdr =['index','subject_id','sex','dob','dod','hospital_expire_flg', \
 	          'value1uom', 'value2num','value2uom']
 ##MCD##	
 mc_data = pd.read_csv("./data/mimic2v26_1_6.csv",encoding='utf-8',names=hdr,sep='\t',skiprows=1, index_col='realtime', parse_dates=True, \
-		dayfirst=False, nrows=5000)
+		dayfirst=False, nrows=2000)
 mc_data.index.names=['realtime']
 
 # clean data --(null) na
@@ -711,7 +715,7 @@ if any( pd.isnull( mc_data) ):
 #----------------
 #--- summary ---#
 # - _time intervals
-def census(dt):
+def census_th(dt):
 	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
 	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
 	#http://stackoverflow.com/questions/23530665/count-the-number-of-observations-that-occur-per-day
@@ -740,7 +744,7 @@ def census(dt):
 	cn = fr3.copy()
 	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
 
-	#group by --or frequency goes up to like 12
+	#group by subject_id
 	cn = cn.set_index('realtime').groupby(['subject_id']).resample('D',how='count')
 	pri( 'cn',cn.head(10) )
 	cn = cn.unstack()
@@ -757,7 +761,7 @@ def census(dt):
 	print('fr3\n ', fr3.head(10))
 	th = th.set_index('realtime') #.groupby('subject_id')
 	pri('th ', th.head(5) )
-	th['percent'] = th['hr1']/th['hr1'].shift(1) - 1 #%shift	
+	th['percent'] = th['hr2']/th['hr2'].shift(1) - 1 #%shift	
 	pri('percent ', th['percent'][:5] )
 
 	mu = th['percent'].mean()
@@ -771,21 +775,248 @@ def census(dt):
 	th['delta'] = th['percent'].map(chk)
 	th=th.reset_index()
 	pri('delta', th.head() )
+	th = th.reset_index()
 	#print th[th['delta']=='large'][:10]
 
 	#merge on realtime diff lengths
 	mrg = pd.merge(cn,th,left_index=True,right_index=True)
-	pri('mrg',mrg.head())
-	print mrg[mrg['delta']=='large'][:10]
-	print('len', len(cn), len(th) )
-	print('len mrg ', len(mrg) )
+	#pri('mrg',mrg.head())
+	#print mrg[mrg['delta']=='large'][:5]
+	#print('len', len(cn), len(th) )
+	#print('len mrg ', len(mrg) )
+	#print('merge ', mrg['freq'].values[:5] )
 
 	#sns plot ['delta'] ['freq']
+	sns.set_palette("deep", desat=.6)
 	sns.factorplot("freq", data=mrg,row="delta",\
-				margin_titles=True, aspect=3, size=2, palette="BuPu_d");	
+				margin_titles=True, aspect=3, size=2) #,palette="PuBu") # palette="PuBuGn_d") #, palette="YlGnBu");#"BuPu_d");	
+	sns.jointplot('freq', 'percent', mrg, kind="scatter");
+	#sns.kdeplot(mrg["freq"]) #, cumulative=True ) #, label='mimic2')
 	plt.show()
 				#	x_order=list('large','medium','small') )
 
+def census_mmc(dt):
+	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
+	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
+	#http://stackoverflow.com/questions/23530665/count-the-number-of-observations-that-occur-per-day
+#plt.axvline(p1.mean(), color="r", linewidth=3)
+#overflowerror: float inf to int
+#http://pymotw.com/2/math/
+#http://stackoverflow.com/questions/11548005/numpy-or-pandas-keeping-array-type-as-integer-while-having-a-nan-value
+#http://stackoverflow.com/questions/13413590/how-to-drop-rows-of-pandas-dataframe-whose-value-of-certain-column-is-nan
+#http://stackoverflow.com/questions/12708807/numpy-integer-nan	
+#http://stackoverflow.com/questions/13413590/how-to-drop-rows-of-pandas-dataframe-whose-value-of-certain-column-is-nan
+	'''
+		dt is telehealth long
+		plots factorplot with col=frequency and rows=delta percent
+		shows frequencies and change in any-values
+		mimic is irregular and goes to final reading
+	'''
+	#input: format the data
+	dt = dt.drop(['gender','source'],1)
+	dt = dt.reset_index()
+	pri('input++',dt.head() )
+
+
+	#counts format
+	fr = dt.drop_duplicates(['realtime','subject_id','variable']) 
+	fr = fr.set_index(['realtime','subject_id','variable'])
+	fr3 = fr.copy()
+	fr3 = fr3.unstack() #unstacks variable(last is default) 
+	fr3.columns = fr3.columns.droplevel(0) #flattens index
+	fr3 = fr3.reset_index()
+	fr3['realtime'] = pd.to_datetime( fr3['realtime'] )
+	#pri('fr3',fr3.head() )
+	#print '$$$ dropped', len(dt), len(fr)
+	
+	#counts freq
+	cn = fr3.copy()
+	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
+	#group by subject_id
+	cn = cn.set_index('realtime').groupby(['subject_id']).resample('D',how='count')
+	##pri( 'cn',cn.head(10) )
+	cn = cn.unstack()
+	cn = cn.reset_index(drop=True)
+	##pri('resampled', cn[:10] )
+	##print len( cn[cn['freq']>3] ), len(cn)
+	##print 'mean', cn['freq'].mean()
+	fmean = cn['freq'].mean()
+
+	#delta (percent change) by subject_id
+	#just have to get the value change for HR1
+	th= fr3.copy()
+	#raw data long form
+	#th = dt.copy()
+
+
+	##print('fr3\n ', fr3.head(10))
+	th = th.set_index('realtime') #.groupby('subject_id')
+	##pri('th ', th.head(5) )
+	th['percent'] = th['hr1']/th['hr2'].shift(1) - 1 #%shift	
+	##pri('percent ', th['percent'][:5] )
+
+	mu = th['percent'].mean()
+	std = th['percent'].std()
+	sm = mu-std; lg = mu+std
+	##print 'sm lg ', sm, lg
+	chk = lambda x: x<sm and 'small'\
+		   			or x>lg and 'large'\
+				   	or 'medium'
+
+	th['delta'] = th['percent'].map(chk)
+	th=th.reset_index()
+	##pri('delta', th.head() )
+	th = th.reset_index()
+	#print th[th['delta']=='large'][:10]
+
+	#merge on realtime diff lengths
+	mrg = pd.merge(cn,th,left_index=True,right_index=True)
+	#pri('mrg',mrg.head())
+	#print mrg[mrg['delta']=='large'][:5]
+	#print('len', len(cn), len(th) )
+	#print('len mrg ', len(mrg) )
+	#print('merge ', mrg['freq'].values[:5] )
+	#mrg = mrg.dropna()
+	##mrg = mrg[pd.notnull(mrg['freq'])]
+	##mrg = mrg[pd.notnull(mrg['percent'])]
+	##mrg = mrg[np.isfinite(mrg['freq'])]
+	##mrg = mrg[np.isfinite(mrg['percent'])]
+	if any( pd.isnull( mrg) ):
+		print 'mcd dropped not null'
+
+	#sns plot ['delta'] ['freq']
+	#sns.color_palette("Greens_d")
+#	sns.factorplot("freq", data=mrg,row="delta",\
+#				margin_titles=True, aspect=3, size=2 ) #, palette="Greens_d");#"BuPu_d");	
+
+	###fre = mrg['freq'].values
+	###fre.astype(int)
+	###if any( pd.isnull(fre) ):
+	###	print 'null found here '
+	###print 'fre ', type(fre), fre[:3]
+	###perc = mrg['percent'].values
+	###perc.astype(int)
+	###print 'perc ', type(perc)
+	###peer = map(lambda x: math.isnan(x) and -99999, perc )
+	###percf = [ -99999 if math.isnan(i) else i for i in perc ]
+	###if any( pd.isnull(percf)):
+	###	print 'null found perc '
+	###percf = np.asarray(percf)
+	###print 'percf ', type(percf)
+	###print percf[:3], fre[:3]
+	###mask = np.ma.array(perc,dtype=int)
+	###index =pd.isnull(mrg).any(axis=1)
+	####index = mrg.isnull().any(axis=1)
+	###print 'index ', index[:10]
+	###mask[index] = np.ma.masked
+	###if any(pd.isnull(mask) ):
+	###	print 'mask not working '
+	###print mask[:10]	
+	#perc = np.array( np.isfinite( mrg['percent'].values ).astype(int) )
+	
+
+	#or np.isfinite		
+	mrg = mrg.dropna(subset=['freq','percent'] )
+	#mrg = mrg[pd.notnull(mrg).any(axis=1)].copy()
+	#pri('mrg null?', mrg.head() )
+	#index = pd.isnull(mrg['freq']).any(axis=1)
+	#print index[:10]
+	#print('mrg null', mrg[index].head() )
+	if any( pd.isnull(mrg['freq']) ):
+		print 'mrg freq contains null'
+	elif any( pd.isnull(mrg['percent']) ):
+		print 'mrg percent contains null'
+	else:
+		print 'clear ??'
+	
+	#joint grid
+	g = sns.JointGrid("freq", "percent", mrg , space=0)
+	g.plot_marginals(sns.kdeplot, shade=True)
+	g.plot_joint(plt.scatter, alpha=.7, marker=".", color="#334488", edgecolor="white", lw=.5)
+	#g.annotate(stats.spearmanr, template="{stat} = {val:.3f} (p = {p:.3g})");
+	#g.plot(sns.kdeplot, shade=True, cmap="PuBu", n_levels=20);
+	#g.plot(sns.jointplot);
+	
+	#sns.jointplot('freq', 'percent', mrg, kind="hex");
+	#cdf
+	#sns.color_palette("Set1")
+#	sns.kdeplot(mrg['freq'], cumulative=True, label='telehealth')
+
+
+	#sns.jointplot(mrg['freq'], mrg['percent'],dropna=True ) #, palette="Greens_d");
+	#sns.jointplot('freq', 'percent', mrg, dropna=True) #, kind="kde");
+	#freq = mrg['freq']
+	##sns.kdeplot(freq, cumulative=True ) #, label='mimic2')
+	#percent = mrg['percent']
+	#sns.jointplot("freq", "percent",mrg, kind="hex",dropna=True) #, palette="Greens_d");
+	#sns.jointplot(freq, percent, kind="kde",dropna=True);
+	#sns.jointplot("freq", "percent", mrg,dropna=True);
+#	sns.kdeplot(freq, percent, shade=True);
+	#sns.kdeplot(mrg['freq'],mrg['percent'],shade=True) #,mrg)
+#	ax.set_title(r'$Readings/Day : \/\ \mu = %0.0f ,\/\ hr%Change \/\ \mu = %0.0f$' % (fmean ,mu), fontsize=17)
+	plt.show()
+				#	x_order=list('large','medium','small') )
+
+def census_pmf(dt):
+	''' delta pmf of final week final week p.19
+	'''
+
+
+def census_box(dt):
+	''' box-plot demographics
+	'''
+
+def time_norm(dt):
+	'''thinkstats.pg74 mean testing
+	'''
+
+	#input: format the data input is long
+#subject_id |   source   |         realtime        | variable | value 
+	dt = dt.drop(['gender','index'],1)
+	dt = dt.reset_index()
+	pri('input++',dt.head() )
+	#counts format
+	dt = dt.drop_duplicates(['realtime','source','subject_id','variable']) 
+	dt = dt.set_index(['realtime','source','subject_id','value','variable'])
+	pri('dropped', fr.head() )
+	fr3 = dt.copy()
+	fr3 = fr3.unstack() #unstacks variable(last is default) 
+	fr3.columns = fr3.columns.droplevel(0) #flattens index
+	fr3 = fr3.reset_index()
+	fr3['realtime'] = pd.to_datetime( fr3['realtime'] )
+	#pri('fr3',fr3.head() )
+	##counts freq
+	cn = fr3.copy()
+	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
+	#group by subject_id, source
+	cn = cn.set_index('realtime').groupby(['source','subject_id']).resample('D',how='count')
+	pri( 'cn',cn.head(10) )
+	exit(0)
+	cn = cn.unstack()
+	cn = cn.reset_index(drop=True)
+	pri('resampled', cn[:10] )
+	##print len( cn[cn['freq']>3] ), len(cn)
+	##print 'mean', cn['freq'].mean()
+	fmean = cn['freq'].mean()
+	exit(0)
+
+	#overflow int error
+	mrg = mrg.dropna(subset=['freq'] )
+	if any( pd.isnull(mrg['freq']) ):
+		print 'mrg freq contains null'
+	else:
+		print 'clear ?'
+
+	#groupby source
+	src = mrg.groupby(['source'])['frequency']
+
+	#kdeplot
+
+def censusbox(dt):
+	'''boxplots:
+	average frequency; length of stay; sex,age,geography; 
+	'''
+	pass
 
 
 def timeplotH(dt, title='mimic'):
@@ -1930,7 +2161,9 @@ def main():
 		#average days of sample
 		#timeplotH(th_data, title='telehealth')
 		#timeplotH(mc_data, title='mimic2')
-		census(thmelt)
+		#census_th(thmelt)
+		#census_mmc(mcd)
+		census_cdf(thmi)
 		#distplot
 		#cdfthmm
 
@@ -1971,6 +2204,7 @@ def main():
 #-hypothesis model---------------------------------------------
 
 #-bayes---------------------------------------------
+#http://nbviewer.ipython.org/github/PrincetonPy/Python-Workshop/blob/master/3.Demos.ipynb
 	
 
 if __name__=="__main__":
