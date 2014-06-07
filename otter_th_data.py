@@ -33,7 +33,11 @@
 #-----------------------------------------------------------------------------------------------------------------<
 
 #---industry------------------------------------------------------------------------------------
+#socrata
+#http://www.socrata.com/careers/
 #http://careers.stackoverflow.com/jobs/55871/senior-principal-software-data-engineer-dc-audax-health?a=168IKtple
+#stratosphere
+#http://stratosphere.eu/
 #jobs
 
 #leap motion api to track motion ** project idea ?
@@ -481,6 +485,8 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 #-----------
 
 #-- _pandas ---
+#groupby
+##.get_group('telehealth')
 #booststrapping private
 #---private data-----
 #bootstrap data make private
@@ -568,6 +574,8 @@ sex, age, date-time, sys,dia,hr1,ox,hr2,wht
 
 #----------------
 #-- import --#
+from collections import defaultdict
+import datetime as dtt
 import pylab
 import math
 import pandas as pd
@@ -676,13 +684,57 @@ hdr =['index','subject_id','sex','dob','dod','hospital_expire_flg', \
 	         'itemid', 'description', 'charttime', 'realtime', 'value1num',\
 	          'value1uom', 'value2num','value2uom']
 ##MCD##	
-mc_data = pd.read_csv("./data/mimic2v26_1_6.csv",encoding='utf-8',names=hdr,sep='\t',skiprows=1, index_col='realtime', parse_dates=True, \
-		dayfirst=False, nrows=2000)
-mc_data.index.names=['realtime']
+#2943-02-28 00:00:00
+#    %Y-%m-%d %H:%M:%Sdtt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S'), 
+tparse = lambda x: pd.to_datetime(x, format='%Y-%m-%d %H:%M:%S') #,coerce=True)
+#tparse = lambda x: pd.to_period(x, format='%Y-%m-%d %H:%M:%S') #,coerce=True)
+#mc_data = pd.read_csv("./data/mimic2v26_1_6.csv",\
+#						encoding='utf-8',\
+#						names=hdr,\
+#					   	sep='\t',\
+#						skiprows=1,\
+#						index_col='realtime',\
+#						parse_dates=['realtime'],\
+#						date_parser = lambda x : pd.to_period(x),\
+#						keep_date_col=True,\
+#					   	verbose=True,\
+#					   	nrows=2000)
+#					   	#infer_datetime_format=True) #date_parser=
+#
+#mc_data.index.names=['realtime']
+#print mc_data.tail(200)
+#2943-02-28 00:00:00
+#princeton python plots
+#http://nbviewer.ipython.org/github/PrincetonPy/Python-Workshop/blob/master/3.Demos.ipynb
+#mcmc
+
+mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, nrows=2000, sep='\t')
+year = dtt.timedelta(days=365)
+def shift(x):
+	x=list(x)
+	x[0] = '1'
+	x[1] = '9'
+	x=''.join(x)
+	return x
+	
+mc_data['timeshift'] = mc_data['realtime'].map(lambda x: shift(x) )
+span = pd.period_range('2900-01-01', '3200-01-01', freq='D')
+#g=mc_data.groupby('subject_id')
+#min = mc_data.apply(lambda x: 
+mc_data['timeshift'] = mc_data['timeshift'].apply(tparse)    #  lambda x: pd.to_datetime(x) )
+mc_data = mc_data.reset_index().set_index('timeshift')
+
+
+print mc_data.head()
+#mc_data = mc_data.to_period(freq="min") #freq='D')
 
 # clean data --(null) na
 if any( pd.isnull( mc_data) ):
 	print '\nmimic null \n'
+
+print 'mc_first_read', type( mc_data.index), mc_data.describe(), mc_data.head()
+mc_data.reset_index(inplace=True)
+print 'mc check', mc_data.realtime.apply(type)
 
 
 # 4. bootstrap values for data sharing
@@ -715,6 +767,7 @@ if any( pd.isnull( mc_data) ):
 #----------------
 #--- summary ---#
 # - _time intervals
+#http://wesmckinney.com/blog/?tag=pandas box-plots
 def census_th(dt):
 	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
 	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
@@ -727,7 +780,7 @@ def census_th(dt):
 	'''
 	#input: format the data
 	dt = dt.drop(['gender','source'],1)
-	pri('input',dt.head() )
+	###pri('input',dt.head() )
 
 	#counts format
 	fr = dt.drop_duplicates(['realtime','subject_id','variable']) 
@@ -737,32 +790,41 @@ def census_th(dt):
 	fr3.columns = fr3.columns.droplevel(0) #flattens index
 	fr3 = fr3.reset_index()
 	fr3['realtime'] = pd.to_datetime( fr3['realtime'] )
-	pri('fr3',fr3.head() )
+	###pri('fr3',fr3.head() )
 	print '$$$ dropped', len(dt), len(fr)
 	
 	#counts
 	cn = fr3.copy()
 	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
+	print 'frequency*** ', cn[['freq']][:10]
 
 	#group by subject_id
 	cn = cn.set_index('realtime').groupby(['subject_id']).resample('D',how='count')
-	pri( 'cn',cn.head(10) )
+	###pri( 'cn',cn.head(10) )
+	print 'frequency*** sampled', cn[['freq']][:10]
 	cn = cn.unstack()
+	#cn = cn.reset_index(drop=True)
 	cn = cn.reset_index(drop=True)
-	pri('resampled', cn[:10] )
+	print 'frequency*** ', cn[['freq']][:10]
+##
+	print('resampled', cn[:10] )
+	print '*** len > 3 '	
 	print len( cn[cn['freq']>3] ), len(cn)
+	print '** cn mean ** '
 	print 'mean', cn['freq'].mean()
+	print 'cn describe '
+	print cn.columns
 
 	#delta (percent change) by subject_id
 	#just have to get the value change for HR1
 	th= fr3.copy()
 	#raw data long form
 	#th = dt.copy()
-	print('fr3\n ', fr3.head(10))
+	###pri('fr3\n ', fr3.head(10))
 	th = th.set_index('realtime') #.groupby('subject_id')
-	pri('th ', th.head(5) )
+	###pri('th ', th.head(5) )
 	th['percent'] = th['hr2']/th['hr2'].shift(1) - 1 #%shift	
-	pri('percent ', th['percent'][:5] )
+	###pri('percent ', th['percent'][:5] )
 
 	mu = th['percent'].mean()
 	std = th['percent'].std()
@@ -774,7 +836,7 @@ def census_th(dt):
 
 	th['delta'] = th['percent'].map(chk)
 	th=th.reset_index()
-	pri('delta', th.head() )
+	###pri('delta', th.head() )
 	th = th.reset_index()
 	#print th[th['delta']=='large'][:10]
 
@@ -784,7 +846,7 @@ def census_th(dt):
 	#print mrg[mrg['delta']=='large'][:5]
 	#print('len', len(cn), len(th) )
 	#print('len mrg ', len(mrg) )
-	#print('merge ', mrg['freq'].values[:5] )
+	print('merge frequency column **&&^% ', mrg['freq'].values[:5] )
 
 	#sns plot ['delta'] ['freq']
 	sns.set_palette("deep", desat=.6)
@@ -815,7 +877,7 @@ def census_mmc(dt):
 	#input: format the data
 	dt = dt.drop(['gender','source'],1)
 	dt = dt.reset_index()
-	pri('input++',dt.head() )
+	#pri('input++',dt.head() )
 
 
 	#counts format
@@ -957,9 +1019,383 @@ def census_mmc(dt):
 	plt.show()
 				#	x_order=list('large','medium','small') )
 
-def census_pmf(dt):
+def census_pmf(d2,m2):
 	''' delta pmf of final week final week p.19
+	http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
+	# input merge data(long) -> groupby object over subject_id and source -> get hr2 over last week_range
+	# the two pmf dicts (lenght is 7days of week)
 	'''
+	source = ['telehealth']
+	th_pmf = defaultdict(list);
+	mm_pmf = defaultdict(list);
+	for si,s in enumerate(source): 
+		if si==0:
+			print '-- setting telehealth'
+			dt=d2.copy()
+			dt = dt[ dt['source']=='telehealth' ]
+			print 'check no mimic', len( dt[ dt['source']=='mimic' ] )
+
+			dt = dt.dropna()
+			print 'check no mimic', len( dt[ dt['source']=='mimic' ] )
+			if any( pd.isnull( dt ) ):
+				print 'not null'
+				##pri('dt dropped na', dt.head() )
+			##pri('tele', dt[ dt['variable']=='hr2'][:5] )
+			pmf=th_pmf; #set dictionary
+		elif si==1: 
+			print '-- setting mimic'
+			m2 = m2.reset_index()
+			m2['realtime'] = pd.to_datetime( m2['realtime'] )
+			dt=m2.copy()	
+			print 'len ', len(d2[['realtime']])
+			dt = dt[ dt['source']=='mimic' ]
+			print 'mimic d2 first', len( d2[ d2['source']=='mimic' ] )
+			##pri('mimic', dt.head() )
+			pmf=mm_pmf #set mimic dictionary
+
+		
+		dt = dt.drop(['gender'],1)
+		dt['realtime'] = pd.to_datetime( dt['realtime'] )	
+		print 'time type ', type(dt['realtime'] )
+		th = dt.copy()  
+		th2 = th.reset_index(drop=True).drop_duplicates(['source','realtime','subject_id','variable']) 
+
+		th2 = th2.set_index(['source','realtime','subject_id','variable'])
+		th2 = th2.unstack()
+		print 'unstack worked ** '
+		th2.columns = th2.columns.droplevel(0)
+		th2 = th2.reset_index()
+
+		# select last week
+		#g = th2.groupby(['subject_id','source'])
+		if si==0:
+			g = th2.groupby(['subject_id'])
+			print 'telehealth group'
+		elif si==1:
+			g=th2
+
+		lastwk = g.apply(lambda x: x[ x['realtime'] > (x['realtime'].iloc[-1] - dtt.timedelta(7)) ])
+		last = lastwk[['realtime','hr2']]
+		#print last.head(10)
+
+		# -- deprecated --
+		#function to apply to last cross-section 
+		#def daynumber(x,srcdict=teleweek):	
+		# 	delta = dtt.timedelta(days =1)
+		#	day0 = x.applymap(lambda x: x['realtime'].iat[0])
+		#	day1 = x.applymap(lambda x: x['realtime'].iat[-1])
+		#	week = zip(day0,day1)
+		#	for s,e in week:
+		#		d=0
+		#		while s < e:
+		#			#get all row at day
+		#			val = last[ last['realtime']==s ]
+		#			vals = val['hr2'].values
+		#			#h1 = np.histogram( vals, normed=0)[0] / float( len(vals) )
+		#			srcdict[d].append(vals)
+		#			s += delta; 
+		#			d += 1
+		
+		#http://stackoverflow.com/questions/14734533/how-to-access-pandas-groupby-dataframe-by-key
+		#http://stackoverflow.com/questions/11720334/selecting-data-from-pandas-panel-with-multiindex
+		##### groupby creates key:val for that groups unique 
+		# -- xs just selects a subset, no changes to key,val grouping
+		# --  groupby by level, key=level, val=sub select
+		try:
+#			###tle = last.xs(s,level=1) #level 1 = 'source' s=telehealth or mimic
+			###tle = tle.groupby(level=0) #level=0 is subject_id ;  
+			tle = last.groupby(level=0)
+		except(KeyError):
+			print 'source(mimic) not found'
+			break;
+
+		#create pmfs for each day of week	
+		for k,v in tle:
+			#k is subject id
+			v['realtime'] = v['realtime'].map(lambda x:x.date() )
+			wkds = v['realtime'][:]    #[0]#,v[1][:] #grouped items are 
+			wkset = set(wkds)
+	
+			week = v['realtime'][-1]
+			delta = dtt.timedelta(days=1)
+			w = week - (delta*7)
+			deltas = [week - dtt.timedelta(days=i) for i in reversed(range(0,8)) ]
+			dmap = dict( zip(deltas,range(0,len(deltas)) ))
+			#print 'the weekset ', wkset
+			#print 'tvals ', v['hr2'].values
+			for w in wkset:
+				#print 'w ',k, w
+				vitals = v[ v['realtime']==w ]['hr2'].values
+				#print 'vitals ', vitals
+				#print dmap[w]
+				pmf[ dmap[w] ].append(vitals)
+		print( 'dict', th_pmf[6])
+	return th_pmf
+
+	#generate histogram
+#	http://stackoverflow.com/questions/11750276/matplotlib-how-to-convert-a-histogram-to-a-discrete-probability-mass-function
+	#http://stackoverflow.com/questions/19584029/plotting-histograms-from-grouped-data-in-a-pandas-dataframe
+	exit(0)
+	# multilevel index select
+	print lastwk.columns.names
+	tele = lastwk.xs('telehealth',level='source',axis=1 )
+	mimi = lastwk.xs('mimic',level='source',axis=1 )
+	print 'multilevel ', tele[:2], mimi[:2] 
+	exit(0)
+	hist.columns = hist.columns.droplevel(0)
+	hist = hist.reset_index()
+	##pri('hist ',hist.head() )
+
+	tele = tail[ tail['source']=='telehealth' ] #.get_group('telehealth')
+	telehr2 = tele[['hr2']]
+	print 'tele hr2 col ', telehr2.head()
+	
+	mimi = tail[tail['source']=='mimic'] #.get_group('telehealth')
+	mimihr2 = mimi[['hr2']]
+
+	t2 = tele['hr2'].values; m2 = mimi['hr2'].values
+	h1=np.histogram(t2,normed=0)[0]/float(len(t2))
+	h2=np.histogram(m2,normed=0)[0]/float(len(m2))
+	print 'histos ', h1[:10], h2[:10]
+	ha =100*(h1-h2)
+	hb =100*(h2-h1)
+	ab = np.concatenate( (h1,h2),axis=0 )
+	print len(m2), len(t2)
+	#plt.hist(h2,bins=20,normed=0)
+	#plt.hist(h1,normed=0)
+	plt.hist(hb,bins=20,normed=0)
+	print h1[:5], h2[:5]
+	plt.show()
+	#pmft = tele.hist[0]/len(tele)
+	#pmfm = mimi.hist[0]/len(mimi)
+	#print 'pmf', pmfm[:5]
+
+def census_mimic_pmf(dt1):
+	''' the mimic pmf weekly
+	'''
+	''' delta pmf of final week final week p.19
+	http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
+	# input mimic data(MCD) -> groupby object over subject_id and source -> get hr2 over last week_range
+	'''
+	#input: format the data
+	dt = dt1.copy()
+
+	dt = dt.drop(['gender'],1)
+	dt = dt.reset_index()
+	print 'type dt',type(dt)
+	print '### 1', dt['realtime'].dtype, dt['realtime'].apply(type)
+	dt['realtime'] = pd.to_datetime( dt['realtime'] )
+	print '### 2', dt['realtime'].dtype, dt['realtime'].apply(type)
+	dt['time'] = pd.to_datetime( dt['realtime'], coerce=True )
+	print dt.time[:100]
+	#dtime = dt['realtime'].apply(lambda x: pd.to_datetime(x) )
+	#dtime.realtime = dt.realtime.apply(pd.Timestamp )
+	#print '$$$ workz ? ', dtime['realtime'].apply(type) 
+	#print '^^^^^  ', dtime.apply(type)
+
+	print '### 3', dt['time'].dtype, dt['time'].apply(type)
+	print 'id ', id(dt), id(dt1)
+	print 'id index ', id(dt.index), id(dt1.index)
+	print 'id cols ', id(dt.columns), id(dt1.columns)
+	exit(0)
+	pri('input++',dt.head() )
+	
+	dt2 = dt[ dt['source']=='mimic' ].copy()
+
+	#counts format
+	fr = dt2.drop_duplicates(['source','realtime','subject_id','variable']) 
+	fr = fr.set_index(['source','realtime','subject_id','variable'])
+	fr3 = fr.copy()
+	print 'fr3 len', len(fr3)
+	fr4 = fr3.unstack() #unstacks variable(last is default) 
+	fr4.columns = fr4.columns.droplevel(0) #flattens index
+	fr5 = fr4.reset_index()
+	#pri('fr3',fr3.head() )
+	print 'fr3 -- ', fr5.head(15)
+	print fr5.columns
+	fr6 = fr5[['subject_id','realtime','hr1']]
+	print 'fr6', fr6.head(), len(fr6)
+	fr6.dropna(subset=['hr1'],inplace=True)
+	print 'fr6 +', len(fr6)
+
+	#group	
+	#na groups auto excluded
+	g = fr6.groupby(['subject_id'])
+	print 'wtf ', type(g)
+	print('g',g.head())
+
+	print '###', fr6['realtime'].dtype, fr6['realtime'].apply(type)
+	fr6['realtime'] = pd.to_datetime(fr6['realtime'] )
+	print '###', fr6['realtime'].dtype, fr6['realtime'].apply(type)
+
+	#g.dropna(subset=['realtime'],axis=1,inplace=True)
+	#g['realtime'] = pd.to_datetime( g['realtime'] )
+	#fr4 = g.apply(pd.dropna(subset=['realtime']))
+	#if any( fr4['realtime'].isnull() ):
+#		print 'null'
+	#fr4 = g[pd.notnull(g['hr2']) ]
+	print 'time type', type(g['realtime'] )
+	tme = g['realtime'].apply(lambda x: pd.to_datetime(x) )
+	print 'yo yo'
+	print 'time type&&&', type(tme )
+	exit(0)
+	lastwk = g.apply(lambda x: x[ x['realtime'] > (x['realtime'].iloc[-1] - dtt.timedelta(7)) ])
+	#print g.tail(1)[['realtime']]
+	#print 'len', len(g)
+	print 'lastwk ', lastwk.head()
+
+	exit(0)
+	lastwk = g.realtime.apply(lambda x: x[ x > (x.tail(1) - dtt.timedelta(days=7)) ])
+	last = lastwk[['realtime','hr2']]
+	print 'last ', last[:5]
+	exit(0)
+	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
+	##pri('cn freq', cn.head() )
+	#group by subject_id
+	cn = cn.set_index('realtime').groupby(['subject_id']).resample('D',how='count')
+	##pri( 'cn',cn.head(10) )
+	cn = cn.unstack()
+	cn = cn.reset_index(drop=True)
+	##pri('resampled', cn[:10] )
+	##print len( cn[cn['freq']>3] ), len(cn)
+	##print 'mean', cn['freq'].mean()
+	fmean = cn['freq'].mean()
+
+	#delta (percent change) by subject_id
+	#just have to get the value change for HR1
+	th= fr3.copy()
+	#raw data long form
+	#th = dt.copy()
+
+
+	##print('fr3\n ', fr3.head(10))
+	th = th.set_index('realtime') #.groupby('subject_id')
+	##pri('th ', th.head(5) )
+	th['percent'] = th['hr1']/th['hr2'].shift(1) - 1 #%shift	
+	##pri('percent ', th['percent'][:5] )
+
+	mu = th['percent'].mean()
+	std = th['percent'].std()
+	sm = mu-std; lg = mu+std
+	##print 'sm lg ', sm, lg
+	chk = lambda x: x<sm and 'small'\
+		   			or x>lg and 'large'\
+				   	or 'medium'
+
+	th['delta'] = th['percent'].map(chk)
+	th=th.reset_index()
+	##pri('delta', th.head() )
+	th = th.reset_index()
+	#print th[th['delta']=='large'][:10]
+	exit(0)
+####
+	th_pmf = defaultdict(list);
+	pmf=th_pmf; #set dictionary
+
+	m2 = m2.reset_index()
+	m2['realtime'] = pd.to_datetime( m2['realtime'] )
+	dt=m2.copy()	
+
+	print 'len time ', len(dt[['realtime']])
+	dtcheck = dt[ dt['source']=='telehealth' ]
+	print 'zero teles :', len(dtcheck)
+	print 'mimic d2 first', len( dt[ dt['source']=='mimic' ] )
+	##pri('mimic', dt.head() )
+
+	
+	#dt = dt.drop(['gender'],1)
+	#dt['realtime'] = pd.to_datetime( dt['realtime'] )	
+	#print 'time type ', type(dt['realtime'] )
+
+	fr = dt.drop_duplicates(['realtime','subject_id','variable']) 
+	fr = fr.set_index(['realtime','subject_id','variable'])
+	fr3 = fr.copy()
+	fr3 = fr3.unstack() #unstacks variable(last is default) 
+	fr3.columns = fr3.columns.droplevel(0) #flattens index
+	fr3 = fr3.reset_index()
+	fr3['realtime'] = pd.to_datetime( fr3['realtime'] )
+	#pri('fr3',fr3.head() )
+	#print '$$$ dropped', len(dt), len(fr)
+	
+	#counts freq
+	cn = fr3.copy()
+	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
+	#group by subject_id
+	print('cn',cn.head() )
+	g = cn.set_index('realtime').groupby(['subject_id']).resample('D',how='count')
+	print 'g ', g[:5]
+	exit(0)
+	##pri( 'cn',cn.head(10) )
+###	cn = cn.unstack()
+###	cn = cn.reset_index(drop=True)
+###	th2 = th2.set_index(['source','realtime','subject_id','variable'])
+###	th2 = th2.unstack()
+###	print 'unstack worked ** '
+###	th2.columns = th2.columns.droplevel(0)
+###	th2 = th2.reset_index(drop=True)
+###
+###	# select last week
+###	#g = th2.groupby(['subject_id','source'])
+###	g=th2
+
+	lastwk = g.apply(lambda x: x[ x['realtime'] > (x['realtime'].iloc[-1] - dtt.timedelta(7)) ])
+	last = lastwk[['realtime','hr2']]
+	#print last.head(10)
+
+	# -- deprecated --
+	#function to apply to last cross-section 
+	#def daynumber(x,srcdict=teleweek):	
+	# 	delta = dtt.timedelta(days =1)
+	#	day0 = x.applymap(lambda x: x['realtime'].iat[0])
+	#	day1 = x.applymap(lambda x: x['realtime'].iat[-1])
+	#	week = zip(day0,day1)
+	#	for s,e in week:
+	#		d=0
+	#		while s < e:
+	#			#get all row at day
+	#			val = last[ last['realtime']==s ]
+	#			vals = val['hr2'].values
+	#			#h1 = np.histogram( vals, normed=0)[0] / float( len(vals) )
+	#			srcdict[d].append(vals)
+	#			s += delta; 
+	#			d += 1
+	
+	#http://stackoverflow.com/questions/14734533/how-to-access-pandas-groupby-dataframe-by-key
+	#http://stackoverflow.com/questions/11720334/selecting-data-from-pandas-panel-with-multiindex
+	##### groupby creates key:val for that groups unique 
+	# -- xs just selects a subset, no changes to key,val grouping
+	# --  groupby by level, key=level, val=sub select
+	try:
+#		###tle = last.xs(s,level=1) #level 1 = 'source' s=telehealth or mimic
+		###tle = tle.groupby(level=0) #level=0 is subject_id ;  
+		tle = last.groupby(level=0)
+	except(KeyError):
+		print 'source(mimic) not found'
+
+	#create pmfs for each day of week	
+	for k,v in tle:
+		#k is subject id
+		v['realtime'] = v['realtime'].map(lambda x:x.date() )
+		wkds = v['realtime'][:]    #[0]#,v[1][:] #grouped items are 
+		wkset = set(wkds)
+	
+		week = v['realtime'][-1]
+		delta = dtt.timedelta(days=1)
+		w = week - (delta*7)
+		deltas = [week - dtt.timedelta(days=i) for i in reversed(range(0,8)) ]
+		dmap = dict( zip(deltas,range(0,len(deltas)) ))
+		#print 'the weekset ', wkset
+		#print 'tvals ', v['hr2'].values
+		for w in wkset:
+			#print 'w ',k, w
+			vitals = v[ v['realtime']==w ]['hr2'].values
+			#print 'vitals ', vitals
+			#print dmap[w]
+			pmf[ dmap[w] ].append(vitals)
+	print( 'dict', th_pmf[6])
+	return th_pmf
+
+
 
 
 def census_box(dt):
@@ -974,11 +1410,11 @@ def time_norm(dt):
 #subject_id |   source   |         realtime        | variable | value 
 	dt = dt.drop(['gender','index'],1)
 	dt = dt.reset_index()
-	pri('input++',dt.head() )
+	##pri('input++',dt.head() )
 	#counts format
 	dt = dt.drop_duplicates(['realtime','source','subject_id','variable']) 
 	dt = dt.set_index(['realtime','source','subject_id','value','variable'])
-	pri('dropped', fr.head() )
+	##pri('dropped', fr.head() )
 	fr3 = dt.copy()
 	fr3 = fr3.unstack() #unstacks variable(last is default) 
 	fr3.columns = fr3.columns.droplevel(0) #flattens index
@@ -990,11 +1426,11 @@ def time_norm(dt):
 	cn['freq'] = cn.index.map( lambda x: x and 1 ) 
 	#group by subject_id, source
 	cn = cn.set_index('realtime').groupby(['source','subject_id']).resample('D',how='count')
-	pri( 'cn',cn.head(10) )
+	##pri( 'cn',cn.head(10) )
 	exit(0)
 	cn = cn.unstack()
 	cn = cn.reset_index(drop=True)
-	pri('resampled', cn[:10] )
+	##pri('resampled', cn[:10] )
 	##print len( cn[cn['freq']>3] ), len(cn)
 	##print 'mean', cn['freq'].mean()
 	fmean = cn['freq'].mean()
@@ -2124,30 +2560,35 @@ def main():
 	#	return d.days%365
 	#print 'type ',  type( mc_data['dod'] )
 	#mc_data['age'] = mc_data.apply(age) 
-	pri('telehealth', th_data.head() )
-	pri('mimic', mc_data.head() )
+	#pri('telehealth', th_data.head() )
+	#pri('mimic', mc_data.head() )
 
 	#melt to long-form
 	thm = th_data.reset_index(drop=False) #dont drop realtime
-	pri('telehealth dropped', th_data.head() )
+	#pri('telehealth dropped', th_data.head() )
 	thd = thm.drop(['dt2','dt3'],axis=1 ) #,inplace=True)
 	thmelt = pd.melt(thd, id_vars=['subject_id','gender','source','realtime']) #,var_name=['itemid'] )
 	thmelt['value'].map(lambda x : np.log(x) )
-	pri('th long', thmelt.head())
+	#pri('th long', thmelt.head())
 
 	#mimic(long default) , merge
 	mcm = mc_data.reset_index(drop=True)
 	mc_data['variable']=mc_data['itemid'].map(lambda x:x)
 	mc_data['value']=mc_data['value1num'].map(lambda x:x)
 	mcd = mc_data.drop(['itemid','value1num','value2num','index','charttime','sex','dob','dod','hospital_expire_flg','description','value1uom','value2uom'],axis=1 )
-	pri('mimic dropped', mcd.head() )
+	#pri('mimic dropped', mcd.tail() )
+	mcd.reset_index(inplace=True)
+	print 'mcd type &&&& ', mcd['realtime'].apply(type) 
 
 	mcd = mcd.dropna()
+	print 'mcd type &&&& ', mcd['realtime'].apply(type) 
 	if any( pd.isnull( mcd) ):
 		print 'mcd dropped not null'
 	#merge
 	thmi = pd.merge(thmelt,mcd,on=['subject_id','gender','source','variable','value'], how='outer' )
-	pri('merged', thmi.head() )
+	#pri('merged data set', thmi.head() )
+	#pri('mimic check', thmi[thmi['source']=='mimic'][:5])
+	print '*****len-check****', len(thmi[ thmi['source']=='mimic'] ), len(mcd), len(mcm), len(mc_data)
 
 
 	#gender	 
@@ -2161,15 +2602,16 @@ def main():
 		#average days of sample
 		#timeplotH(th_data, title='telehealth')
 		#timeplotH(mc_data, title='mimic2')
-		#census_th(thmelt)
-		#census_mmc(mcd)
-		census_cdf(thmi)
-		#distplot
-		#cdfthmm
+		##census_th(thmelt)
+		##census_mmc(mcd)
+		##census_pmf( thmi,mcd )
+		mcd.reset_index(inplace=True)
+		mcd['realtime'] = pd.to_datetime( mcd['realtime'] )
+		print 'mcd type &&&& ', mcd['realtime'].apply(type) 
+		census_mimic_pmf(mcd)
 
 		#fit lognormal distribution
 		#distributionsFG(thmi,row='source',col='variable', val='value')
-
 
 		##m1 = maleid19.copy()
 		##lognormal(m1)
