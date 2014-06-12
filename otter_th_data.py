@@ -111,6 +111,9 @@
 #----------------
 #-- refs --#
 #---plotting ---
+
+#princeton python plots
+#http://nbviewer.ipython.org/github/PrincetonPy/Python-Workshop/blob/master/3.Demos.ipynb
 #boxplot pandas day of week
 #http://stackoverflow.com/questions/17194581/best-way-to-generate-day-of-week-boxplots-from-a-pandas-timeseries
 #perl  
@@ -148,6 +151,8 @@
 #--------------------------------------------------------------------------------------------------------------------------------<
 
 #-----#distributions---------------------------------------------
+#failure-rate esimation
+#healthyalgorithms.com/2014/05/16/mcmc-in-python-estimating-failure-rates-from-observed-data/
 #http://pages.stern.nyu.edu/~adamodar/New_Home_Page/StatFile/statdistns.htm#_ftnref2
 
 #stat reference:
@@ -187,6 +192,9 @@
 #---alerts-----------------------------------------------------------------------------------------------------------------------------<
 
 '''
+#fft 
+#http://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/
+
 #python module for anomaly detection
 #https://github.com/mihaibivol/Graphite-Anomaly-Detector/
 #median-deviation
@@ -493,6 +501,17 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 #-----------
 
 #-- _pandas ---
+
+	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
+	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
+	#http://stackoverflow.com/questions/23530665/count-the-number-of-observations-that-occur-per-day
+#plt.axvline(p1.mean(), color="r", linewidth=3)
+#overflowerror: float inf to int
+#http://pymotw.com/2/math/
+#http://stackoverflow.com/questions/11548005/numpy-or-pandas-keeping-array-type-as-integer-while-having-a-nan-value
+#http://stackoverflow.com/questions/13413590/how-to-drop-rows-of-pandas-dataframe-whose-value-of-certain-column-is-nan
+#http://stackoverflow.com/questions/12708807/numpy-integer-nan	
+#http://stackoverflow.com/questions/13413590/how-to-drop-rows-of-pandas-dataframe-whose-value-of-certain-column-is-nan
 #groupby
 ##.get_group('telehealth')
 #booststrapping private
@@ -660,11 +679,8 @@ if any( pd.isnull( th_data) ):
 from private import private_data
 th_data = private_data(th_data)
 th_data_stack = th_data.stack()
-
 #clean
 vitalmap={'sys':1, 'dia':2 }	
-
-
 # 2. _mimic2v26
 # flatfiles 1 through 6, can import more records at 
 # /home/solver/MIMIC-Importer-2.6/
@@ -693,9 +709,7 @@ hdr =['index','subject_id','sex','dob','dod','hospital_expire_flg', \
 	          'value1uom', 'value2num','value2uom']
 ##MCD##	
 tparse = lambda x: pd.to_datetime(x, format='%Y-%m-%d %H:%M:%S')
-#princeton python plots
-#http://nbviewer.ipython.org/github/PrincetonPy/Python-Workshop/blob/master/3.Demos.ipynb
-mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, nrows=2000, sep='\t')
+mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, nrows=36000, sep='\t')
 year = dtt.timedelta(days=365)
 def shift(x):
 	x=list(x)
@@ -716,35 +730,9 @@ mc_data.reset_index(inplace=True)
 
 # 4. bootstrap values for data sharing
 
-
-	#get counts for each day by subject_id in column value
-	#resample
-	##cn = cn.groupby(['subject_id']).resample('D',how='count')
-	##print 'resampled', cn.head()
-	##
-	###reset_index
-	##cn = cn.reset_index()
-	##print 'wrk_a ', cn.head()
-	##cn.columns = cn.columns.get_level_values(0)
-	##print 'set level ', cn.head()
-	##print 'cols', cn.columns['level_1']
-	##exit(0)
-	##cn = cn.columns.droplevel(0)
-	##print 'wrk_a ', cn.head()
-	##cn=cn.unstack()
-	##print 'wrk ', cn.head()
-	##frequency = cn2['value']
-	##print 'yo ',frequency[:10] #cnt['value'][:10]
-	#cn2.columns = cn2.columns.droplevel(0)
-	#cn2 = cn2.reset_index()
-	#cnt = cnt.unstack() #first level
-	#cnt = cnt.unstack('subject_id') #subject id groups
-
-
 #----------------
 #--- summary ---#
 # - _time intervals
-#http://wesmckinney.com/blog/?tag=pandas box-plots
 def census_th(dt):
 	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
 	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
@@ -835,16 +823,6 @@ def census_th(dt):
 				#	x_order=list('large','medium','small') )
 
 def census_mmc(dt):
-	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
-	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
-	#http://stackoverflow.com/questions/23530665/count-the-number-of-observations-that-occur-per-day
-#plt.axvline(p1.mean(), color="r", linewidth=3)
-#overflowerror: float inf to int
-#http://pymotw.com/2/math/
-#http://stackoverflow.com/questions/11548005/numpy-or-pandas-keeping-array-type-as-integer-while-having-a-nan-value
-#http://stackoverflow.com/questions/13413590/how-to-drop-rows-of-pandas-dataframe-whose-value-of-certain-column-is-nan
-#http://stackoverflow.com/questions/12708807/numpy-integer-nan	
-#http://stackoverflow.com/questions/13413590/how-to-drop-rows-of-pandas-dataframe-whose-value-of-certain-column-is-nan
 	'''
 		dt is telehealth long
 		plots factorplot with col=frequency and rows=delta percent
@@ -996,7 +974,10 @@ def census_mmc(dt):
 	plt.show()
 				#	x_order=list('large','medium','small') )
 
-def census_pmf(d2,m2):
+
+#--------
+from itertools import chain
+def census_pmf(d2,m2,dlen=13):
 	''' delta pmf of final week final week p.19
 	http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
 	# input merge data(long) -> groupby object over subject_id and source -> get hr2 over last week_range
@@ -1030,7 +1011,7 @@ def census_pmf(d2,m2):
 			##pri('mimic', dt.head() )
 			pmf=mm_pmf #set mimic dictionary
 
-		#pri('tele',dt.head() )	
+		pri('tele',dt.head() )	
 		dt = dt.drop(['gender'],1)
 		dt['realtime'] = pd.to_datetime( dt['realtime'] )	
 		#print 'time type ', type(dt['realtime'] )
@@ -1042,6 +1023,10 @@ def census_pmf(d2,m2):
 		print 'unstack worked ** '
 		th2.columns = th2.columns.droplevel(0)
 		th2 = th2.reset_index()
+		pri('unstacked th', th2.head() )
+
+		#calculate percentages
+		th2['percent'] = th2['hr2']/th2['hr2'].shift(1) - 1 #%shift	
 
 		# select last week
 		#g = th2.groupby(['subject_id','source'])
@@ -1051,8 +1036,8 @@ def census_pmf(d2,m2):
 		elif si==1:
 			g=th2
 
-		lastwk = g.apply(lambda x: x[ x['realtime'] > (x['realtime'].iloc[-1] - dtt.timedelta(7)) ])
-		last = lastwk[['realtime','hr2']]
+		lastwk = g.apply(lambda x: x[ x['realtime'] > (x['realtime'].iloc[-1] - dtt.timedelta(dlen)) ])
+		last = lastwk[['realtime','percent']]
 		#print last.head(10)
 
 		# -- deprecated --
@@ -1095,49 +1080,80 @@ def census_pmf(d2,m2):
 	
 			week = v['realtime'][-1]
 			delta = dtt.timedelta(days=1)
-			w = week - (delta*7)
-			deltas = [week - dtt.timedelta(days=i) for i in reversed(range(0,8)) ]
+			w = week - (delta*dlen)
+			deltas = [week - dtt.timedelta(days=i) for i in reversed(range(0,dlen+1)) ]
 			dmap = dict( zip(deltas,range(0,len(deltas)) ))
 			#print 'the weekset ', wkset
 			#print 'tvals ', v['hr2'].values
 			for w in wkset:
 				#print 'w ',k, w
-				vitals = v[ v['realtime']==w ]['hr2'].values
+				vitals = v[ v['realtime']==w ]['percent'].values
 				#print 'vitals ', vitals
 				#print dmap[w]
 				pmf[ dmap[w] ].append(vitals)
 		print( '***telehealth dict', th_pmf[6])
 	return th_pmf
 
-
-
-def histopmf(thpmf, mpmf ):
-	#generate histogram
+def histopmf(thpmf, mpmf, bins=14 ):
+	#generate histogram 
 #	http://stackoverflow.com/questions/11750276/matplotlib-how-to-convert-a-histogram-to-a-discrete-probability-mass-function
 	#http://stackoverflow.com/questions/19584029/plotting-histograms-from-grouped-data-in-a-pandas-dataframe
-
-	t2 = [ thpmf[i]   for i in range(6) ]
-	m2 = [ mpmf[i] for i in range(6) ]
-	print 't2 ',t2
-	print 'm2 ',m2
-
-	h1=np.histogram(t2,normed=0)[0]/float(len(t2))
-	h2=np.histogram(m2,normed=0)[0]/float(len(m2))
-	print 'histos ', h1[:10], h2[:10]
-	ha =100*(h1-h2)
-	hb =100*(h2-h1)
-	ab = np.concatenate( (h1,h2),axis=0 )
-	print len(m2), len(t2)
+	#print 'th ', thpmf[0][:3]
+	#print 'mm ', mpmf[0][:3]
+	#print 'len mpmf ', len(mpmf), len(mpmf[0] )
+	#h1 = [ float(len(thpmf[i])/len(thpmf))   for i in range(bins) ]
+	#h2 = [ float(len(mpmf[i])/len(mpmf))   for i in range(bins) ]
+	##print 'h1 ',h1
+	##print 'h2 ',h2
+	#h1 = np.asarray(h1)
+	#h2 = np.asarray(h2)
+	def k(d):
+		return chain(*d.values())
+	t2=[] #np.array(range(6))
+	#vec=[]
+	for k,v in thpmf.items(): 
+		vv = np.fromiter(chain.from_iterable(v), dtype=float )
+		tvv=np.median( vv)
+		t2.append(tvv)
+	#mmvec=[]
+	m2=[] #np.array(range(6))
+	for k,v in mpmf.items(): 
+		vv = np.fromiter(chain.from_iterable(v), dtype=float )
+		mvv=np.median( vv)
+		m2.append(mvv)
+	print '%%%%%%%%%%%%%%'
+	print t2, m2
+	print len(t2), len(m2)
+	#t2=vec
+	#m2=mmvec
+	#lent2 = [ len(t) for t in t2]	
+	#print lent2,sum(lent2)
+	#h1=np.histogram(t2,bins=7, normed=1)[0] #/float(len(t2))
+	#h2=np.histogram(m2,bins=7, normed=1)[0] #/float(len(m2))
+	#print 'histos ', h1[:10], h2[:10]
+	ha =[ 100*(a-b) if abs(a)>.01 and abs(b)>.01 else 0.01 for (a,b) in zip(t2,m2)]
+	haha =[ 100*(a-b) for (a,b) in zip(t2,m2)]
+	hb =[ 100*(b-a) for (a,b) in zip(t2,m2) if abs(a) > .015 and abs(b) > .015 ]
+	#hb =[ 100*(b-a) for (a,b) in zip(t2,m2) ]
+	ab = np.concatenate( (t2,m2),axis=0 )
+	#print len(m2), len(t2)
 	#plt.hist(h2,bins=20,normed=0)
 	#plt.hist(h1,normed=0)
-	plt.hist(hb,bins=20,normed=0)
-	print h1[:5], h2[:5]
+	##plt.hist(hb,bins=6,normed=0)
+	print hb, len(hb)
+	days = range(len(haha))
+
+	fig, ax = plt.subplots(1, 1, figsize=(6, 5))
+	plt.bar(days,haha,align='center')
+	#plt.bar(days,ha,align='center')
+	ax.set_xlabel("final_2weeks");ax.set_ylabel("median_%change");
+	ax.set_title(r'Heart_Rate Difference (TH - Mimic2)', fontsize=18)
 	plt.show()
 	#pmft = tele.hist[0]/len(tele)
 	#pmfm = mimi.hist[0]/len(mimi)
 	#print 'pmf', pmfm[:5]
 
-def census_mimic_pmf(dt1):
+def census_mimic_pmf(dt1,dlen=13):
 	''' the mimic pmf weekly
 	'''
 	''' delta pmf of final week final week p.19
@@ -1161,16 +1177,19 @@ def census_mimic_pmf(dt1):
 	fr = fr.unstack() 
 	fr.columns = fr.columns.droplevel(0) 
 	fr = fr.reset_index() #if no columns then just pass to self
-	fr.dropna(subset=['hr1'],inplace=True)
+	fr.dropna(subset=['hr2'],inplace=True)
 	#pri('fr',fr.head() )
+
+	#calculate percentages
+	fr['percent'] = fr['hr2']/fr['hr2'].shift(1) - 1 #%shift	
 
 	#group last week
 	#na groups auto excluded by groupby
 	g = fr.groupby(['subject_id'])
 	#pri( 'g',g.head(2))
-	lastwk = g.apply(lambda x: x[ x['timeshift'] > (x['timeshift'].iloc[-1] - dtt.timedelta(7)) ])
+	lastwk = g.apply(lambda x: x[ x['timeshift'] > (x['timeshift'].iloc[-1] - dtt.timedelta(dlen)) ])
 	#print('lwk', lastwk[:5])
-	last = lastwk[['timeshift','hr1']]
+	last = lastwk[['timeshift','percent']]
 	#last = last.reset_index(drop=True)
 	#pri('last ', last.head())
 
@@ -1188,12 +1207,12 @@ def census_mimic_pmf(dt1):
 	
 		week = v['timeshift'][-1]
 		delta = dtt.timedelta(days=1)
-		w = week - (delta*7)
-		deltas = [week - dtt.timedelta(days=i) for i in reversed(range(0,8)) ]
+		w = week - (delta*dlen)
+		deltas = [week - dtt.timedelta(days=i) for i in reversed(range(0,dlen+1)) ]
 		dmap = dict( zip(deltas,range(0,len(deltas)) ))
 		for w in wkset:
 			#print 'w ',k, w
-			vitals = v[ v['timeshift']==w ]['hr1'].values
+			vitals = v[ v['timeshift']==w ]['percent'].values
 			#print 'vitals ', vitals
 			#print dmap[w]
 			pmf[ dmap[w] ].append(vitals)
@@ -1201,11 +1220,87 @@ def census_mimic_pmf(dt1):
 	return pmf
 
 
-
-
+#http://wesmckinney.com/blog/?tag=pandas box-plots
+#http://nbviewer.ipython.org/github/dolaameng/tutorials/blob/master/exploratory-data-analysis/PLOT%20-%20seaborn%20tutorial%201.ipynb
 def census_box(dt):
-	''' box-plot demographics
+	'''boxplots:
+	average frequency; length of stay; sex,age,geography; 
+	[ sex, age, geography ]
+	[ lenght_of_stay, avg_frequency_day]
 	'''
+	#input thmi merged
+	dt.reset_index(drop=True, inplace=True)
+	# age, do not have telehealth ages
+	pri('thmi', dt.head() )
+	#dt = dt[ pd.notnull(dt.dob) ]; 
+	def birthdeath(b,d):
+		'''>90 set to 90'''
+		try:
+			bint = int(b[:4] ) #bd.map(lambda x: int(x[:4]) ) 
+			dint = int(d[:4] ) #dd.map(lambda x: int(x[:4]) )
+			age  = dint - bint
+			return age
+		except:
+			pass
+	sid = dt.groupby(['subject_id']).first()
+	sid['age'] = np.vectorize(birthdeath)( sid['dob'], sid['dod'] ) 
+	sid = sid.reset_index(drop=True) 
+	pri('age ',sid.head() )
+
+	def weighted_choice(choices):
+	   total = sum(w for c, w in enumerate(choices) )
+	   r = random.uniform(0, total)
+	   upto = 0
+	   for c, w in enumerate( choices):
+	      if upto + w > r:
+	         return c
+	      upto += w
+	   assert False, "Shouldn't get here"
+	
+	def geo(x):
+		l = ['urban','sub','rural']
+		p = dict(enumerate(l) )
+		c = [2,2,1]
+		n = weighted_choice(c)
+		return p[n]
+	sid['geo'] = sid.index.map(lambda x: geo(x)) 
+	pri('geo',sid.geo.head() )
+	
+	agelist = ['<40','40-60','>60']
+	aged = dict(enumerate(agelist) )
+	sid['ageg'] = sid.age.map(lambda x: x<40 and aged[0]\
+									or x>60 and aged[2]\
+									or aged[1] )
+
+	#sid['geoC'] = sid.groupby(['geo']).size()
+	#sid['ageC'] = sid['age'].mean()
+	#sid['genderC'] = sid.groupby(['gender']).size()
+	#pri('sidC', sid[['gender','genderC']][:10] )
+
+	xtab = pd.crosstab(sid.source, [sid.gender,sid.geo,sid.ageg] ) #,sid.geo], rownames=['source'], colnames=['s','g'])
+	print 'xtab', xtab.head()
+	#geo, age, gender 
+	#can create group over column
+	f, ax = plt.subplots() #1,2, figsize=(4, 4), sharey=True)
+	sns.set_style("darkgrid", {"grid.linewidth": .5, "axes.facecolor": ".9",'xtick.direction': '45'}) #, 'xtick.major.size': 0, 'xtick.minor.size': 0,  })
+	#f.set_xticklabels(rotation=10)
+	sns.boxplot(xtab,color='pastel')
+	#sns.boxplot(sid.loc[:, 'age'], groupby=[sid.gender,sid.ageg])
+	#sns.boxplot(sid.loc[:, 'age'], groupby=[sid.gender,sid.geo ])
+	#sns.boxplot(sid.loc[:, 'genderC'], groupby=sid.source)
+	#sns.boxplot(sid.loc[:, 'geoC'], groupby=sid.source)
+	#sns.boxplot(sid.loc[ : ['age']], groubpy=sid.source, color="pastel")
+	#sns.boxplot(sid, names=['age', groupby=sid.source)
+	#sns.factorplot("ageg",data=sid,col='gender', hue='source',kind='box')
+	#sns.factorplot('source',sid ,kind='box')
+	#sns.factorplot("gender","genderC","source",sid ,kind='box')
+	f.tight_layout()
+	#ax.set_xticklabels(,rotation=45 )
+	#range(N), rotation=45, fontsize=8)
+	ax.set_title('Gender,Geography,Age', fontsize=25)
+	plt.show()
+
+
 
 def time_norm(dt):
 	'''thinkstats.pg74 mean testing
@@ -1253,11 +1348,6 @@ def time_norm(dt):
 
 	#kdeplot
 
-def censusbox(dt):
-	'''boxplots:
-	average frequency; length of stay; sex,age,geography; 
-	'''
-	pass
 
 
 def timeplotH(dt, title='mimic'):
@@ -1377,7 +1467,6 @@ def distributionsFG(dt,row="gender",col="variable", val="value"):
 	#g.set_axis_labels("Total bill (US Dollars)", "Tip");
 	#g.set(xticks=[10, 30, 50], yticks=[2, 6, 10]);
 	#g.fig.subplots_adjust(wspace=.02, hspace=.02);
-
 
 	#malesgrp = males.groupby('subject_id')['whtlog'].values
 	#print 'data ', maleid19['wht'].values
@@ -1635,11 +1724,8 @@ def ensembleaverage(dt):
 	'''
 
 # - box-plot {age, pt, demographic, time}
- 
 
-
-
-#--- alerts --#
+# - alerts --#
 
 # - _rugplot, 
 
@@ -2173,6 +2259,7 @@ def boostpercentplot( dt ):
 	#	return ( (dx['mean']-M )	/ dx['std'] )
 	#dt = dt[['mean','cis','cip']].apply(lambda x: nrmm(x) )
 
+
 def percent_method( empirical_distribution ):
 	'''sorts dtboost.bci and takes top/bottom 5%'''
 	# sort e.d.
@@ -2262,35 +2349,89 @@ def multivariate_prediction_interval(dt):
 	'''
 
 #multivariate_prediction_interval(th_data)	
-		
 
-
-#dt['cisingle'] = th_data[['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']].apply(lambda x: single(x))
-#print 'SINGLE ', cisingle
 
 #--- _fft --#
-def fft(x):
-    def detect_outlier_position_by_fft(signal, threshold_freq=.1, frequency_amplitude=.01):
-        fft_of_signal = np.fft.fft(signal)
-        outlier = np.max(signal) if abs(np.max(signal)) > abs(np.min(signal)) else np.min(signal)
-        if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
-            index_of_outlier = np.where(signal == outlier)
-            return index_of_outlier[0]  
-        else:                  
-            return None
-  
-  
-    outlier_positions = []
-    for ii in range(10, y_with_outlier.size, 5):
-        outlier_position = detect_outlier_position_by_fft(y_with_outlier[ii-5:ii+5])
-        if outlier_position is not None:    
-            outlier_positions.append(ii + outlier_position[0] - 5)
-    outlier_positions = list(set(outlier_positions))
-  
-    plt.figure(figsize=(12, 6));    
-    plt.scatter(range(y_with_outlier.size), y_with_outlier, c=COLOR_PALETTE[0], label='Original Signal');
-    plt.scatter(outlier_positions, y_with_outlier[np.asanyarray(outlier_positions)], c=COLOR_PALETTE[-1], label='Outliers');
-    plt.legend();
+def fft(dth, dtm):
+	''' d
+	'''
+	pri('dt fft', dth.head() )	
+	pri('dt fft', dtm.tail() )	
+	#raw vs norm HR2
+	def cleandata(dth):
+		dth = dth.drop(['gender'],1)
+		th = dth.copy()  
+		th2 = th.reset_index(drop=True).drop_duplicates(['source','subject_id','realtime','variable']) 
+		th2 = th2.set_index(['source','subject_id','realtime','variable'])
+		th2 = th2.unstack()
+		th2.columns = th2.columns.droplevel(0)
+		th2 = th2.reset_index()
+
+		mu = th2.hr1.mean(); 
+		std = th2.hr1.std() 
+		mmax = mu+std; mmin= mu-std;
+
+		signal = th2[['hr1']].values
+		s = np.fromiter(chain.from_iterable(signal), dtype=float )
+		norm = [ i for i in s if i > mmin and i<mmax ]
+		r = []
+		r.append( s )
+		r.append( norm )
+		r.append( mu )
+		r.append( std)
+		return r
+
+	def cleanmimic( dtm ):
+		#long data just select
+		mc = dtm.copy()
+		hr = mc[ mc['variable']=='hr2']
+		mu = hr.value.mean()
+		std = hr.value.std()
+		mx = mu+std
+		mn = mu-std
+		v = hr.value.values
+		norm = [ vv for vv in v if vv>mn and vv<mx ]
+		r = []
+		r.append(v)
+		r.append(norm)
+		r.append(mu)
+		r.append(std)
+		return r
+
+	s = cleandata(dth)
+	s1 = cleanmimic(dtm)
+	#raw = s[0] + s1[0]
+	raw = np.concatenate((s[0],s1[0]) )
+	norm = np.concatenate( (s[1],s1[1]) )
+	print 'zoik', raw[:5], norm[:5]
+	print 'zeep len', len(raw), len(norm)	
+	raw = raw[:500]
+	def detect_outlier_position_by_fft(signal=raw, threshold_freq=.1, frequency_amplitude=.01):
+		fft_of_signal = np.fft.fft(signal)
+		outlier = np.max(signal) if abs(np.max(signal)) > abs(np.min(signal)) else np.min(signal)
+		if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
+			index_of_outlier = np.where(signal == outlier)
+			return index_of_outlier[0]  
+		else:
+			return None
+
+ 	y_with_outlier = np.asarray( raw )#hr1
+	outlier_positions = []
+	for ii in range(10, y_with_outlier.size, 5):
+		outlier_position = detect_outlier_position_by_fft(y_with_outlier[ii-5:ii+5])
+		if outlier_position is not None:
+			outlier_positions.append(ii + outlier_position[0] - 5)
+	outlier_positions = list(set(outlier_positions))
+	#fft plot 
+	COLOR_PALETTE = ["#348ABD","#A60628","#7A68A6","#467821","#CF4457",	"#188487", "#E24A33"]
+	plt.figure(figsize=(12, 6));
+	plt.scatter(range(y_with_outlier.size), y_with_outlier, c=COLOR_PALETTE[0], label='Original Signal');
+	plt.scatter(outlier_positions, y_with_outlier[np.asanyarray(outlier_positions)], c=COLOR_PALETTE[-1], label='Outliers');
+	plt.legend();
+	plt.title('HR_FFT outlier detection', fontsize=17)
+	mu = s[2]; std= s[3]
+	plt.title(r'$HR_FFT : \/\ \mu = %0.0f ,\/\mu \/\ \sigma = %0.0f$' % (mu,std), fontsize=17)
+	plt.show()
 
 
 def cp(x):
@@ -2359,18 +2500,9 @@ def main():
 	th_data['source'] = th_data['subject_id'].map(lambda x: 'telehealth') 
 	mc_data['source'] = mc_data['subject_id'].map(lambda x: 'mimic') 
 
-	# -- age time-delta days
-	#def age(x):
-	#	d = x.to_datetime(['dod']) - x.to_datetime(['dob'])
-	#	return d.days%365
-	#print 'type ',  type( mc_data['dod'] )
-	#mc_data['age'] = mc_data.apply(age) 
-	#pri('telehealth', th_data.head() )
-	#pri('mimic', mc_data.head() )
 
 	#melt to long-form
 	thm = th_data.reset_index(drop=False) #dont drop realtime
-	#pri('telehealth dropped', th_data.head() )
 	thd = thm.drop(['dt2','dt3'],axis=1 ) #,inplace=True)
 	thmelt = pd.melt(thd, id_vars=['subject_id','gender','source','realtime']) #,var_name=['itemid'] )
 	thmelt['value'].map(lambda x : np.log(x) )
@@ -2380,7 +2512,7 @@ def main():
 	mcm = mc_data.reset_index(drop=True)
 	mc_data['variable']=mc_data['itemid'].map(lambda x:x)
 	mc_data['value']=mc_data['value1num'].map(lambda x:x)
-	mcd = mc_data.drop(['itemid','value1num','value2num','index','charttime','sex','dob','dod','hospital_expire_flg','description','value1uom','value2uom'],axis=1 )
+	mcd = mc_data.drop(['itemid','value1num','value2num','index','charttime','sex','hospital_expire_flg','description','value1uom','value2uom'],axis=1 )
 	#pri('mimic dropped', mcd.tail() )
 	mcd.reset_index(inplace=True)
 	#print 'mcd type &&&& ', mcd['realtime'].apply(type) 
@@ -2392,29 +2524,29 @@ def main():
 	#merge
 	thmi = pd.merge(thmelt,mcd,on=['subject_id','gender','source','variable','value'], how='outer' )
 	pri('merged data set', thmi.head() )
-	#pri('mimic check', thmi[thmi['source']=='mimic'][:5])
+	pri('mimic check', thmi[thmi['source']=='mimic'][:5])
 	#print '*****len-check****', len(thmi[ thmi['source']=='mimic'] ), len(mcd), len(mcm), len(mc_data)
 
 
-	#gender	 
-	gender = th_data[th_data['gender']==' m']	
-	males = gender[['wht','subject_id']];	
-	maleid19 = males[males['subject_id']==19]
 
 
 #-summary------------------------------------------------------
-	if(1):
+	if(0):
 		#average days of sample
 		#timeplotH(th_data, title='telehealth')
 		#timeplotH(mc_data, title='mimic2')
+
+		# -- frequency vs %change_HR
 		##census_th(thmelt)
 		##census_mmc(mcd)
-		tpmf = census_pmf( thmelt,mcd ) #thmi
-		#mcd.reset_index(inplace=True)
-		#mcd['realtime'] = pd.to_datetime( mcd['realtime'] )
-		#print 'mcd type &&&& ', mcd['realtime'].apply(type) 
-		mpmf = census_mimic_pmf(mcd)
-		histopmf( tpmf, mpmf )
+
+		# -- final week %change diff_HR
+		#tpmf = census_pmf( thmelt,mcd ) #thmi
+		#mpmf = census_mimic_pmf(mcd)
+		#histopmf( tpmf, mpmf )
+
+		# -- boxplot
+		census_box(thmi)
 
 		#fit lognormal distribution
 		#distributionsFG(thmi,row='source',col='variable', val='value')
@@ -2426,22 +2558,34 @@ def main():
 		##qqnorm(m1)
 
 #-alerts--------------------------------------------------------
-	if(0):
-		m2 = maleid19.copy()
-		logfitcdf(males)
-		exit(0)
-		#logboostci(m2)
-		#test(malesgrp)
-		test(smple)
-		exit(0)
-		#confidence interval
-		dtb = boostci(th_data) 
-		dtv = dtb[dtb['vitals']=='sys']
-		print 'dtv check', dtv.tail(), dtv.describe()
+	if(1):
+		if(0):	
+			#gender	 
+			gender = th_data[th_data['gender']==' m']	
+			males = gender[['wht','subject_id']];	
+			maleid19 = males[males['subject_id']==19]
+
+			m2 = maleid19.copy()
+			logfitcdf(males)
+			exit(0)
+
+			#logboostci(m2)
+			#test(malesgrp)
+			test(smple)
+			exit(0)
+		if(1):
+			#confidence interval
+			dtb = boostci(th_data) 
+			dtv = dtb[dtb['vitals']=='sys']
+			print 'dtv check', dtv.tail(), dtv.describe()
+			#fft
+			#if > std filter
+			fft(thmelt,mcd  )
+			exit(0)
 
 		#boots(th_data, dtv)
-		pltframe = percent_method2(dtv)
-		ttestboost(dtv)
+		##pltframe = percent_method2(dtv)
+		##ttestboost(dtv)
 		#boostpercentplot( pltframe )
 
 		#ci = percent_method(empirical_distribution)
