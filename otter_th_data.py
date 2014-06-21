@@ -1,4 +1,12 @@
-#---fun,#life,news, to read when done------------------------------------------------------------------------------------------------------------------------
+# -*- coding: utf-8 -*-
+from __future__ import division
+
+## references ##
+# -- misc -- ##
+# thesis writeup
+# https://readthedocs.org/
+# sphinx
+
 #data sources: http://rs.io/2014/05/29/list-of-data-sets.html
 #cancer project compuational glover virus kill cancer, ecosystem
 #http://www.washingtonpost.com/news/morning-mix/wp/2014/05/15/womans-cancer-killed-by-measles-virus-in-unprecedented-trial/?tid=hp_mm
@@ -148,9 +156,10 @@
 #story-telling
 #https://github.com/LLK/scratch-flash
 
-#--------------------------------------------------------------------------------------------------------------------------------<
 
-#-----#distributions---------------------------------------------
+
+
+# -- distributions ---
 #failure-rate esimation
 #healthyalgorithms.com/2014/05/16/mcmc-in-python-estimating-failure-rates-from-observed-data/
 #http://pages.stern.nyu.edu/~adamodar/New_Home_Page/StatFile/statdistns.htm#_ftnref2
@@ -189,9 +198,11 @@
 #make time stationary
 #http://stats.stackexchange.com/questions/2077/how-to-make-a-time-series-stationary?rq=1
 
-#---alerts-----------------------------------------------------------------------------------------------------------------------------<
 
-'''
+
+# -- alerts---#
+
+'''refs
 #fft 
 #http://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/
 
@@ -205,6 +216,11 @@ https://pypi.python.org/pypi/powerlaw
 http://see.stanford.edu/see/courseInfo.aspx?coll=84d174c2-d74f-493d-92ae-c3f45c0ee091
 #bayes log-normal model
 http://engineering.richrelevance.com/bayesian-ab-testing-with-a-log-normal-model/
+
+#*****
+#http://jakevdp.github.io/blog/2014/06/14/frequentism-and-bayesianism-4-bayesian-in-python/ 
+#*****
+
 #Alerts
 # - kernel_reg, change_pt, fft, counsyl, prediction_interval
 #otter2tmp
@@ -229,6 +245,7 @@ http://engineering.richrelevance.com/bayesian-ab-testing-with-a-log-normal-model
 #http://comments.gmane.org/gmane.comp.python.scikit-learn/10332
 
 #event related data analysis
+
 #http://www.pymvpa.org/tutorial_eventrelated.html
 
 #failure rate
@@ -305,6 +322,9 @@ st like all the other DV sketches, HyperLogLog looks for interesting things in t
 #refs/imm6614.pdf statsmodel patsy R-formula slide30_34
 
 #---disease model--------------------------------------------------------------------------------------------------
+#wilson algo
+#random tree generator
+#http://bl.ocks.org/mbostock/11357811
 #clustering
 #http://nbviewer.ipython.org/github/herrfz/dataanalysis/blob/master/week4/clustering_example.ipynb
 #http://www.windml.org/examples/visualization/clustering.html
@@ -425,6 +445,11 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 #http://stats.stackexchange.com/questions/1856/application-of-machine-learning-techniques-in-small-sample-clinical-studies?rq=1
 #http://en.wikipedia.org/wiki/Thompson_sampling","Thompson sampling - Wikipedia,
 #http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection?rq=1
+### sampling
+# reservoir sampling
+#http://gregable.com/2007/10/reservoir-sampling.html
+#http://www.keithschwarz.com/darts-dice-coins/
+#secretary problem
 
 #collinearity
 #http://learnitdaily.com/six-ways-to-address-collinearity-in-regression-mVodels/
@@ -438,9 +463,23 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 
 
 
-#----------------
+
+# -- code-snips -- #
 #-- code snips --#
 #-- _python --#
+#structs
+
+#insert into each algo
+#class Bunch:
+ #   def __init__(self, **kwds):
+  #      self.__dict__.update(kwds)
+#point = Bunch(datum=y, squared=y*y, coord=x)
+# lambda get var from envt created it, not store reference of var
+#tracebacks
+
+			#traceback.print_stack()
+			#print repr(traceback.extract_stack())
+			#print repr(traceback.format_stack()) 
 #recursive generators
 #http://linuxgazette.net/100/pramode.html
 #def boostrs(vc):
@@ -501,6 +540,10 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 #-----------
 
 #-- _pandas ---
+# -- HDFStore
+#http://pandas.pydata.org/pandas-docs/dev/cookbook.html#cookbook-hdf
+
+# -- pivot
 
 	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
 	#http://stackoverflow.com/questions/11232275/pandas-pivot-warning-about-repeated-entries-on-index
@@ -575,9 +618,7 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 
 
 
-
-#----------------
-#-- TODO --#
+# -- TODO -- #
 '''  
 # countdown
 a. alr fatigue, real-time threshold
@@ -594,15 +635,20 @@ b. biosurveillance as prior art
 ~/BOOKS/bk2/BOOKS/kingston082011
 # load pandas --wide-format
 sex, age, date-time, sys,dia,hr1,ox,hr2,wht 
-
 '''
 
 
+# -- import -- #
+'''https://www.versioneye.com/python/PyQt-Fit/1.1.15
+	https://pypi.python.org/pypi/PyQt-Fit
 
-#----------------
-#-- import --#
-from collections import defaultdict
+'''
+import tables
+import pprint
+from itertools import izip
+from collections import defaultdict, namedtuple
 import datetime as dtt
+import traceback
 import pylab
 import math
 import pandas as pd
@@ -628,8 +674,7 @@ from statsmodels.graphics.gofplots import qqplot
 #http://olgabot.github.io/prettyplotlib/
 
 
-#----------------
-#-- data --#
+# -- data -- #
 # 1.  _telehealth
 #otter_data.py (took parse.py->all.csv {web sql queries} -> all.csv) -> dataframe
 # ~/project/data/load_data_th/reports2/*.txt csv
@@ -681,6 +726,7 @@ th_data = private_data(th_data)
 th_data_stack = th_data.stack()
 #clean
 vitalmap={'sys':1, 'dia':2 }	
+
 # 2. _mimic2v26
 # flatfiles 1 through 6, can import more records at 
 # /home/solver/MIMIC-Importer-2.6/
@@ -730,8 +776,7 @@ mc_data.reset_index(inplace=True)
 
 # 4. bootstrap values for data sharing
 
-#----------------
-#--- summary ---#
+# -- summary --- #
 # - _time intervals
 def census_th(dt):
 	#http://stackoverflow.com/questions/18727920/pivoting-pandas-dataframe-assertionerror-index-length-did-not-match-values
@@ -974,8 +1019,6 @@ def census_mmc(dt):
 	plt.show()
 				#	x_order=list('large','medium','small') )
 
-
-#--------
 from itertools import chain
 def census_pmf(d2,m2,dlen=13):
 	''' delta pmf of final week final week p.19
@@ -1219,7 +1262,6 @@ def census_mimic_pmf(dt1,dlen=13):
 	print( '!!! mimic dict', pmf[6][:10])
 	return pmf
 
-
 #http://wesmckinney.com/blog/?tag=pandas box-plots
 #http://nbviewer.ipython.org/github/dolaameng/tutorials/blob/master/exploratory-data-analysis/PLOT%20-%20seaborn%20tutorial%201.ipynb
 def census_box(dt):
@@ -1301,7 +1343,6 @@ def census_box(dt):
 	plt.show()
 
 
-
 def time_norm(dt):
 	'''thinkstats.pg74 mean testing
 	'''
@@ -1349,7 +1390,6 @@ def time_norm(dt):
 	#kdeplot
 
 
-
 def timeplotH(dt, title='mimic'):
 	#group subject_id
 	# -- reset index
@@ -1363,7 +1403,6 @@ def timeplotH(dt, title='mimic'):
 	subj_min  = grpt.min() ; 
 	subj_max  =  grpt.max() ;
 	descr = grpt.describe() #df['delta'] = (df['tvalue']-df['tvalue'].shift()).fillna(0)
-	
 	
 	# subject min max 
 	mn = subj_max - subj_min
@@ -1805,7 +1844,6 @@ def confidenceinterval(dt):
 		#print '\n confidence interval ', dt[vcs ][:3]
 		#print '\n confidence interval ', dt[vca ][:3]
 		#print '\noutliers ', dt[ dt[vco] == 1]
-
 			
 		#bootstrap ci
 		#http://stats.stackexchange.com/questions/18396/determining-the-confidence-interval-for-a-non-normal-distribution
@@ -1819,8 +1857,6 @@ def confidenceinterval(dt):
 		print '\n bootstrapped 90%', CI[0], CI[1], len(CI), CI
 		dt[vc+'ci'] = [ 1 if i>CI[0] and i<CI[1] else 0 for i in dt[vcz] ]
 		print 'dtvc ', dt[vc+'ci'][:10], '\n ', dt[vc][:10], len( dt[dt[vc+'ci']==1])/len(dt) * 100.0
-
-
 
 	#plot	--dt['whtci']	
 	fig, ax = plt.subplots(1, 1, figsize=(13, 5))
@@ -2048,7 +2084,8 @@ def test(dt):
 
 #a data-object with only 1 vital(grouped) is passed
 def percent_method2( dtb1 ):
-	'''sorts means, takes top/bottom 5% as cutoff, compute CI-range'''
+	'''sorts means, takes top/bottom 5% as cutoff, compute CI-range
+	'''
 	dtb = dtb1[['mean','cip','cis','std','vitals']].copy()
 
 	#normalize to [-1 to 1] #sort ascending
@@ -2221,10 +2258,6 @@ def boostpercentplot( dt ):
 	#ax.set_title("Confidence Interval: boost percent method (norm invariant)$",fontsize=18)
 	#ax.set_xlabel('Sample (with %d observations)' %n, fontsize=18)
 	plt.show()
-	#
-	#pass
-
-
 
 #	#normalize
 #	M = dt['mean'].mean()
@@ -2259,7 +2292,6 @@ def boostpercentplot( dt ):
 	#	return ( (dx['mean']-M )	/ dx['std'] )
 	#dt = dt[['mean','cis','cip']].apply(lambda x: nrmm(x) )
 
-
 def percent_method( empirical_distribution ):
 	'''sorts dtboost.bci and takes top/bottom 5%'''
 	# sort e.d.
@@ -2284,32 +2316,20 @@ def percent_method( empirical_distribution ):
 	print 'ci ', ci
 	return ci
 
-
 def toyplotpm(boostci):
 	# plot 100 total from empirical_distribution
 	n=100; ind = ed[:]
 	fig, ax = plt.subplots(1, 1, figsize=(13,5))
-	
 	ind = np.arange(1, 101)
-	
 	ax.axhline(y=0, xmin=0, xmax=n+1, color=[0, 0, 0])
-	
 	ax.plot([ind, ind], ci[:100], color=[0, 0.2, 0.8, 0.8], marker='_', ms=0, linewidth=3)
-	
 	ax.plot([ind[out], ind[out]], ci[:, out], color=[1, 0, 0, 0.8], marker='_', ms=0, linewidth=3)
-		
 	ax.plot(ind, m, color=[0, .8, .2, .8], marker='.', ms=10, linestyle='')
-	
 	ax.set_xlim(0, 101)
-	
 	ax.set_ylim(-1.1, 1.1)
-	
 	ax.set_title("Bootstrap Confidence Interval percentile method", fontsize=18)
-	
 	ax.set_xlabel('100 Samples' %n, fontsize=18)
-	
 	plt.show()
-
 
 def radarplot():
 	#http://www.loria.fr/~rougier/teaching/matplotlib/#d-plots
@@ -2326,7 +2346,6 @@ def radarplot():
 
 	show()	
 
-
 def predictioninterval(dt):
 	'''
 	ensembleaverage http://nbviewer.ipython.org/github/duartexyz/BMC/blob/master/Ensemble%20average.ipynb
@@ -2339,7 +2358,6 @@ def predictioninterval(dt):
 	can use duartexyz or seaborn
 	''' 
 
-
 import ellipsoid     
 def multivariate_prediction_interval(dt):
 	''' 
@@ -2351,13 +2369,194 @@ def multivariate_prediction_interval(dt):
 #multivariate_prediction_interval(th_data)	
 
 
-#--- _fft --#
-def fft(dth, dtm):
-	''' d
+# -- _fft -- #
+def fft(dth, dtm, thmi):
+	''' imperative approach
 	'''
-	pri('dt fft', dth.head() )	
-	pri('dt fft', dtm.tail() )	
-	#raw vs norm HR2
+	##pri('dt fft', dth.head() )	  
+	##pri('dt fft', dtm.tail() )	
+	##raw vs norm HR2 
+	def cleandatall(dth,vital='hr1'):
+	  	dth = dth.drop(['gender'],1)
+		th = dth.copy( )  
+		th2 = th.reset_index(drop=True).drop_duplicates(['source','subject_id','realtime','variable']) 
+		th2 = th2.set_index(['source','subject_id','realtime','variable'])
+		th2 = th2.unstack()
+		th2.columns = th2.columns.droplevel(0)
+		th2 = th2.reset_index()
+		mu = th2[vital].mean(); 
+		std = th2[vital].std() 
+		#mmax = mu+std; mmin= mu-std;
+		return th2[[vital]].values, mu, std
+
+	def cleandata(dth,vital='hr1'):
+	  	dth = dth.drop(['gender'],1)
+		th = dth.copy()  
+		th2 = th.reset_index(drop=True).drop_duplicates(['source','subject_id','realtime','variable']) 
+		th2 = th2.set_index(['source','subject_id','realtime','variable'])
+		th2 = th2.unstack()
+		th2.columns = th2.columns.droplevel(0)
+		th2 = th2.reset_index()
+		mu = th2.hr1.mean(); 
+		std = th2.hr1.std() 
+		mmax = mu+std; mmin= mu-std;
+
+		#grouby by subject_id
+		g = th2.groupby( ['subject_id'] )
+		sidgroup = [ v for k,v in g ]
+		signal = []
+		r=[] #0=raw #1=norm
+		for i,s in enumerate(sidgroup):
+			sid1     = []
+			raw = np.fromiter(chain.from_iterable( s[[vital]].values ), dtype=float )
+			sid1.append( raw )
+			
+			mu  = s[[vital]].mean() 
+			std = s[[vital]].std() 
+			mmin = mu-std; mmax = mu+std
+
+			sid1.append( mu )
+			sid1.append( std )
+			def nf(x):
+				if x>mmin & x<mmax:
+					return x	
+			flt = s[(s[[vital]] > mmin) & (s[[vital]] < mmax) ]
+			norm = flt[ pd.notnull( flt[vital])  ][vital].values
+			#norm = s.where( s>0, s['hr1'], axis='index')
+			sid1.append( norm )
+			r.append( sid1 )
+			#0=raw, 1=mu, 2=std, 3=norm
+		return r
+
+	def cleanmimicall( dtm, vital='hr2' ):
+		#long data just select
+		mc = dtm.copy()
+		hr = mc[ mc['variable']==vital]
+
+	def cleanmimic( dtm, vital='hr2' ):
+		#long data just select
+		mc = dtm.copy()
+		hr = mc[ mc['variable']==vital]
+		#group by subject_id
+		hr_group = hr.groupby('subject_id')
+		r = [] 
+		for i,s in hr_group:
+			tmp =[]
+			mu = s.value.mean()
+			std = s.value.std()
+			mx = mu+std
+			mn = mu-std
+			v = s.value.values
+			norm = [ vv for vv in v if vv>mn and vv<mx ]
+			tmp.append(v)
+			tmp.append(mu)
+			tmp.append(std)
+			tmp.append(norm)
+			r.append(tmp)
+		#0=raw 1=mu 2=std 3=norm
+		return r
+
+	#s   = cleandata(dth)
+	#s1  = cleanmimic(dtm)
+	frc,fra,pltsize = 0.1, 0.01, 1000	
+	def total(frc=frc, fra=fra, pltsize=pltsize):
+		#count iterator
+		fftc=Count()
+		vitals = ['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']
+		op=[]
+		opindex=[]
+		oraw = []
+		ostats=[]
+		for v in vitals:
+			s,mu,std  = cleandatall(dth,vital=v) #select each vital
+			ostats.append([mu,std])
+			raw = np.fromiter(chain.from_iterable( s ), dtype=float ) #flatten array
+			raw = raw[:pltsize]
+			s1 = cleanmimicall(dtm, vital=v)
+			#raw = np.concatenate( (s[:][0], s1[:][0] ) ) #, axis=0  )
+			#raw = np.concatenate( (s, s1 ) ) #, axis=0  )
+			#raw = s[0]
+			#norm= np.concatenate( (s[5][3], s1[5][3] ) )
+
+			def detect_outlier_position_by_fft(signal=raw, threshold_freq=frc, frequency_amplitude=fra):
+				fft_of_signal = np.fft.fft(signal)
+				outlier = np.max(signal) if abs(np.max(signal)) > abs(np.min(signal)) else np.min(signal)
+				if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
+					index_of_outlier = np.where(signal == outlier)
+					return index_of_outlier[0]  
+				else:
+					return None
+
+ 			y_with_outlier = np.asarray( raw )#hr1
+			outlier_positions = []
+			for ii in range(10, y_with_outlier.size, 5):
+				outlier_position = detect_outlier_position_by_fft(y_with_outlier[ii-5:ii+5])
+				if outlier_position is not None:
+					outlier_positions.append(ii + outlier_position[0] - 5)
+			outlier_positions = list(set(outlier_positions))
+			opindex.append(outlier_positions)
+			sum_outlier = len( outlier_positions )
+			op.append(sum_outlier)
+			oraw.append(raw)
+
+		#dicts
+		out_dict = dict(izip( vitals,op) )
+		out_dict_index = dict(izip( vitals, opindex) ) #outlier_positions) )
+		rawdata = dict(izip( vitals,oraw) )
+		stats = dict(izip( vitals,ostats) )
+	
+		#series dataframe
+		#d = dict(outlier = 
+		#cl = pd.Series(	
+
+		#closure call for counts
+		totalcounts = fftc(out_dict)   #counts for all vitals from closure
+		return totalcounts, out_dict_index, rawdata,stats
+
+	totalcounts,indx,raw,stats = total()
+	vtl = 'hr1'
+	print 'TOTALS ', totalcounts[vtl]
+	outlier_positions, y_with_outlier, (mu,std) = map(lambda x: x[vtl], [indx, raw, stats] )
+	numo = len(outlier_positions)	
+
+	#fft plot 
+	COLOR_PALETTE = ["#348ABD","#A60628","#7A68A6","#467821","#CF4457",	"#188487", "#E24A33"]
+	plt.figure(figsize=(12, 6));
+	plt.scatter(range(y_with_outlier.size), y_with_outlier, c=COLOR_PALETTE[0], label='Original Signal');
+	plt.scatter(outlier_positions, y_with_outlier[np.asanyarray(outlier_positions)], c=COLOR_PALETTE[-1], label='Outliers');
+	plt.legend();
+	#plt.title('HR_FFT outlier detection', fontsize=17)
+	plt.title('FFT-%s %d:%d  $\mu = %0.0f ,\/\ \sigma = %0.0f$ \n threshold= %.2f , amp= %.2f' % (vtl,numo,pltsize,mu,std,frc,fra), fontsize=17)
+	plt.show()
+	
+#	def fft_vector(x):	
+#		#rolling_window or rolling_apply
+#		frc,fra,pltsize = 0.1, 0.01, 1000	
+#		threshold_freq=frc, frequency_amplitude=fra
+#		fft_of_signal = np.fft.fft(x)
+#		outlier = x.max if abs(x.max) > abs( x.min ) else signal.min
+#		if (np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
+#			#index_of_outlier = np.where(x == outlier)
+#			#return index_of_outlier[0]  
+#			return 1
+#		else:
+#			return 0
+#
+#		for ii in range(10, y_with_outlier.size, 5):
+#			outlier_position = detect_outlier_position_by_fft(y_with_outlier[ii-5:ii+5])
+#			#if outlier_position is not None:
+#			#	outlier_positions.append(ii + outlier_position[0] - 5)
+#			#outlier_positions = list(set(outlier_positions))
+#
+#	fft_v = lambda x: fft_vector(x)	
+#	thmi['outlier'] = rolling_apply( dt[i],5,fft_v )
+#	thmi['algo'] = thmi.apply(lambda x: 'fft' )
+
+
+# -- bcp -- #
+import offline_changepoint_detection as offcd
+from functools import partial
+def bayeschangepoint(dth, dtm):
 	def cleandata(dth):
 		dth = dth.drop(['gender'],1)
 		th = dth.copy()  
@@ -2366,81 +2565,261 @@ def fft(dth, dtm):
 		th2 = th2.unstack()
 		th2.columns = th2.columns.droplevel(0)
 		th2 = th2.reset_index()
-
 		mu = th2.hr1.mean(); 
 		std = th2.hr1.std() 
 		mmax = mu+std; mmin= mu-std;
 
-		signal = th2[['hr1']].values
-		s = np.fromiter(chain.from_iterable(signal), dtype=float )
-		norm = [ i for i in s if i > mmin and i<mmax ]
-		r = []
-		r.append( s )
-		r.append( norm )
-		r.append( mu )
-		r.append( std)
+		#grouby by subject_id
+		g = th2.groupby( ['subject_id'] )
+		sidgroup = [ v for k,v in g ]
+		signal = []
+		r=[] #0=raw #1=norm
+		for i,s in enumerate(sidgroup):
+			sid1     = []
+			raw = np.fromiter(chain.from_iterable( s[['hr1']].values ), dtype=float )
+			sid1.append( raw )
+			
+			mu  = s[['hr1']].mean() 
+			std = s[['hr1']].std() 
+			mmin = mu-std; mmax = mu+std
+
+			sid1.append( mu )
+			sid1.append( std )
+			def nf(x):
+				if x>mmin & x<mmax:
+					return x	
+			flt = s[(s[['hr1']] > mmin) & (s[['hr1']] < mmax) ]
+			norm = flt[ pd.notnull( flt['hr1'])  ]['hr1'].values
+			#norm = s.where( s>0, s['hr1'], axis='index')
+			sid1.append( norm )
+			r.append( sid1 )
+			#0=raw, 1=mu, 2=std, 3=norm
 		return r
 
 	def cleanmimic( dtm ):
 		#long data just select
 		mc = dtm.copy()
 		hr = mc[ mc['variable']=='hr2']
-		mu = hr.value.mean()
-		std = hr.value.std()
-		mx = mu+std
-		mn = mu-std
-		v = hr.value.values
-		norm = [ vv for vv in v if vv>mn and vv<mx ]
-		r = []
-		r.append(v)
-		r.append(norm)
-		r.append(mu)
-		r.append(std)
+		#group by subject_id
+		hr_group = hr.groupby('subject_id')
+		r = [] 
+		for i,s in hr_group:
+			tmp =[]
+			mu = s.value.mean()
+			std = s.value.std()
+			mx = mu+std
+			mn = mu-std
+			v = s.value.values
+			norm = [ vv for vv in v if vv>mn and vv<mx ]
+			tmp.append(v)
+			tmp.append(mu)
+			tmp.append(std)
+			tmp.append(norm)
+			r.append(tmp)
+		#0=raw 1=mu 2=std 3=norm
 		return r
 
-	s = cleandata(dth)
-	s1 = cleanmimic(dtm)
-	#raw = s[0] + s1[0]
-	raw = np.concatenate((s[0],s1[0]) )
-	norm = np.concatenate( (s[1],s1[1]) )
-	print 'zoik', raw[:5], norm[:5]
-	print 'zeep len', len(raw), len(norm)	
-	raw = raw[:500]
-	def detect_outlier_position_by_fft(signal=raw, threshold_freq=.1, frequency_amplitude=.01):
-		fft_of_signal = np.fft.fft(signal)
-		outlier = np.max(signal) if abs(np.max(signal)) > abs(np.min(signal)) else np.min(signal)
-		if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
-			index_of_outlier = np.where(signal == outlier)
-			return index_of_outlier[0]  
-		else:
-			return None
+	s   = cleandata(dth)
+	s1  = cleanmimic(dtm)
+	subject = 15
 
- 	y_with_outlier = np.asarray( raw )#hr1
-	outlier_positions = []
-	for ii in range(10, y_with_outlier.size, 5):
-		outlier_position = detect_outlier_position_by_fft(y_with_outlier[ii-5:ii+5])
-		if outlier_position is not None:
-			outlier_positions.append(ii + outlier_position[0] - 5)
-	outlier_positions = list(set(outlier_positions))
-	#fft plot 
-	COLOR_PALETTE = ["#348ABD","#A60628","#7A68A6","#467821","#CF4457",	"#188487", "#E24A33"]
-	plt.figure(figsize=(12, 6));
-	plt.scatter(range(y_with_outlier.size), y_with_outlier, c=COLOR_PALETTE[0], label='Original Signal');
-	plt.scatter(outlier_positions, y_with_outlier[np.asanyarray(outlier_positions)], c=COLOR_PALETTE[-1], label='Outliers');
-	plt.legend();
-	plt.title('HR_FFT outlier detection', fontsize=17)
-	mu = s[2]; std= s[3]
-	plt.title(r'$HR_FFT : \/\ \mu = %0.0f ,\/\mu \/\ \sigma = %0.0f$' % (mu,std), fontsize=17)
+	allt = dth.drop(['gender'],1)
+	th = allt.copy()  
+	th2 = th.reset_index(drop=True).drop_duplicates(['source','subject_id','realtime','variable']) 
+	th2 = th2.set_index(['source','subject_id','realtime','variable'])
+	th2 = th2.unstack()
+	th2.columns = th2.columns.droplevel(0)
+	th2 = th2.reset_index()
+	raw = th2.hr1.values
+	print 'raw ', len(raw), raw[:1000]
+	raw = raw[:100]
+
+	raw = np.concatenate( (s[subject][0], s1[subject][0]), axis=0  )
+	#norm= np.concatenate( (s[subject][3], s1[subject][3]) )
+
+	data = raw
+	Q, P, Pcp = offcd.offline_changepoint_detection(data, partial(offcd.const_prior, l=(len(data)+1)), offcd.gaussian_obs_log_likelihood)
+	fig, ax = plt.subplots(figsize=[18, 16])
+	ax = fig.add_subplot(2, 1, 1)
+	ax.plot(data[:])
+	mu = s[0][1]; std= s[0][2]
+	plt.title(r'$HR Bayes change-point : \/\ \mu = %0.0f ,\/\mu \/\ \sigma = %0.0f $' % (mu,std), fontsize=17)
+	ax = fig.add_subplot(2, 1, 2, sharex=ax)
+	ax.plot(np.exp(Pcp).sum(0))
+	#plt.title('HR Bayes change-point', fontsize=17)
 	plt.show()
 
-
-def cp(x):
-	pass
-
-#--- _kern-reg --#
-#kernelregression http://scikit-learn.org/stable/auto_examples/gaussian_process/plot_gp_regression.html#example-gaussian-process-plot-gp-regression-py
+# -- kernreg -- #
 def kernreg(x):
+	'''kernelregression http://scikit-learn.org/stable/auto_examples/gaussian_process/plot_gp_regression.html#example-gaussian-process-plot-gp-regression-py
+	'''
 	pass
+
+#---vectorized alert counts 1-DIM---#
+def fft_vector(x):	
+	#rolling_window or rolling_apply
+	frc,fra = 0.1, 0.01
+	threshold_freq=frc; 
+	frequency_amplitude=fra
+	
+	fft_of_signal = np.fft.fft(x)
+	outlier = x.max() if abs(x.max()) > abs(x.min()) else x.min()
+	if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
+		arr = np.where(x == outlier,1,0)
+		#print 'arr', x, np.where(x==outlier), arr, arr[0]
+		return arr[0]
+	else:
+		return 0
+## stat-metrics: expected no. of alerts in period -ith alert
+
+def bayes_cp_vector(x):
+	''' OFFLINE: get log-probability, Pcp, take exp. sum get p(t_i, is_changepoint)
+		input:: 
+			1. prior of successive[a=cp,b=cp] at t_distance
+			2. likelihood_data:[s_sequence, t_distance] no changepoint 
+		ONLINE: gives prob_distribution(mass) of P(t) not_cp in [1,2,...n]; n=0 is P(t) is changepoint
+	'''
+	# rolling_apply -> lambda x ;
+	Q, P, Pcp = offcd.offline_changepoint_detection(x, partial(offcd.const_prior, l=(len(x)+1)),\
+		   	offcd.gaussian_obs_log_likelihood)
+	#print '** log-prob change-point t_i ',len(Pcp), '\n', Pcp
+	cp = np.exp(Pcp).sum(0)
+	#print 'cp\n ', cp
+	return cp[0]
+
+#log transform
+#https://pythonhosted.org/PyQt-Fit/KDE_tut.html#transformations
+
+import pyqt_fit.bootstrap as bs
+import pyqt_fit.kernel_smoothing as smooth
+def kern_vector(x, window_size ):
+	'''http://statsmodels.sourceforge.net/devel/generated/statsmodels.nonparametric.kernel_regression.KernelReg.html#statsmodels.nonparametric.kernel_regression.KernelReg
+	http://nbviewer.ipython.org/github/carljv/Will_it_Python/blob/master/MLFH/CH2/ch2.ipynb
+*** https://pythonhosted.org/PyQt-Fit/NonParam_tut.html ***
+	http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/xlghtmlnode34.html
+	http://comments.gmane.org/gmane.comp.python.pystatsmodels/10720
+	http://comments.gmane.org/gmane.comp.python.pystatsmodels/12442
+***	http://statsmodels-np.blogspot.in/
+	http://www.mathworks.com/help/stats/nlpredci.html
+***	http://jakevdp.github.io/blog/2013/12/01/kernel-density-estimation/
+	http://stackoverflow.com/questions/16707141/python-estimating-regression-parameter-confidence-intervals-with-scikits-boots
+	http://www.statmethods.net/advstats/bootstrapping.html
+	https://github.com/cgevans/scikits-bootstrap/blob/master/scikits/bootstrap/bootstrap.py
+	'''
+
+	''' stats.model -> multivariate -> cdf/pdf
+		pyqtfit -> bootstrap/grid -> ci
+		but what does multivariate even mean ?? ie average of values... i think the scikits-bootstrap will just take a bunch of array, take some average and bootstrap over that..
+		multivariate stat loses interpretability
+	'''	
+	
+	'''
+		univariate: just follow example
+	'''
+	ws = window_size
+	grid = np.r_[0:ws:512j]
+	xindex = np.asarray( range(ws ) )
+	result = bs.bootstrap(smooth.LocalPolynomialKernel1D,\
+		   	xindex, x, eval_points = grid, fit_kwrds = {'q': 2}, CI = (95,99))
+	print 'CI ', result.CIs
+	rmax = result.CIs[0][0,1]
+	rmin = result.CIs[0][0,0]
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+## alert visualization using euclidean distances ##
+#http://nbviewer.ipython.org/github/carljv/Will_it_Python/blob/master/MLFH/ch9/ch9.ipynb
+
+## plot of hyperplane on scatterplot
+## http://nbviewer.ipython.org/github/sujitpal/statlearning-notebooks/blob/master/src/chapter9.ipynb
+
+# -- model -- #
+# lasso regression of rank for patient based on alert-term fr
+# http://nbviewer.ipython.org/github/carljv/Will_it_Python/blob/master/MLFH/ch6/ch6.ipynb
+def countplotdataframe(dth, dtm):
+	algos = ['fft','bayes','kern','pm']
+	vital =['sys','dia','hr1','ox','hr2','wht']
+	counts = []
+	#get outlier index, create boolean index with that
+	#telehealth: wide, so each vital own column
+	#mimic2: long so vitals column	
+
+	
+def countsrugplot():
+	pass
+
+#--- count up alerts --#
+def getcnt(a):
+	return a
+def Count():
+	pp = pprint.PrettyPrinter(depth=6)
+	a = dict(sys=0,dia=0,hr1=0,ox=0,hr2=0,wht=0)
+	itr = [0]
+	def C(a=a,itr=itr):
+		'''closure to sum to a
+		'''
+		def b( cnt ):
+			for k in cnt:
+				at = a.get(k,0)
+				bt =  cnt.get(k,0) 
+				if not isinstance(bt, int):
+					print '****bt not int **** ', k, sum(itr), len( bt ), type( bt ), #bt
+				#print cnt[k]
+				if not isinstance(cnt[k], int):
+					print '****cnt not int **** ', k, sum(itr), len( cnt[k] ), type(cnt[k]) #, cnt[k]
+				if not isinstance(a[k], int):
+					print '****a not int **** ', k, sum(itr), len( a[k] ), type(a[k])
+				print '*** a *** ',sum(itr),' ', a[k]
+				print 'a ', a
+				a[k] = a.get(k,0) + cnt.get(k,0) 
+
+			itr.append(1)
+			#print '--new call', len(a)
+			#pp.pprint(a)
+			return a
+		#lambda a: getcnt(a)
+		return b
+	c=C()
+	return c
+
+fc=Count()
+t = getcnt(fc)
+#gc = lambda x,fc:
+print '!!**t ** ', t
+def toyalgo(fc):
+	vitals = ['sys', 'dia', 'hr1', 'ox', 'hr2', 'wht']
+	cc = np.random.randint(0,20,size=6)
+	cnt = dict(izip( vitals, cc) )
+	abc = fc(cnt)
+	return abc
+print '****&&& fc ****&&&'
+toyalgo(fc)
+toyalgo(fc)
+toyalgo(fc)
+abc = toyalgo(fc)
+print 'abc', abc
+#print 'ttt', map(lambda x:t(x), t)
+
 
 def time3d(data):
 	fig = plt.figure()
@@ -2467,6 +2846,8 @@ def time3d(data):
 
 #----------------
 #--- boosting --#
+#balance dataset
+#cost-sensitive learning p147 MLinAction
 
 
 
@@ -2524,7 +2905,7 @@ def main():
 	#merge
 	thmi = pd.merge(thmelt,mcd,on=['subject_id','gender','source','variable','value'], how='outer' )
 	pri('merged data set', thmi.head() )
-	pri('mimic check', thmi[thmi['source']=='mimic'][:5])
+	pri('merged mimic check', thmi[thmi['source']=='mimic'][:5])
 	#print '*****len-check****', len(thmi[ thmi['source']=='mimic'] ), len(mcd), len(mcm), len(mc_data)
 
 
@@ -2551,11 +2932,6 @@ def main():
 		#fit lognormal distribution
 		#distributionsFG(thmi,row='source',col='variable', val='value')
 
-		##m1 = maleid19.copy()
-		##lognormal(m1)
-		##normalfit(m1)	
-		##qqlog(m1)
-		##qqnorm(m1)
 
 #-alerts--------------------------------------------------------
 	if(1):
@@ -2564,7 +2940,6 @@ def main():
 			gender = th_data[th_data['gender']==' m']	
 			males = gender[['wht','subject_id']];	
 			maleid19 = males[males['subject_id']==19]
-
 			m2 = maleid19.copy()
 			logfitcdf(males)
 			exit(0)
@@ -2574,15 +2949,98 @@ def main():
 			test(smple)
 			exit(0)
 		if(1):
-			#confidence interval
+			# confidence interval
 			dtb = boostci(th_data) 
 			dtv = dtb[dtb['vitals']=='sys']
 			print 'dtv check', dtv.tail(), dtv.describe()
-			#fft
-			#if > std filter
-			fft(thmelt,mcd  )
-			exit(0)
+			#kernel regression
 
+			# fft
+			#fft(thmelt,mcd  )
+			
+			# bayes change point
+			#bayeschangepoint(thmelt, mcd)
+
+			# vectorize
+		#http://stackoverflow.com/questions/15487022/customizing-rolling-apply-function-in-python-pandas
+		#http://stackoverflow.com/questions/24032282/create-contour-plot-from-pandas-groupby-dataframe
+		#vitals = ['sys'] #, 'dia', 'hr1', 'ox', 'hr2', 'wht']
+			if(0):
+				fft_v = lambda x: fft_vector(x)	
+				#pri('fft bfre alert', thmi.head() )
+				thmi['fft'] = thmi.index.map(lambda x:-1)
+				tg = thmi.groupby(['variable'])
+				gg = []
+				for k,g in tg:
+					g['fft'] = pd.rolling_apply( g['value'], 10, fft_v )
+					gg.append(g)
+					print k, g[['fft']][:10]
+				th = pd.concat(gg)
+				#pri('th', th.head() )
+				#print 'th', th[['fft','variable']][:100]
+			if(1):
+				window_size = 10
+				kr_v = lambda x: kern_vector(x, window_size)		
+				thmi['krn'] = thmi.index.map(lambda x:-1)
+				tg = thmi.groupby(['variable'])
+				gg = []
+				for k,g in tg:
+					g['krn'] = pd.rolling_apply( g['value'], window_size, kr_v )
+					gg.append(g)
+					print k, g[['krn']][:10]
+				th = pd.concat(gg)
+
+			if(0):
+				hdf5 = drcty2 + 'store.h5' 
+				if not os.path.exists( hdf5 ): 
+					print "\n::: performing bayes-point detection :::\n"
+					"""multiple table: 
+							selector table with indexed_col, that other tables indices match 
+							query over selector, quick, but get lots of data back
+							it is like having a wide table, but more efficient
+					   /refs/pandas.pdf ch18 hdf5 table examples, query
+					   hdf5 not reclaim space, delete/add just expands
+					   time_format not safe, NaT convert to int64 etc
+					"""
+					pd.set_option("io.hdf.default_format","table")
+					store = pd.HDFStore(hdf5) #table format
+
+					bp_v = lambda x: bayes_cp_vector(x)
+					thmi['bycp'] = thmi.index.map(lambda x:-1.0)
+					pri('bycp before alert', thmi.head() )
+
+					tg = thmi.groupby(['variable'])
+					gg = []
+					for k,g in tg:
+						print '##val check ', k,'\n', g.value[:3]
+						g['bycp'] = pd.rolling_apply( g['value'], 15, bp_v )
+						gg.append(g)
+
+					th = pd.concat(gg)
+					store.append('bycp',th)
+
+					pri('bayes changepoint', th.head() )
+					print "** HDFStore type ** ", store.root.bycp._v_attrs.pandas_type
+					print 'num rows= ', store.get_storer("bycp").nrows
+
+				else:
+					with pd.get_store(hdf5) as store:
+						print "\n** hdfs type ** \n", store.root.bycp._v_attrs.pandas_type
+						print 'num rows= ', store.get_storer("bycp").nrows
+						th = store.select('bycp')
+						pri('bayes_cp alerts', th.head() )
+						print th.bycp[:20]
+						#th = store['bycp']  # load it
+					
+			if(1):
+				'''kern-reg statsmodel
+				'''
+
+
+		if(0):
+			#count up the alerts
+			#countalerts(dt)
+			exit(0)
 		#boots(th_data, dtv)
 		##pltframe = percent_method2(dtv)
 		##ttestboost(dtv)
