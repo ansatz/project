@@ -2,10 +2,246 @@
 from __future__ import division
 
 ## references ##
+#job machine learning bugra
+#https://www.cbinsights.com/jobs
+#ipython
+#http://www.gibiansky.com/blog/ipython/ipython-kernels/
+#compresssibility
+#https://news.ycombinator.com/item?id=5998675
+#bloom filter python many:many
+#http://zacharyvoase.com/2012/08/31/m2mbloom/
+#factorization diagram
+#http://mathlesstraveled.com/factorization/
+#waldboost http://www.lucaamore.com/?p=638%20%20%D0%A0%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3
+#http://mhr3.blogspot.com/2012/03/face-detection-with-opencl.html
+#job computer vision
+#http://cs.stackexchange.com/questions/16697/job-sites-for-applied-interdisciplinary-mathematics-related-to-computer-science?rq=1
+#beamer how to design a theme
+#http://www.drbunsen.org/designing-a-beamer-template-theme/
+#https://github.com/drbunsen/drbunsen-beamer
+#random numbers
+#http://www.analyticbridge.com/forum/topics/challenge-of-the-week-random-numbers
+#cloud sagemath
+#https://cloud.sagemath.com/
+# d3.js radar plot (weather)
+#http://yr.hveem.no/
+#data science as career
+#http://jakevdp.github.io/blog/2014/08/22/hacking-academia/
+#causality
+#http://blog.echen.me/2014/08/15/propensity-modeling-causal-inference-and-discovering-drivers-of-growth/
+
+#ipython notebook style
+#ipython notebook style
+#plots reproducible
+#http://damon-is-a-geek.com/publication-ready-the-first-time-beautiful-reproducible-plots-with-matplotlib.html
+#from IPython.core.display import HTML
+#css_file = './custom.css'
+#HTML(open(css_file, "r").read())
+#http://lorenabarba.com/blog/announcing-aeropython/
+#http://nbviewer.ipython.org/github/ketch/HyperPython/blob/master/Lesson_03_High-resolution_methods.ipynb
+#http://www.davidketcheson.info/2014/05/28/hyperpython.html
+#http://slendermeans.org/better-typography-for-ipython-notebooks.html
+#http://blog.henryhhammond.com/theming-ipython/
+#http://nbviewer.ipython.org/github/hugadams/imgproc_supplemental/blob/master/Notebooks/NBCONFIG.ipynb
+#ipython notebook stat analysis
+#https://github.com/fonnesbeck/statistical-analysis-python-tutorial
+#data analysis 
+#http://www.bayesimpact.org/blog/walking-the-beat.html
+#flame graph
+#job surgeryacademy glass for surgery: https://angel.co/surgery-academy/jobs?utm_campaign=talent&utm_content=promote_jobs_box&utm_medium=al_tweet&utm_source=twitter&utm_term=surgery-academy
+#datomic http://blog.datomic.com/2014/08/stuff-happens-fixing-bad-data-in-datomic.html
+#which distribution do I have?
+#http://www.vosesoftware.com/content/ebook.pdf
+#http://www.johndcook.com/blog/2010/08/11/what-distribution-does-my-data-have/
+#bayesian http://www.johndcook.com/blog/tag/bayesian/
+#get data sources
+#http://www.quandl.com/
+#correlation
+#http://www.chrisstucchio.com/blog/2014/existence_does_not_imply_correlation.html
+#p-vals research paper
+#https://peerj.com/preprints/447v3.pdf
+#ipython
+#ipython notebook --pylab=inline
+#design
+#https://news.ycombinator.com/item?id=8182084
+#random numbers 
+#http://www.analyticbridge.com/forum/topics/challenge-of-the-week-random-numbers
+#datascience refs
+#http://www.datasciencecentral.com/profiles/blogs/data-science-cheat-sheet
+#data viz
+#http://www.reddit.com/r/dataisbeautiful/comments/2djft8/best_of_dataisbeautiful_january_july_2014/
+#hockey stick graph climate timeseries
+#https://en.wikipedia.org/wiki/Hockey_stick_graph
+#traffic control design
+#http://ops.fhwa.dot.gov/publications/fhwahop08024/chapter4.htm
+#sample size
+#http://jvns.ca/blog/2014/07/11/fun-with-stats-how-big-of-a-sample-size-do-i-need/
+#phd blog
+#http://www-ui.is.s.u-tokyo.ac.jp/~ume/
+#fisher-yates randomization
+#http://spin.atomicobject.com/2014/08/11/fisher-yates-shuffle-randomization-algorithm/
+#fuzzy
+#http://lcamtuf.blogspot.com/2014/08/binary-fuzzing-strategies-what-works.html
+#js functional programming
+#https://stevekrouse.github.io/hs.js/
+#chicago dataanalytics firm
+# work@datascopeanalytics.com
+#django jobs
+#https://djangogigs.com/gigs/country/united-states/
+#reservoir sampling
+#http://slantedwindows.com/reservoir-sampling-made-visual/
+#russian medical decision tree
+#http://fastml.com/how-a-russian-mathematician-constructed-a-decision-tree-by-hand-to-solve-a-medical-problem/
+#jobs
+#http://www.datatau.com/item?id=3398
+#random forest phd thesis
+#https://github.com/glouppe/phd-thesis
+#python
+#http://anandology.com/python-practice-book/index.html
+#network anomoly topological
+#http://unsupervisedlearning.wordpress.com/2014/08/04/topological-anomaly-detection/
+#wordvector
+#http://www.socher.org/index.php/Main/GloveGlobalVectorsForWordRepresentation
+#optimal streaming histogram
+#http://blog.amplitude.com/2014/08/06/optimal-streaming-histograms/
+#kaggle ensemble learning , rank averaging, stacking
+#http://mlwave.com/reflecting-back-on-one-year-of-kaggle-contests/
+#backprop
+#http://numericinsight.blogspot.com/2014/07/a-gentle-introduction-to-backpropagation.html
+#health testing
+#http://news.harvard.edu/gazette/story/2014/08/cheap-and-compact-medical-testing/
+#healthIT
+#http://techcrunch.com/2014/08/05/backed-by-yc-and-rock-health-aptible-handles-the-hard-parts-of-hipaa-compliance/
+#datastructure
+#http://obviam.net/index.php/game-ai-an-introduction-to-behavior-trees/
+#bayes 
+#http://blog.henryhhammond.com/kcbo-a-bayesian-data-analysis-toolkit/
+#healthIT app
+#http://ychacks.challengepost.com/submissions/25781-athelas
+#bayes ab testing
+#http://conversion-rate.appspot.com/
+#disease graph relation
+#http://www.diseasegraph.com/
+#game nash sim
+#https://github.com/pdtournament/pdtournament
+#healthIT app
+#http://rxv2.com/#Quit-Smoking
+#academic misleading
+#http://sss.sagepub.com/content/44/4/638.long
+#speedlimit 85% no variability
+#http://priceonomics.com/is-every-speed-limit-too-low/
+#audio extract
+#http://newsoffice.mit.edu/2014/algorithm-recovers-speech-from-vibrations-0804
+#epidemic
+#http://en.wikipedia.org/wiki/Friendship_paradox
+#type language
+#http://spacemanaki.com/blog/2014/08/04/Just-LOOK-at-the-humongous-type/
+#control
+#http://web.mit.edu/remy/
+#sql
+#http://wozniak.ca/what-orms-have-taught-me-just-learn-sql
+#diagonlization
+#http://rjlipton.wordpress.com/2014/08/03/diagonalization-without-sets/
+#markov visualization
+#http://setosa.io/blog/2014/07/26/markov-chains/index.html
+#collatz sequence clojure
+#http://www.petrounias.org/articles/2014/08/03/collatz-sequence-generation-performance-profiling-in-clojure/
+#lda notebook
+#http://sebastianraschka.com/Articles/2014_python_lda.html
+#ebola spread
+#http://grantbrown.github.io/libspatialSEIR/doc/tutorials/Ebola2014/Ebola2014.html
+#pvals change
+#http://www.newyorker.com/magazine/2010/12/13/the-truth-wears-off?currentPage=all
+'''
+Palmer’s most convincing evidence relies on a statistical tool known as a funnel graph. When a large number of studies have been done on a single subject, the data should follow a pattern: studies with a large sample size should all cluster around a common value—the true result—whereas those with a smaller sample size should exhibit a random scattering, since they’re subject to greater sampling error. This pattern gives the graph its name, since the distribution resembles a funnel.
+
+This suggests that the decline effect is actually a decline of illusion. While Karl Popper imagined falsification occurring with a single, definitive experiment—Galileo refuted Aristotelian mechanics in an afternoon—the process turns out to be much messier than that. Many scientific theories continue to be considered true even after failing numerous experimental tests. Verbal overshadowing might exhibit the decline effect, but it remains extensively relied upon within the field. The same holds for any number of phenomena, from the disappearing benefits of second-generation antipsychotics to the weak coupling ratio exhibited by decaying neutrons, which appears to have fallen by more than ten standard deviations between 1969 and 2001. Even the law of gravity hasn’t always been perfect at predicting real-world phenomena. (In one test, physicists measuring gravity by means of deep boreholes in the Nevada desert found a two-and-a-half-per-cent discrepancy between the theoretical predictions and the actual data.) Despite these findings, second-generation antipsychotics are still widely prescribed, and our model of the neutron hasn’t changed. The law of gravity remains the same. 
+
+
+
+'''
+
+#text processing
+#http://matt.might.net/articles/sculpting-text/
+#industry
+#http://techcrunch.com/2014/07/22/boardrounds-dorm-room-fund/
+#jobs
+#http://priceonomics.com/join-the-priceonomics-writing-team/
+#outliers frequency trail
+#http://www.brendangregg.com/frequencytrails.html
+#what cause outlier? distribution change over time?
+#modes http://www.brendangregg.com/FrequencyTrails/modes.html
+#motivation
+#http://genius.cat-v.org/richard-feynman/writtings/letters/problems
+#effect size
+#http://stats.stackexchange.com/questions/90668/bayesian-analysis-of-contingency-tables-how-to-describe-effect-size?rq=1
+#sequential notebook
+#https://github.com/rasbt/python_reference
+
+#id private
+#https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange#Description
+#https://freedom-to-tinker.com/blog/randomwalker/no-silver-bullet-de-identification-still-doesnt-work/
+#google health
+#http://thehealthcareblog.com/blog/2014/07/08/google-co-founders-thanks-but-no-thanks/
+#django
+#http://www.fullstackpython.com/django.html
+#twitter dermatology paper
+#http://andrewcantino.com/
+#ipython
+#ipython v0.13.2 --compile vim with python
+#string search
+#https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
+#http://blog.phusion.nl/2010/12/06/efficient-substring-searching/
+
+
+#mcmc
+#http://techeffigy.wordpress.com/2014/06/30/markov-chains-explained/
+#bayes
+#http://www.businessweek.com/articles/2014-07-03/hospitals-are-mining-patients-credit-card-data-to-predict-who-will-get-sick
+#http://www.businessweek.com/articles/2014-07-03/hospitals-are-mining-patients-credit-card-data-to-predict-who-will-get-sick
+#cc
+#http://www.businessweek.com/articles/2014-07-03/hospitals-are-mining-patients-credit-card-data-to-predict-who-will-get-sick
+
+#pandas plots boxplot, trellis, regression
+#http://nbviewer.ipython.org/github/fonnesbeck/Bios366/blob/master/notebooks/Section2_7-Plotting-with-Pandas.ipynb
+
+#bayes notebook
+#http://nbviewer.ipython.org/github/knathanieltucker/209fp/blob/master/final.ipynb
+#numpy
+#http://wiki.scipy.org/Tentative_NumPy_Tutorial
+#http://nbviewer.ipython.org/github/jrjohansson/scientific-python-lectures/blob/master/Lecture-2-Numpy.ipynb
+
+#measure theory
+#http://blog.echen.me/2011/03/14/laymans-introduction-to-measure-theory/
+
+#xkcd
+#http://xkcd.com/793/
+#quote/motivation
+#elegant_design/tools + try to do it the stupid way = WIN !! <== key to programming
+
+#hash crypto
+#https://saadbinakhlaq.wordpress.com/2012/05/23/python-and-cryptography-with-pycrypto/
+
+#compute data
+#http://blog.paralleluniverse.co/2013/10/16/spaceships2/
+#http://www.paralleluniverse.co/
+
+#rescue plan
+#http://arstechnica.com/science/2014/02/the-audacious-rescue-plan-that-might-have-saved-space-shuttle-columbia/
+
+# adaboost 
+# http://narrowmark.com/2014/04/03/adaboost/
+
 # -- misc -- ##
-# thesis writeup
+## thesis writeup
+#https://saadbinakhlaq.wordpress.com/2012/05/12/jinja2/
+#https://saadbinakhlaq.wordpress.com/2013/07/25/book-review-building-impressive-presentations-with-impress-js/
 # https://readthedocs.org/
 # sphinx
+#markdown -> web -> https://pythonhosted.org/PyQt-Fit/mod_utils.html#module-pyqt_fit.utils
+
+# -- python notebooks -- #
+#odes as markov_chain: http://nbviewer.ipython.org/github/URXtech/techblog/blob/master/continuousTimeMarkovChain/markovChain.ipynb
 
 #data sources: http://rs.io/2014/05/29/list-of-data-sets.html
 #cancer project compuational glover virus kill cancer, ecosystem
@@ -49,9 +285,12 @@ from __future__ import division
 #avidbots
 #http://www.ros.org/:w
 
+#fellowship
+#http://www.bayesimpact.org/fellowship
 #socrata
 #http://www.socrata.com/careers/
 #http://careers.stackoverflow.com/jobs/55871/senior-principal-software-data-engineer-dc-audax-health?a=168IKtple
+#http://www.crunchboard.com/jobs/index.php
 #stratosphere
 #http://stratosphere.eu/
 #jobs
@@ -152,6 +391,8 @@ from __future__ import division
 
 #plot of patients as stick figures:
 # http://nbviewer.ipython.org/gist/theandygross/4544012
+#nice graphs
+#http://www.theswarmlab.com/r-vs-python-round-3/
 
 #story-telling
 #https://github.com/LLK/scratch-flash
@@ -175,7 +416,7 @@ from __future__ import division
 #exploratory:
 #http://nbviewer.ipython.org/github/herrfz/dataanalysis/blob/master/week3/exploratory_graphs.ipynb
 
-#---time-series analysis-----------------------------------------------------------------------------------------------------------
+#---time-series analysis --#
 #fitting model to long time series
 #http://robjhyndman.com/hyndsight/long-time-series/
 #time series cv 
@@ -203,7 +444,56 @@ from __future__ import division
 # -- alerts---#
 
 '''refs
-#fft 
+
+'''
+# A kernel is a type of probability distribution function, required to be even.  A kernel is non-negative, real-valued, even, integral=1.  PDFs which are kernels include uniform(-1,1), and standard normal distributions.
+# KDE estimates the pdf of a continuous random variable without assumption about its underlying distribution, non-parametrically.  At every point, a kernel is created with the point at its center; therefore kernel is symmetric.  PDF is then estimated by adding all of the kernel functions and dividing by number of data(non-negative, and normalizes).
+'''
+#http://archive.today/ulPFkfferings
+http://www.dspguide.com/ch9/3.htm
+music.pdf benson musical offerings
+http://cs.stackexchange.com/questions/12497/what-the-difference-between-the-fourier-transform-of-an-image-and-an-image-histo
+
+Multiplying signals, amplitude modulation
+
+##Discrete Fourier Transform
+
+The Discrete Fourier Transform(DFT) deals with decomposing a signal into a combination of sinusoid coefficients, ordered by frequency.
+
+###Forward Discrete Fourier Transform:
+
+$$X_k = \sum_{n=0}^{N-1}x_n\cdot e^\frac{-i 2\pi k n}{N}$$
+
+###Inverse Discrete Fourier Transform (IDFT):
+$$ x_n = \sum_{k=0}^{N-1}X_k e^ \frac{-i 2\pi k n}{N}$$
+
+
+  The transform from $x_n\rightarrow X_k$  represents a translation from the original, time domain to the frequency domain.  The observed sequence used by DFT is a convolution of an ideal (infinite, periodic) signal with a finite windowing function.  DFT assumes an ideal signal; if the observation time is not an integer multiple of the period, this results in incoherent sampling, causing the frequency components of the signal change.  In dealing with aperiodic signals, where the frequency range is not clear, a signal may change over time and the changes themselves may vary.  
+
+    Convolution in the time domain corresponds to multiplication in the frequency domain; using DFT, however, is faster and easier to interpret.  The frequency response represents the amplitude and phase changes of cosine waves, caused by a linear system; this completely describes the system.  The fourier transform is not sensitive to the amplitude or variance of the original signal, only its frequency. 
+
+	  Finally, the frequency spectrum produced is dependent on windowing size used; in a plot of frequency vs time, a smaller window has more localised time but greater spread in frequency, while larger window sizes better identify true frequency components but are spread more in the time axis.  
+
+	    Therefore, outlier detection using fourier transform requires window size, frequency amplitude, and frequency threshold parameters to be set.  If the frequency response of the signal contains a frequency component greater than the frequency threshold, then the position is labeled an outlier. 
+
+'''
+#optimization: http://nbviewer.ipython.org/github/arokem/teach_optimization/blob/master/optimization.ipynb
+#minimax:http://stackoverflow.com/questions/7856588/python-minimax-for-tictactoe 
+#knapsack: http://bertolami.com/index.php?engine=blog&content=posts&detail=knapsack-problem
+
+
+a = 12
+
+b = '''
+ 
+### kernel regression
+# A kernel is a type of probability distribution function, required to be even.  A kernel is non-negative, real-valued, even, integral=1.  PDFs which are kernels include uniform(-1,1), and standard normal distributions.
+# KDE estimates the pdf of a continuous random variable without assumption about its underlying distribution, non-parametrically.  At every point, a kernel is created with the point at its center; therefore kernel is symmetric.  PDF is then estimated by adding all of the kernel functions and dividing by number of data(non-negative, and normalizes).
+
+# The bandwidth of a kernel is the standard deviation.  Chosen small for large, tightly packed data, larger for sparse, small data sets.  
+
+'''
+'''
 #http://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/
 
 #python module for anomaly detection
@@ -216,10 +506,13 @@ https://pypi.python.org/pypi/powerlaw
 http://see.stanford.edu/see/courseInfo.aspx?coll=84d174c2-d74f-493d-92ae-c3f45c0ee091
 #bayes log-normal model
 http://engineering.richrelevance.com/bayesian-ab-testing-with-a-log-normal-model/
-
+'''
 #*****
 #http://jakevdp.github.io/blog/2014/06/14/frequentism-and-bayesianism-4-bayesian-in-python/ 
 #*****
+
+#visualize algorithms
+#http://bost.ocks.org/mike/algorithms/
 
 #Alerts
 # - kernel_reg, change_pt, fft, counsyl, prediction_interval
@@ -249,26 +542,28 @@ http://engineering.richrelevance.com/bayesian-ab-testing-with-a-log-normal-model
 #http://www.pymvpa.org/tutorial_eventrelated.html
 
 #failure rate
-http://healthyalgorithms.com/2014/05/16/mcmc-in-python-estimating-failure-rates-from-observed-data/
+#http://healthyalgorithms.com/2014/05/16/mcmc-in-python-estimating-failure-rates-from-observed-data/
 
 #sequential
-http://nbviewer.ipython.org/github/rasbt/algorithms_in_ipython_notebooks/blob/master/ipython_nbs/sequential_selection_algorithms.ipynb?create=1
+#http://nbviewer.ipython.org/github/rasbt/algorithms_in_ipython_notebooks/blob/master/ipython_nbs/sequential_selection_algorithms.ipynb?create=1
 
 #powerlaw
 #http://nbviewer.ipython.org/gist/jeffalstott/19fcdd6a4ba400ce8de2
 
 # vienese maze
-bostock d3.js maze to tree
+#bostock d3.js maze to tree
 
 #anomoly detection
-http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection?rq=1
+#http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection?rq=1
 
 #outlier
-318009,"http://stats.stackexchange.com/questions/1142/simple-algorithm-for-online-outlier-detection-of-a-generic-time-series?rq=1","Simple algorithm for online outlier detection of a generic time series - Cross Validated","moc.egnahcxekcats.stats.",0,0,0,4730,45,,"PDGpQ6B2hWZ6"
-318011,"http://stats.stackexchange.com/questions/5700/finding-the-change-point-in-data-from-a-piecewise-linear-function?rq=1","regression - Finding the change point in data from a piecewise linear function - Cross Validated","moc.egnahcxekcats.stats.",0,0,0,4730,45,,"WPYKWjdDaE-u"
-318013,"http://stats.stackexchange.com/questions/35137/appropriate-clustering-techniques-for-temporal-data?lq=1","machine learning - Appropriate clustering techniques for temporal data? - Cross Validated","moc.egnahcxekcats.stats.",0,0,0,4730,45,,"sksniL5X1R6D"
-318019,"http://biomet.oxfordjournals.org/content/92/4/787.abstract","Symmetric diagnostics for the analysis of the residuals in regression models","gro.slanruojdrofxo.temoib.",0,0,0,,45,,"LZEwqHIqyLnv"
-318027,"http://www.originlab.com/www/helponline/origin/en/UserGuide/Graphic_Residual_Analysis.html#Detecting_outliers_by_transforming_residuals","Graphic Residual Analysis","moc.balnigiro.www.",0,0,0,11632,45,,"ywvhk5nvwpT_"
+
+'''
+##318009,"http://stats.stackexchange.com/questions/1142/simple-algorithm-for-online-outlier-detection-of-a-generic-time-series?rq=1","Simple algorithm for online outlier detection of a generic time series - Cross Validated","moc.egnahcxekcats.stats.",0,0,0,4730,45,,"PDGpQ6B2hWZ6"
+##318011,"http://stats.stackexchange.com/questions/5700/finding-the-change-point-in-data-from-a-piecewise-linear-function?rq=1","regression - Finding the change point in data from a piecewise linear function - Cross Validated","moc.egnahcxekcats.stats.",0,0,0,4730,45,,"WPYKWjdDaE-u"
+##318013,"http://stats.stackexchange.com/questions/35137/appropriate-clustering-techniques-for-temporal-data?lq=1","machine learning - Appropriate clustering techniques for temporal data? - Cross Validated","moc.egnahcxekcats.stats.",0,0,0,4730,45,,"sksniL5X1R6D"
+##318019,"http://biomet.oxfordjournals.org/content/92/4/787.abstract","Symmetric diagnostics for the analysis of the residuals in regression models","gro.slanruojdrofxo.temoib.",0,0,0,,45,,"LZEwqHIqyLnv"
+##318027,"http://www.originlab.com/www/helponline/origin/en/UserGuide/Graphic_Residual_Analysis.html#Detecting_outliers_by_transforming_residuals","Graphic Residual Analysis","moc.balnigiro.www.",0,0,0,11632,45,,"ywvhk5nvwpT_"
 
 #3d { singlevscum, kernel_reg, change_pt, fft }
 #pie graph
@@ -292,6 +587,7 @@ http://www.robots.ox.ac.uk/~misard/condensation.html
 #datamining hyperloglog (very good)
 #incoming streaming data probabilistic counting by bits not order stats
 #http://research.neustar.biz/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/
+
 '''
 st like all the other DV sketches, HyperLogLog looks for interesting things in the hashed values of your incoming data.  However, unlike other DV sketches HLL is based on bit pattern observables as opposed to KMV (and others) which are based on order statistics of a stream.  As Flajolet himself states:
 '''
@@ -302,7 +598,7 @@ st like all the other DV sketches, HyperLogLog looks for interesting things in t
 #http://sparselab.stanford.edu/
 
 #http://nbviewer.ipython.org/github/mwaskom/Psych216/blob/master/week6_tutorial.ipynb
-#http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Compressive_Sampling.ipynb
+##### http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Compressive_Sampling.ipynb
 #http://nbviewer.ipython.org/url/perrin.dynevor.org/exploring_r_formula_evaluated.ipynb
 #survival curves
 #http://nbviewer.ipython.org/github/CamDavidsonPilon/lifelines/blob/master/docs/Survival%20Analysis%20intro.ipynb
@@ -446,6 +742,8 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 #http://en.wikipedia.org/wiki/Thompson_sampling","Thompson sampling - Wikipedia,
 #http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection?rq=1
 ### sampling
+#random forest
+#http://blog.echen.me/2011/03/14/laymans-introduction-to-random-forests/
 # reservoir sampling
 #http://gregable.com/2007/10/reservoir-sampling.html
 #http://www.keithschwarz.com/darts-dice-coins/
@@ -465,6 +763,28 @@ The Probability of A * Probability of new data | A =   P(new data) * P(A|new dat
 
 
 # -- code-snips -- #
+#time delta pandas crap rolling groups window
+
+					#print g['tavg'].str.contains('*L')
+					#pd.to_datetime(g['tavg'], format='%H:%M:%S')
+					#print ' TYPE ** ', type(g['tavg'])
+					#gg = g[ g['alert_v'] == 1 ]
+					#print '##$#$#type ', type( gg['tavg1'])
+					#gg['cumt2'] = pd.rolling_apply( gg['tavg1'].time, 2, np.sum )
+					#gg['cumt'] = pd.rolling_sum(gg['tavg'],2).shift(1)
+					#gg['cumte'] = gg.apply(lambda x: pd.expanding_sum(x['tavg'], min_periods=2) )
+					#gg['cumt'] = gg['tavg'].cumsum() #apply( lambda x: x['tavg'] + x['tavg'].shift(1)[1:] ) 
+					#gg['cumt'] = gg['tavg'].values.cumsum() 
+
+
+					#gg['cumt2'] = pd.rolling_apply( gg['tavg1'].time, 2, np.sum )
+
+					#pd.to_datetime(gg['tavg'], format='%H:%M:%S')
+					#gg['cumt2'] = pd.rolling_apply( gg['tavg'].time, 2, np.sum )
+
+					#print 'cumltive: ',gg
+					#return gg #gg[gg['tavg'].notnull()]
+					#break
 #-- code snips --#
 #-- _python --#
 #structs
@@ -755,7 +1075,9 @@ hdr =['index','subject_id','sex','dob','dod','hospital_expire_flg', \
 	          'value1uom', 'value2num','value2uom']
 ##MCD##	
 tparse = lambda x: pd.to_datetime(x, format='%Y-%m-%d %H:%M:%S')
-mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, nrows=36000, sep='\t')
+#mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, sep='\t') #nrows=1000
+mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, sep='\t', nrows=3000)
+#mc_data = pd.read_csv("/home/solver/project/data/mimic2v26_1_6.csv", names=hdr, skiprows=1, sep='\t', nrows=3000)
 year = dtt.timedelta(days=365)
 def shift(x):
 	x=list(x)
@@ -2657,18 +2979,22 @@ def kernreg(x):
 
 #---vectorized alert counts 1-DIM---#
 def fft_vector(x):	
-	#rolling_window or rolling_apply
-	frc,fra = 0.1, 0.01
-	threshold_freq=frc; 
-	frequency_amplitude=fra
-	
-	fft_of_signal = np.fft.fft(x)
-	outlier = x.max() if abs(x.max()) > abs(x.min()) else x.min()
-	if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
-		arr = np.where(x == outlier,1,0)
-		#print 'arr', x, np.where(x==outlier), arr, arr[0]
-		return arr[0]
-	else:
+	'''-- rolling_window or rolling_apply
+		-- return 1 value at time
+	'''
+	try:
+		frc,fra = 0.1, 0.01
+		threshold_freq=frc; 
+		frequency_amplitude=fra
+		
+		fft_of_signal = np.fft.fft(x)
+		outlier = x.max() if abs(x.max()) > abs(x.min()) else x.min()
+		if np.any(np.abs(fft_of_signal[threshold_freq:]) > frequency_amplitude):
+			arr = np.where(x == outlier,1,0)
+			return arr[0]
+		else:
+			return 0
+	except:
 		return 0
 ## stat-metrics: expected no. of alerts in period -ith alert
 
@@ -2680,51 +3006,185 @@ def bayes_cp_vector(x):
 		ONLINE: gives prob_distribution(mass) of P(t) not_cp in [1,2,...n]; n=0 is P(t) is changepoint
 	'''
 	# rolling_apply -> lambda x ;
-	Q, P, Pcp = offcd.offline_changepoint_detection(x, partial(offcd.const_prior, l=(len(x)+1)),\
+	try:
+		Q, P, Pcp = offcd.offline_changepoint_detection(x, partial(offcd.const_prior, l=(len(x)+1)),\
 		   	offcd.gaussian_obs_log_likelihood)
-	#print '** log-prob change-point t_i ',len(Pcp), '\n', Pcp
-	cp = np.exp(Pcp).sum(0)
-	#print 'cp\n ', cp
-	return cp[0]
+		#print '** log-prob change-point t_i ',len(Pcp), '\n', Pcp
+		cp = np.exp(Pcp).sum(0)
+		#print 'cp\n ', cp
+		return cp[0]
+	except:
+		return 0
 
 #log transform
 #https://pythonhosted.org/PyQt-Fit/KDE_tut.html#transformations
 
 import pyqt_fit.bootstrap as bs
 import pyqt_fit.kernel_smoothing as smooth
-def kern_vector(x, window_size ):
-	'''http://statsmodels.sourceforge.net/devel/generated/statsmodels.nonparametric.kernel_regression.KernelReg.html#statsmodels.nonparametric.kernel_regression.KernelReg
-	http://nbviewer.ipython.org/github/carljv/Will_it_Python/blob/master/MLFH/CH2/ch2.ipynb
-*** https://pythonhosted.org/PyQt-Fit/NonParam_tut.html ***
-	http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/xlghtmlnode34.html
-	http://comments.gmane.org/gmane.comp.python.pystatsmodels/10720
-	http://comments.gmane.org/gmane.comp.python.pystatsmodels/12442
-***	http://statsmodels-np.blogspot.in/
-	http://www.mathworks.com/help/stats/nlpredci.html
-***	http://jakevdp.github.io/blog/2013/12/01/kernel-density-estimation/
-	http://stackoverflow.com/questions/16707141/python-estimating-regression-parameter-confidence-intervals-with-scikits-boots
-	http://www.statmethods.net/advstats/bootstrapping.html
-	https://github.com/cgevans/scikits-bootstrap/blob/master/scikits/bootstrap/bootstrap.py
-	'''
+cimaxmin=[[]]
+global cimaxmin
+cimaxmin.append([])
 
-	''' stats.model -> multivariate -> cdf/pdf
-		pyqtfit -> bootstrap/grid -> ci
-		but what does multivariate even mean ?? ie average of values... i think the scikits-bootstrap will just take a bunch of array, take some average and bootstrap over that..
-		multivariate stat loses interpretability
-	'''	
+##def kern_vector(xx ): 
+##	'''http://statsmodels.sourceforge.net/devel/generated/statsmodels.nonparametric.kernel_regression.KernelReg.html#statsmodels.nonparametric.kernel_regression.KernelReg
+##	http://nbviewer.ipython.org/github/carljv/Will_it_Python/blob/master/MLFH/CH2/ch2.ipynb
+##*** https://pythonhosted.org/PyQt-Fit/NonParam_tut.html ***
+##	http://sfb649.wiwi.hu-berlin.de/fedc_homepage/xplore/tutorials/xlghtmlnode34.html
+##	http://comments.gmane.org/gmane.comp.python.pystatsmodels/10720
+##	http://comments.gmane.org/gmane.comp.python.pystatsmodels/12442
+##***	http://statsmodels-np.blogspot.in/
+##	http://www.mathworks.com/help/stats/nlpredci.html
+##***	http://jakevdp.github.io/blog/2013/12/01/kernel-density-estimation/
+##	http://stackoverflow.com/questions/16707141/python-estimating-regression-parameter-confidence-intervals-with-scikits-boots
+##	http://www.statmethods.net/advstats/bootstrapping.html
+##	https://github.com/cgevans/scikits-bootstrap/blob/master/scikits/bootstrap/bootstrap.py
+##	http://www.r-bloggers.com/a-kernel-density-approach-to-outlier-detection/
+##	'''
+##
+##	''' stats.model -> multivariate -> cdf/pdf
+##		pyqtfit -> bootstrap/grid -> ci
+##		but what does multivariate even mean ?? ie average of values... i think the scikits-bootstrap will just take a bunch of array, take some average and bootstrap over that..
+##		multivariate stat loses interpretability
+##	'''	
+##	
+##	'''
+##		univariate: just follow example
+##	 '''
+##
+##	#!!! **WITH WINDOW
+##	##--column values/not group object
+##	x = xx
+##	#x = xx['value'].values
+##	#x = xx.values
+##	#x.astype(float)
+##	ws = len(xx)
+##	print 'X', x[:10], len(x),ws
+##
+##	#--grid/index
+##	#add/mult is element-wise with scalar.  
+##	#pass imaginary number to np.r_ return (0:ws) inclusive, by skipping last
+##	imgn = np.complex(ws)
+##	grid = np.r_[0:ws:imgn] 
+##	xindex = np.asarray( range( ws ) )
+##	print 'imaginary', imgn
+##	print 'grid ', grid
+##	print 'xindiex', xindex
+##	print 'grid lens', len(grid), len(xindex)
+##
+##	result = bs.bootstrap(smooth.LocalPolynomialKernel1D,\
+##		   	xindex, x, eval_points = grid, fit_kwrds = {'q': 2}, CI = (95,99))
+##	rmax = result.CIs[0][0,1]
+##	rmin = result.CIs[0][0,0]
+##	#print 'result ', result.shape(), result[:10]
+##	print 'CI ', result.CIs 
+##	print 'result', result
+##	print 'max--min--xo', rmax, rmin, x[0]
+##	print 'len ',len(x),len(rmax), len(rmin)
+##	global cimaxmin
+##	cimaxmin[0].append(rmax[0])
+##	global cimaxmin
+##	cimaxmin[1].append(rmin[0])
+##
+##	#sns.tsplot(g, time="realtime_x", condition="krn", value="value");
+##	#exit(0)
+##		
+##	plt.figure()
+##	plt.plot(grid, result.y_fit(grid), 'r', label="Fitted curve")
+##	plt.plot(grid, result.CIs[0][0,0], 'g--', label='95% CI')
+##	plt.plot(grid, result.CIs[0][0,1], 'g--')
+##	plt.plot(xindex, x[:], 'o', label='Data')
+##	plt.fill_between(grid, result.CIs[0][0,0], result.CIs[0][0,1], color='g', alpha=0.25)
+##	plt.legend(loc='best')
+##	#plt.show()
+##	#exit(0)
+##	#take max of rolling_window.. 
+##	##mmx = max(rmax) ; mmn = min(rmin)
+##	#outlier = np.where( xx>rmax[0] & xx<rmin[0] ) #, axis='index')
+##	outlier =  1 if x[0]>rmax[0] or x[0]<rmin[0] else 0 
+##	print 'outlier ', [ outlier,rmax[0],rmin[0] ]
+##	return outlier
+##
+	#return (outlier,rmax[0],rmin[0])
+	#arr = np.array([ [outlier, rmax[0], rmin[0]] ] ) #, dtype=np.float64)
+	#arr = np.array( [outlier, rmax[0], rmin[0]], dtype=np.float64)
+#	return pd.Series({'krn': float( outlier), 'krncimax':float(rmax[0]),'krncimin':float( rmin[0]) })
+	#return arr
+	#return pd.DataFrame(np.array( [[outlier, rmax[0], rmin[0]] ]), columns=['krn','krncimax','krncimin'])
+	#return np.array( [outlier,rmax[0],rmin[0] ] )
+	#return [outlier,rmax[0],rmin[0] ]
+	#return a group
+	#x['krn'] = outlier
+	#return x
+
+
+def kern_vector2(xx ): 
+	''' * NOT WINDOW-ing ; apply()
+	'''
+	# -- grouped object, passed in with lambda
+	#xv = x[ x.iloc[['value']] ]
+	x = xx['value'].values
+	print 'x', x[:4], len(x)	
 	
-	'''
-		univariate: just follow example
-	'''
-	ws = window_size
-	grid = np.r_[0:ws:512j]
-	xindex = np.asarray( range(ws ) )
-	result = bs.bootstrap(smooth.LocalPolynomialKernel1D,\
-		   	xindex, x, eval_points = grid, fit_kwrds = {'q': 2}, CI = (95,99))
-	print 'CI ', result.CIs
-	rmax = result.CIs[0][0,1]
-	rmin = result.CIs[0][0,0]
+	#--grid/index
+	#add/mult is element-wise with scalar.  
+	#pass imaginary number to np.r_ return (0:ws) inclusive, by skipping last
+	imgn = np.complex(len(x))
+	grid = np.r_[0:len(x):imgn] 
+	xindex = np.asarray( range( len(x) ) )
+	#print 'grid lens', len(grid), len(xindex)
 
+	#--bootstrap
+	try:
+		result = bs.bootstrap(smooth.LocalPolynomialKernel1D,\
+		   	xindex, x, eval_points = grid, fit_kwrds = {'q': 2}, CI = (95,99))
+		rmax = result.CIs[0][0,1]
+		rmin = result.CIs[0][0,0]
+		#print 'minmax', len(rmax), len(rmin)
+		
+		#--boolean array outlier
+		#--vectorized lambda passes each element to expression 
+		v = xx['value'].values
+		c = np.where( v>rmax, 1,
+				np.where( v<rmin,1,0))
+		xx['krn'] = c 
+		#at = ['krn'] * len(x)
+		#xx['alert_type'] = at
+		print 'count\n', xx['krn'].value_counts()
+		#pri('xx',xx.head())
+		return xx
+	except Exception:
+		z = np.zeros(len(x) )
+		xx['krn'] = z
+		return xx
+#########plot############################	
+#	# -- plot
+#	sns.set_context('paper')
+#	pal = sns.color_palette("Set1", 4)
+#	print 'colors', pal
+#	fig, ax = plt.subplots()
+#
+#	clnc = xx.copy()
+#	clnc['krnlbl'] = clnc['krn'].map(lambda x: x==0 and 'signal' or x==1 and 'outlier' )
+#	c = range(len(xx) )
+#	clnc['rr'] =c
+#	#plt.figure()
+#	#sns.lmplot("rr", "value", clnc, hue="krnlbl", palette="Set1", ax=ax, lowess=True, line_kws={"color": ".2"});#fit_reg=False, ci=95,ax=ax);
+#	sns.lmplot("rr", "value", clnc, hue="krnlbl", palette="Set1", ax=ax,fit_reg=False, ci=95); 
+#	#sns.tsplot(clndt, time="realtime_x", condition="krn", value="value");
+#	ax.plot(grid, result.y_fit(grid), '-', color='.2', label="Fitted curve", linewidth=1)
+#	ax.plot(grid, result.CIs[0][0,0], '--',color='.2', label='95% CI')
+#	ax.plot(grid, result.CIs[0][0,1], '--', color='.2' )
+#	#plt.plot(xindex, x[:], 'o', label='Data')
+#	ax.fill_between(grid, result.CIs[0][0,0], result.CIs[0][0,1], color='grey', alpha=0.25)
+#	ax.legend()#.draw_frame()
+#	ax.set_xlim(0,400 )
+#	o = len( xx[xx['krn']==1])
+#	n = len(xx.index); print'n',n,o
+#	ax.set_title(r'kernel regression dialysis : readings= %d , alerts=%d' % (n,o), fontsize=17)
+#	ax.set_xlim(0,100 )
+#	plt.show()
+########################################
+	#return group
 
 
 
@@ -2871,7 +3331,7 @@ def pri(msg, dt):
    print '\n**',msg,'\n',pt
 
 def main():
-#-format data for fnc------------------------------------------------------
+# -- format data for fnc -- #
 	#format
 	# -- gender
 	th_data['gender'] = th_data['gender'].apply(lambda x:x==' m' and str('Male') or str('Female') )
@@ -2908,11 +3368,15 @@ def main():
 	pri('merged mimic check', thmi[thmi['source']=='mimic'][:5])
 	#print '*****len-check****', len(thmi[ thmi['source']=='mimic'] ), len(mcd), len(mcm), len(mc_data)
 
+## data format section  above
+#########################################################################
+
+## ** using thmi for everything ** ##
 
 
-
-#-summary------------------------------------------------------
-	if(0):
+# -- summary -- 
+	def mainsummary():
+		#http://stackoverflow.com/questions/22248580/how-to-summarise-data-over-several-years-into-one-dataframe?rq=1
 		#average days of sample
 		#timeplotH(th_data, title='telehealth')
 		#timeplotH(mc_data, title='mimic2')
@@ -2933,27 +3397,31 @@ def main():
 		#distributionsFG(thmi,row='source',col='variable', val='value')
 
 
-#-alerts--------------------------------------------------------
-	if(1):
-		if(0):	
-			#gender	 
-			gender = th_data[th_data['gender']==' m']	
-			males = gender[['wht','subject_id']];	
-			maleid19 = males[males['subject_id']==19]
-			m2 = maleid19.copy()
-			logfitcdf(males)
-			exit(0)
-
-			#logboostci(m2)
-			#test(malesgrp)
-			test(smple)
-			exit(0)
-		if(1):
+# -- alerts --
+			# vectorize
+		#http://stackoverflow.com/questions/15487022/customizing-rolling-apply-function-in-python-pandas
+		#http://stackoverflow.com/questions/24032282/create-contour-plot-from-pandas-groupby-dataframe
+		#vitals = ['sys'] #, 'dia', 'hr1',  'ox', 'hr2', 'wht']
+		#http://stackoverflow.com/questions/23862429/using-apply-in-pandas-externally-defined-function
+		#http://nbviewer.ipython.org/gist/nipunreddevil/6947228
+#	if(1):
+#		if(0):	
+#			#gender	 
+#			gender = th_data[th_data['gender']==' m']	
+#			males = gender[['wht','subject_id']];	
+#			maleid19 = males[males['subject_id']==19]
+#			m2 = maleid19.copy()
+#			logfitcdf(males)
+#			exit(0)
+#
+#			#logboostci(m2)
+#			#test(malesgrp)
+#			test(smple)
+#			exit(0)
 			# confidence interval
-			dtb = boostci(th_data) 
-			dtv = dtb[dtb['vitals']=='sys']
-			print 'dtv check', dtv.tail(), dtv.describe()
-			#kernel regression
+			#dtb = boostci(th_data) 
+			#dtv = dtb[dtb['vitals']=='sys']
+			#print 'dtv check', dtv.tail(), dtv.describe()
 
 			# fft
 			#fft(thmelt,mcd  )
@@ -2961,86 +3429,535 @@ def main():
 			# bayes change point
 			#bayeschangepoint(thmelt, mcd)
 
-			# vectorize
-		#http://stackoverflow.com/questions/15487022/customizing-rolling-apply-function-in-python-pandas
-		#http://stackoverflow.com/questions/24032282/create-contour-plot-from-pandas-groupby-dataframe
-		#vitals = ['sys'] #, 'dia', 'hr1', 'ox', 'hr2', 'wht']
-			if(0):
-				fft_v = lambda x: fft_vector(x)	
-				#pri('fft bfre alert', thmi.head() )
-				thmi['fft'] = thmi.index.map(lambda x:-1)
-				tg = thmi.groupby(['variable'])
-				gg = []
-				for k,g in tg:
-					g['fft'] = pd.rolling_apply( g['value'], 10, fft_v )
-					gg.append(g)
-					print k, g[['fft']][:10]
-				th = pd.concat(gg)
-				#pri('th', th.head() )
-				#print 'th', th[['fft','variable']][:100]
-			if(1):
-				window_size = 10
-				kr_v = lambda x: kern_vector(x, window_size)		
-				thmi['krn'] = thmi.index.map(lambda x:-1)
-				tg = thmi.groupby(['variable'])
-				gg = []
-				for k,g in tg:
-					g['krn'] = pd.rolling_apply( g['value'], window_size, kr_v )
-					gg.append(g)
-					print k, g[['krn']][:10]
-				th = pd.concat(gg)
+	def mainhdf5(df=thmi, hdf5='store2.h5' ):
+		#http://stackoverflow.com/questions/16997048/how-does-one-append-large-amounts-of-data-to-a-pandas-hdfstore-and-get-a-natural?lq=1
+		#http://stackoverflow.com/questions/15939603/append-new-columns-to-hdfstore-with-pandas?rq=1
+		#http://pandas.pydata.org/pandas-docs/dev/io.html#multiple-table-queries
+#http://mldata.org/about/
 
-			if(0):
-				hdf5 = drcty2 + 'store.h5' 
-				if not os.path.exists( hdf5 ): 
-					print "\n::: performing bayes-point detection :::\n"
-					"""multiple table: 
-							selector table with indexed_col, that other tables indices match 
-							query over selector, quick, but get lots of data back
-							it is like having a wide table, but more efficient
-					   /refs/pandas.pdf ch18 hdf5 table examples, query
-					   hdf5 not reclaim space, delete/add just expands
-					   time_format not safe, NaT convert to int64 etc
-					"""
-					pd.set_option("io.hdf.default_format","table")
-					store = pd.HDFStore(hdf5) #table format
+		''' multiple table: 
+					selector table with indexed_col, that other tables indices match 
+					query over selector, quick, but get lots of data back
+					it is like having a wide table, but more efficient
+			   /refs/pandas.pdf ch18 hdf5 table examples, query
+		'''
+		'''**  hdf5 not reclaim space, delete/add just expands
+			   time_format not safe, NaT convert to int64 etc
+		'''
+		'''row append only, not column... therefore make long table and append to it
+			df['alert_type'] df['alert_value']
+		'''
+		pd.set_option("io.hdf.default_format","table")
+		hdf5 = drcty2 + hdf5 
+		#hdf5 = drcty2 + 'store.h5' 
 
-					bp_v = lambda x: bayes_cp_vector(x)
-					thmi['bycp'] = thmi.index.map(lambda x:-1.0)
-					pri('bycp before alert', thmi.head() )
+		store = pd.HDFStore(hdf5) 
 
-					tg = thmi.groupby(['variable'])
-					gg = []
-					for k,g in tg:
-						print '##val check ', k,'\n', g.value[:3]
-						g['bycp'] = pd.rolling_apply( g['value'], 15, bp_v )
-						gg.append(g)
+		store.append('thmi',df)
 
-					th = pd.concat(gg)
-					store.append('bycp',th)
+		print "** HDFStore type ** ", store.root.bycp._v_attrs.pandas_type
+		print 'num rows= ', store.get_storer("bycp").nrows
 
-					pri('bayes changepoint', th.head() )
-					print "** HDFStore type ** ", store.root.bycp._v_attrs.pandas_type
-					print 'num rows= ', store.get_storer("bycp").nrows
+			#load hdf5 file
+			#with pd.get_store(hdf5) as store:
+			#	print "\n** hdfs type ** \n", store.root.bycp._v_attrs.pandas_type
+			#	print 'num rows= ', store.get_storer("bycp").nrows
+			#	th = store.select('bycp')
+			#	pri('bayes_cp alerts', th.head() )
+			#	print th.bycp[:20]
+			#	#th = store['bycp']  # load it
 
-				else:
-					with pd.get_store(hdf5) as store:
-						print "\n** hdfs type ** \n", store.root.bycp._v_attrs.pandas_type
-						print 'num rows= ', store.get_storer("bycp").nrows
-						th = store.select('bycp')
-						pri('bayes_cp alerts', th.head() )
-						print th.bycp[:20]
-						#th = store['bycp']  # load it
-					
-			if(1):
-				'''kern-reg statsmodel
-				'''
+	def maincsv(dt=None, csvfile='thmi_alerts.csv'):
+		'''write all the alerts to csv
+		   thmi gets ['fft'] ['krn'] ['bcp']
+		   stack to ['alert_type'] ['alert_value']
+		'''
+		drcty2 = '/home/solver/project/data/'
+		csvf = drcty2 + csvfile
+
+		if not os.path.exists( csvf ) :
+			print '\n:::you are writing csv file ',csvfile,':::\n'
+			dt.to_csv(csvf, sep='\t', encoding='utf-8')
+
+		if os.path.exists( csvf ):
+			print '\n',csvfile,' exists, not overwritten\n '
+			nf = csvf[:-4] + '_TEMP_.csv'
+			print '\n',nf,' written instead\n '
+			dt.to_csv(nf, sep='\t', encoding='utf-8')
+		
+	def mainfft(dt=thmi):
+		print "\n::: performing fft detection :::\n"
+		''' grouped only by ['variable'] '''
+		fft_v = lambda x: fft_vector(x)	
+		#pri('fft bfre alert', dt.head() )
+		#dt['fft'] = dt.index.map(lambda x:-1)
+		tg = dt.groupby(['variable'])
+		gg = []
+		for k,g in tg:
+			# return 1 val at time
+			g['fft'] = pd.rolling_apply( g['value'], 10, fft_v )
+			gg.append(g)
+			print k, g[['fft']][:15]
+		th =pd.concat(gg)
+		#pri('checking dt fft', dt.head(25))
+		print 'fft alerts\n', th['fft'].value_counts()
+		return th
+		#pri('th', th.head(15) )
+		#print 'th', th[['fft','variable']][:100]
+	
+	def mainkernreg(dt=thmi):
+		print "\n::: performing kernel regression detection _apply :::\n"
+		'''grouped by variable, subject_id 
+		#http://stackoverflow.com/questions/24272398/python-cleaning-dates-for-conversion-to-year-only-in-pandas
+		http://stackoverflow.com/questions/9155478/how-to-try-except-an-illegal-matrix-operation-due-to-singularity-in-numpy?rq=1
+		'''
+		# -- munge
+		#dt['krn'] = dt.index.map(lambda x:-1)
+
+		# -- datetime64 issue
+		pd.to_datetime( dt['realtime_x'], coerce=True )
+		#dt['rt']=dt[['realtime_x']].apply(lambda x: np.datetime64(x).astype(dtt.datetime)) 
+		## clnc['rt'] = pd.to_datetime(clnc['realtime_x'])
+		#df = dt.ix[ clnc ]
+
+		##cln = dt[ (dt['subject_id']==1) &( dt['variable']=='dia') ]
+
+		# -- vectorized, but pass each group with lambda
+		kr_v = lambda x: kern_vector2(x )
+		cln = dt.groupby(['subject_id','variable'],as_index=False,group_keys=False).apply(kr_v)
+		#pri('krn', cln.head() )
+		print 'krn alerts\n', cln['krn'].value_counts()
+		return cln
+
+			  	#  numpy.linalg.linalg.LinAlgError as err:
+				#   if 'Singular matrix' in err.message:
+				#	      # your error handling block
+				#		    else:
+			  	#				    raise
 
 
-		if(0):
-			#count up the alerts
-			#countalerts(dt)
+		# -- plot
+		#cln['krnlbl'] = cln['krn'].map(lambda x: x==0 and 'signal' or x==1 and 'outlier' )
+		#sns.set_context('paper')
+		#clnc = cln.copy()
+		#c = range(len(cln) )
+		#clnc['rr'] =c
+		##clnc.set_index('rt', inplace=True)
+		#pri('plot', clnc.head() )
+		##clndt['value'].plot()
+		#sns.lmplot("rr", "value", clnc, hue="krnlbl", palette="Set1", fit_reg=True, ci=95);
+		##sns.tsplot(clndt, time="realtime_x", condition="krn", value="value");
+		#plt.show()
+
+		#exit(0)
+		#clnu = cln.apply( lambda x: x.unstack() )
+		#clnd = clnu.reindex( cln.index.get_level_values(0).unique() )
+		#clnd = clnd.apply(kern_vector2)
+		
+		#iteration flattens multiple group pairs
+	##	gg = []
+	##	for (k1, k2), g in cln.groupby(['subject_id','variable'], axis=0):
+	##		#gg = np.vectorize(kern_vector)(g['value'].values, wsc 	) 
+	##		#g['krn'] = g['value'].apply( kern_vector )
+	##		#g['krn'] = g[['value']].apply( kr_v )
+	##		#g['krn'] = g.apply( lambda x: kern_vector2( x[ x[['value']].iloc() ], lenx=ll ), axis=0 )
+	##		print('keys ', k1,k2)
+	##		ll = g[['value']].count()
+	##		print('g ', g[:3] )
+	##		print '### ll ', ll
+	##		# -- pass each group to kr_v lambda
+	##		g.apply( kr_v )
+	##		print 'group vals** ', k1,k2, g['value'][:10]
+	##		print k1,k2, g[['krn']][:50]
+
+	##		sns.tsplot(w, time="realtime_x", condition="krn", value="value");
+	##		gg.append( g )
+	##		exit(0)
+
+	##	th = pd.concat(gg)
+	##	pri('kernel_regression',th.head() )
+
+		
+	if(0):
+		print "\n::: performing kernel regression detection _window=10 :::\n"
+		window_size = 50
+		kr_v = lambda x: kern_vector(x )#, window_size)		
+		pri('thmi', thmi.head() )	
+		thmi['krn'] = thmi.index.map(lambda x:-1)
+		cln = thmi[ pd.notnull( thmi['value'] ) ]
+
+		gg = []; ww = [] 
+		ci = [[]]
+		a = []
+		grp = thmi.groupby(['subject_id','variable'] ) #.apply(kern_vector)
+		for (k1,k2),g in grp:
+			print(k1, k2) 
+			# -- windows for one group
+			g['krn'] =  pd.rolling_apply( g['value'].values, window_size, kr_v )  
+			gg.append(g)
+			w = pd.concat(gg)
+
+			#plt.figure()
+			#sns.lmplot("total_bill", "tip", tips, hue="time", palette="Set1"); #fit_reg=False);
+			sns.tsplot(w, time="realtime_x", condition="krn", value="value");
+			plt.show()
 			exit(0)
+			#tv = g[ g['variable']==k2][['value']]
+			#outlier_positions = g[ (g['variable']==k2) & (g['krn']) ]
+			#COLOR_PALETTE = ["#348ABD","#A60628","#7A68A6","#467821","#CF4457",	"#188487", "#E24A33"]
+			plt.figure(figsize=(12, 6));
+			plt.scatter(range(len(tv)), tv, c=COLOR_PALETTE[0], label=k2);
+			plt.show()
+			exit(0)
+
+
+			plt.scatter(outlier_positions, tv[outlier_positions], c=COLOR_PALETTE[-1], label='outliers');
+			plt.legend();
+			#plt.title('HR_FFT outlier detection', fontsize=17)
+			plt.title('kernel regression outlier detection %s',k2 , fontsize=17)
+			plt.show()
+			#tv.plot()
+			exit(0)
+			c = len( cimaxmin[:][0] )
+			xlnv = range(c)
+			print len(tv.index[10:]), c
+			print(k1,k2)
+			plt.plot(xlnv, tv[9:], 'o',lw=1, label=k2)
+			plt.plot(xlnv, cimaxmin[:][0], 'g--', label='95% CI')
+			plt.plot(xlnv, cimaxmin[:][1], 'g--')
+			plt.fill_between(xlnv, cimaxmin[:][1], cimaxmin[:][0], color='g', alpha=0.25)
+			plt.show()
+			ll = g[['value']].count()
+			print '### ll ', ll, len( g[['value']] )
+			exit(0)
+
+		th = pd.concat(gg)
+		pri('kernel_regression',th.head() )
+
+	def mainbayes_changepoint(dt=thmi):
+		#if not os.path.exists( hdf5 ): 
+		print "\n::: performing bayes-point detection :::\n"
+
+
+		bp_v = lambda x: bayes_cp_vector(x)
+		#dt['bycp'] = dt.index.map(lambda x:-1.0)
+
+		tg = dt.groupby(['variable'])
+		gg = []
+		for k,g in tg:
+			print '##val check ', k,'\n', g.value[:3]
+			g['bycp'] = pd.rolling_apply( g['value'], 15, bp_v )
+			g['bycp'] = g['bycp'].map(lambda x: x> g['bycp'].quantile(.90) and 1 or 0)
+			gg.append(g)
+
+		th = pd.concat(gg)
+		pri('bayes changepoint', th.head() )
+		return th
+	
+# -- read write alerts --
+# -- write a new file, then change if->(0)	
+	#csvf = 'alert100_TEMP_.csv'
+	#csvf = 'alert1500mcd.csv'
+	csvf = 'alert5000mcd.csv'
+	#csvf = 'alert20Kmcd.csv'
+	##with new main_bycp function that discretize probs
+	#csvf = 'alert1Kmcd_TEMP__TEMP_.csv' 
+	if(0):
+		fltr = thmi[thmi['source']=='mimic'] 
+		smp = fltr
+		a=mainfft(dt=smp)
+		b=mainkernreg(dt=smp)
+		c=mainbayes_changepoint(dt=smp)
+
+		alrt = pd.concat([smp , a['fft'],b['krn'],c['bycp']], axis=1)
+		print('thmi concat alerts',alrt.head(50) )
+		maincsv(dt=alrt, csvfile=csvf)
+	else:
+		#print 'in loop'
+		f = './data/' + csvf
+		hdr =[ 'subject_id',  'gender',  'source',  'realtime_x',  'variable',    'value',   'index',   'timeshift',   'level_0', 'dob' ,'dod', 'realtime_y',  'fft', 'krn', 'bycp']
+
+
+		alrt_data = pd.read_csv(f, names=hdr,skiprows=1, sep='\t')
+		print('loaded alerts from csv', alrt_data.head())
+
+
+
+	def maincount_alerts_rug(dt=alrt_data):
+		'''row = variable
+		   col = alert_ye
+		'''
+		# -- pre-example
+		sns.set_style("whitegrid")
+		#d = pd.DataFrame({'row':['a']*9 + ['b']*9 + ['c']*9,
+		#					'col': ['fft','krn','bycp']*9,
+		#					'val':np.random.randn(27)})
+		#print 'data', d
+
+		'''stacking the dataframe
+		'''
+		# -- merge mimic and telehealth time index
+		mt=dt[ dt['source']=='mimic']['timeshift']
+		tt=dt[ dt['source']=='telehealth'][ 'realtime_x' ]
+		dt['tidx'] = pd.concat( [mt,tt], axis=0)
+		dt['timeindex'] = pd.to_datetime(dt['tidx'])
+		print type(dt['timeindex']), dt['timeindex'].dtype
+
+		# -- expanding the dataframe wide to long
+		# -- melt()
+		dcat = pd.concat( [dt,dt,dt], axis=0 )
+		dcat['alert_t'] = ['krn']*len(dt['krn']) + ['fft']*len(dt['fft']) + ['bycp']* len(dt['bycp'])   
+		dcat['alert_v'] = pd.concat( [dt['krn'] , dt['fft'] , dt['bycp']], axis=0)
+			
+		dcatt = dcat[['source','subject_id','alert_t','variable','timeindex','alert_v','value']]
+		d = dcatt.reset_index(drop=True).set_index(['timeindex'],drop=False ).copy()
+		print 'd expand' , d.head(20)
+
+		# -- get the interarrival time
+		# -- set the iqt range
+		# -- get cumsum over interarrival time
+		def deltat(g):
+			try:
+				g['tavg'] = g[ g['alert_v']==1 ]['timeindex'].diff(1)
+				#print g
+				return g
+			except:
+				pass
+
+		def iqt(g):
+			try:
+				g['iqt'] = g[ g['alert_v']==1 ]['value'].map(lambda x: x > g['value'].quantile(.90) and 1 or x < g['value'].quantile(.10) and 1 or 0)
+				#print 'iqt', g
+				return g
+			except (Exception, StopIteration) as e:
+				pass
+
+		def cum(g):
+			try:
+				#--exact[float64] conversion timedelta to seconds
+				#g['tavgsec']= pd.to_timedelta(g['tavg'],unit='d')+pd.to_timedelta(0,unit='s').astype('timedelta64[s]')
+				# --exact convert to float64
+				g['tavg'] = g['tavg'].fillna(0)
+				g['tavgf']= (pd.to_timedelta(g['tavg'],unit='d')+pd.to_timedelta(0,unit='s'))/np.timedelta64(1,'D')
+
+				# --cumsum on filter rows
+				g['cumt'] = g[ g['alert_v'] == 1 ]['tavg'].cumsum()
+				g['cumt'] = g['cumt'].fillna(0)
+
+				# float64 convert
+				g['cumtf'] = (pd.to_timedelta(g['cumt'],unit='d')+pd.to_timedelta(0,unit='s'))/np.timedelta64(1,'D')
+				#print 'group type', type(g['cumt'] )
+				##print g.head()
+				return g
+
+			except (Exception, ZeroDivisionError , StopIteration, ValueError) as e:
+				print 'cumulative error\n', e
+				pass
+
+		# -- utility
+		d.sort_index(axis=0, inplace=True)
+		dg = d.groupby(['source','subject_id','alert_t','variable'], as_index=False, group_keys=False)
+		#	pd.to_datetime(d['tavg'], format='%H:%M:%S')
+
+
+		# -- set bycp threshold for probability val to alert
+		def quantg(g):
+			try:
+				# -- vectorized if-else 
+				#g['alert_v'] = np.where(g['alert_v']>g['value'].quantile(.75),1,0) 
+				g['alert_v'] = np.where(g['alert_v']>.1,1,0) 
+				g.drop_duplicates(inplace=True)
+				#print 'group', g[:2]
+				return g
+			except (Exception,StopIteration,TypeError) as e:
+				print '**bycp error\n', e
+				pass
+		
+		## duplicate values, therefore have to reset index and drop duplicates for both groups and df original, \
+		# or else update does not know which row to update new value to.
+		# get_duplicates(), duplicated, drop_duplicates()
+
+		#-- pre-filtered group, 
+		#-- post-filter not work over multi-column, does not return unfiltered
+		d.reset_index(inplace=True, drop=True)
+		db=d[d['alert_t']=='bycp'].groupby(['timeindex','source','subject_id','alert_t','variable'],\
+				as_index=True,group_keys=True).apply(lambda x: quantg(x))  #.copy(deep=True) 
+		db.drop_duplicates(inplace=True)
+		print 'bycp vals', db.head()
+		print 'bycp == 1 *** ', db[ db['alert_v']==1][:10], len(db[ db['alert_v']==1])
+
+		#-- update to (unfiltered) data frame
+		d1 = d.set_index(['timeindex','source','subject_id','alert_t','variable'],drop=False, inplace=False).copy()
+		#print '*** bycp to_update', d[d.alert_t == 'bycp'].head()
+		d1.update(db, overwrite=False)
+		#print '*** bycp updated', d1[d1.alert_t == 'bycp'].head()
+		print '*** bycp updated', d1.head(10)
+		d1.reset_index(inplace=True,drop=True)
+		#d.set_index(['timeindex'], drop=False, inplace=True)
+		#print '*** bycp', d[d.alert_t == 'bycp'].head()
+
+		# -- stupid way to split dataframe and concate alert_t
+		dd = d.copy()
+		print dd.head()
+		#dd.reset_index(inplace=True)
+		ddk = dd[dd['alert_t']=='krn']; ddf=dd[dd['alert_t']=='fft']
+
+		d2 = pd.concat( [ddk,ddf,db], axis=0 )
+		d2.set_index(['timeindex'], drop=False, inplace=True)
+		print 'weird*** ', d2.head(), len(d2) 
+		print 'weird*** ', d2.tail(), len(d2) 
+		d2.sort_index(axis=0, inplace=True)
+		print 'weird*** ', d2.tail(), len(d2) 
+		
+		#--- bycp-end ---
+
+		# -- get time delta interarrival times of alerts
+		d=d2.copy()
+		print 'weird d*** ', d.head(), len(d) 
+		print 'weird d*** ', d.tail(), len(d) 
+		print 'weird d*** ', d.tail(), len(d) 
+
+		d=d.groupby(['source','subject_id','alert_t','variable'],as_index=False,group_keys=False).apply(lambda x: deltat(x) )
+
+		# -- set quartile alerts; to get FP,FN
+		d=d.groupby(['source','subject_id','alert_t','variable'],as_index=False,group_keys=False).apply(lambda x: iqt(x) ) 
+
+		# -- get cumulative time
+		print '*** bycp pre 2', d[d.alert_t == 'bycp'].head()
+		d = d.groupby(['source','subject_id','alert_t','variable'],as_index=False,group_keys=False).apply(lambda x: cum(x) ) 
+		print '*** bycp2', d[d.alert_t == 'bycp'].head()
+		#print d.describe() #print d.head()
+
+		# -- filter out timedeltas eq 0 
+		aa=pd.to_timedelta('00:00:00')
+		print '*** bycp tod2', d[d.alert_t == 'bycp'].head()
+		d = d[ pd.to_datetime( d['cumt'] ) - pd.to_timedelta('00:00:00') > pd.to_timedelta('00:00:00') ]
+		print '*** bycp tod++', d[d.alert_t == 'bycp'].head()
+
+		# fp/fn vs iqt boxplot
+		# -- 1 box per column -> use pivottable
+		def fp(x):
+			iqt = x['iqt']
+			alv = x['alert_v']
+			x['fpfn'] = x.apply(lambda x: x['iqt']==0 and x['alert_v']==0 and 'TN'
+										or x['iqt']==1 and x['alert_v']==1 and 'TP' 
+										or x['iqt']==0 and x['alert_v']==1 and 'FP'
+										or x['iqt']==1 and x['alert_v']==0 and 'FN',
+										axis=1 )
+			return x
+
+		d = d.groupby(['source','subject_id','alert_t','variable'],as_index=False,group_keys=False).apply(lambda g: fp(g) )
+		print '*** bycp3', d[d.alert_t == 'bycp'].head()
+		#print 'd len', len(d['subject_id'].unique() ), d['subject_id']
+		print dcatt.info()
+		pri('catt', dcatt.head() )
+		print 'sid unq', len( dcatt['subject_id'].unique() )
+		#c= c.unstack()
+		#pri('cmplte', c.head() )
+		c = d.copy()
+		print '*** bycp4', c[c.alert_t == 'bycp'].head()
+		c.reset_index(inplace=True,drop=True)
+		cp = c.pivot_table(rows=['subject_id','alert_t'],
+						   cols=['fpfn'],
+						   values=['alert_v'],
+						   aggfunc=lambda x: x.count() ) 
+		print ('cp alert type', c['alert_t'].unique() )
+		print('cp',cp.head(15) )
+		print cp.info()
+		#b = sns.FacetGrid(d, col='alert_t',palette="husl",margin_titles=True)
+		#b.map(sns.boxplot,c)
+		sns.boxplot(cp)
+
+
+		# -- rugplot
+		#(c1, c2, c3, c4, c5 ) = sns.color_palette("husl", 6)[:5]
+		g = sns.FacetGrid(d, col='alert_t', row='variable',size=1, aspect=3, palette="husl",margin_titles=True)
+		g.map(sns.rugplot,'tavgf') #,height=.5)
+		print sns.axes_style()
+		sns.despine(left='False')
+		g.fig.subplots_adjust(wspace=1.2, hspace=.3);
+		g.set_axis_labels(['time diff']);
+		g.set(yticks = [])
+
+		# -- cdf plot
+		# http://nbviewer.ipython.org/github/nicolasfauchereau/NIWA_Python_seminars/blob/master/4_Statistical_modelling.ipynb
+		#pd.tslib.repr_timedelta64(np.timedelta64(180487000000000,'ns'))
+		print 'tavgf ## ', type(d['tavgf']) , d['tavgf'].dtype
+		print('##@@d',d.head() )
+		c = sns.FacetGrid(d, col="alert_t")	
+		c.map(  sns.distplot, 
+				"cumtf", 
+				kde=True, 
+				kde_kws={'cumulative':'True'},
+				fit=stats.expon )
+		#loop subplots over alert_t
+
+		#c.map( sns.kdeplot, "cumtf", cumulative=True )
+		c.set_axis_labels(['time diff']);
+
+		# - kde plot of freq(1/a, 1/b, 1/c) <- cdf
+		# http://stackoverflow.com/questions/6298105/precision-of-cdf-in-scipy-stats
+		# -- get slope
+		a1 = c.facet_axis(0,0)
+		#print 'a1 ', a1.get_children()
+		mx = a1.get_children()[2]._x
+		my = a1.get_children()[2]._y	
+		#print 'm\n', mx, my
+		maxm =0
+		minm =1
+		slopes = [(x,y) for x,y in zip(mx,my) if y/x-0.2<0 or y/x+0.2>0 ]
+		#print 'slopes ', slopes[:2]
+
+		# box plots
+		# -- binned frequency
+		# max time
+		# avg_time
+		at = d.copy()
+		#boxat = at.pivot_table(rows=['subject_id','alert_t'],
+		#				   	values=['tavg'],
+		#				   	aggfunc=lambda x: x.mean() ) 
+		#pri('boxplot avgT', boxat.head() )
+
+		# diff assumptions (Weibull, k=2)
+		# violin plot of interarrival times
+
+		# overlap kde for each variable
+		# busiest time
+
+		#time by alert-types (top 3) 
+
+		#time by alert-size (top3)
+
+		plt.show()
+
+		# clean up time column
+		#http://stackoverflow.com/questions/19350806/how-to-convert-columns-into-one-datetime-column-in-pandas
+		#http://stackoverflow.com/questions/17688155/complicated-for-me-reshaping-from-wide-to-long-in-pandas
+	'''
+
+		# alert_type 
+		#http://nbviewer.ipython.org/github/amplab/datascience-sp14/blob/master/lab4/joins.ipynb
+		print('dt',dt.head() )
+		s = dt.stack(['bycp']) #['fft','krn','bycp'])
+		print('stack',s[:25] )
+		#create empty dataframe of size ['values'][alert_type][alert_value]
+# 3 * len of dt
+		alt['alert_value'] = dt['fft'].map(lambda x: x)
+		alt['alert_value'] = dt['krn'].map(lambda x: x)
+		alt['alert_value'] = dt['bycp'].map(lambda x: x)
+		alt['alert_type'].apply(lambda x: 
+
+		# facet plot
+		# rugplots , rows='variable', cols='alert_type'
+
+		# cdf of time to alert
+
+		# 
+		# count up the alerts
+		# time to alerts
+		# rug plot on bottom
+		#countalerts(dt)
+
 		#boots(th_data, dtv)
 		##pltframe = percent_method2(dtv)
 		##ttestboost(dtv)
@@ -3048,13 +3965,39 @@ def main():
 
 		#ci = percent_method(empirical_distribution)
 		#toyplotpm(ci)
+	'''
+	maincount_alerts_rug()
+
+
+
+
 
 #-boosting-----------------------------------------------------
+# score.py  main.py
+# weights graph
+# wordle of alerts
 
-#-hypothesis model---------------------------------------------
+#-- sampling --#
+#reservoir sampling
+#mab
+#http://blog.yhathq.com/posts/the-beer-bandit.html
+#bayes mab (ukrainian seattle data science co.)
+#http://cstheory.stackexchange.com/questions/21338/how-much-time-to-recognize-palindromes-in-logarithmic-space
+
+#--- hypothesis model ---#
+# ridge regression mlh ch4
+
+#-disease model-- 
+#http://blog.yhathq.com/posts/predicting-customer-churn-with-sklearn.html
+#hash kernel
+#int prg
+#percolation
+#mixture model
+#http://blog.echen.me/2012/03/20/infinite-mixture-models-with-nonparametric-bayes-and-the-dirichlet-process/
 
 #-bayes---------------------------------------------
 #http://nbviewer.ipython.org/github/PrincetonPy/Python-Workshop/blob/master/3.Demos.ipynb
+#https://probmods.org/occam%27s-razor.html
 	
 
 if __name__=="__main__":
