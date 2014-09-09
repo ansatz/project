@@ -2,9 +2,17 @@
 from __future__ import division
 
 ## references ##
+#BOOTCAMP ###
+#http://nbviewer.ipython.org/github/profjsb/python-bootcamp/blob/master/Lectures/04_IPythonNotebookIntroduction/IPython%20-%20beyond%20plain%20Python.ipynb
+#http://nbviewer.ipython.org/github/profjsb/python-bootcamp/tree/master/
+#https://www.picloud.com/
+
+
+
 #job machine learning bugra
 #https://www.cbinsights.com/jobs
-#ipython
+#IPYTHON
+#http://nbviewer.ipython.org/urls/gist.githubusercontent.com/jdfreder/6734825/raw/529872f1b4544d6e270c92c0335c6a348ce6cf4a/IPython+Markdown+Pandoc+Limitations.ipynb
 #http://www.gibiansky.com/blog/ipython/ipython-kernels/
 #compresssibility
 #https://news.ycombinator.com/item?id=5998675
@@ -634,6 +642,7 @@ st like all the other DV sketches, HyperLogLog looks for interesting things in t
 '''
 http://jakevdp.github.io/blog/2014/03/11/frequentism-and-bayesianism-a-practical-intro/
 
+## sample size *
 hypoth test(correlation)
 1. null  hypoth r=0 (2-sided r neq 0)
 2. null distr
@@ -2082,6 +2091,7 @@ def ensembleaverage(dt):
 	'''
 	time normalized
 	http://nbviewer.ipython.org/github/duartexyz/BMC/blob/master/Ensemble%20average.ipynb
+	http://nbviewer.ipython.org/github/demotu/BMC/blob/master/notebooks/FrequencyAnalysis.ipynb
 	'''
 
 # - box-plot {age, pt, demographic, time}
@@ -3998,7 +4008,7 @@ def main():
 #-bayes---------------------------------------------
 #http://nbviewer.ipython.org/github/PrincetonPy/Python-Workshop/blob/master/3.Demos.ipynb
 #https://probmods.org/occam%27s-razor.html
-	
+
 
 if __name__=="__main__":
 	main()
