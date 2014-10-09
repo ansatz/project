@@ -1,3 +1,22 @@
+#smiley face in ipython
+http://nbviewer.ipython.org/gist/deeplook/5162445
+#heat map dendogram
+http://nbviewer.ipython.org/github/ucsd-scientific-python/user-group/blob/master/presentations/20131016/hierarchical_clustering_heatmaps_gridspec.ipynb
+#corr matrix to network graph MST
+http://nbviewer.ipython.org/github/mvaz/PyData2014-Berlin/blob/master/3%20-%20DAX30%20Network.ipynb
+
+#auto-tune hyperparameters, log-uniform search space
+http://fastml.com/optimizing-hyperparams-with-hyperopt/
+#trends in ml:
+http://fastml.com/good-representations-distance-metric-learning-and-supervised-dimensionality-reduction/
+#purpost of stats
+http://slantedwindows.com/reservoir-sampling-made-visual/
+http://rem.ph.ucla.edu//goal.of.stat.html
+#health-analyis
+#additive model: clinical study
+http://www.ncbi.nlm.nih.gov/pubmed/19854637
+extreme money-ball houston astros all in
+http://www.theatlantic.com/health/archive/2014/08/how-racism-creeps-into-medicine/378618/?single_page=true
 #ipython
 http://nbviewer.ipython.org/urls/gist.githubusercontent.com/jdfreder/6734825/raw/529872f1b4544d6e270c92c0335c6a348ce6cf4a/IPython+Markdown+Pandoc+Limitations.ipynb
 http://anandology.com/python-practice-book/iterators.html#generators
@@ -5,6 +24,10 @@ http://damon-is-a-geek.com/publication-ready-the-first-time-beautiful-reproducib
 http://wrobstory.github.io/2013/04/pandas-vincent-timeseries.html
 http://nbviewer.ipython.org/gist/wrobstory/1eb8cb704a52d18b9ee8/Up%20and%20Down%20PyData%202014.ipynb
 http://matplotlib.org/examples/api/radar_chart.html
+
+#ml
+https://bitbucket.org/mhorbal/learningtools
+https://github.com/hmcuesta/PDA_Book
 
 #latex
 https://en.wikibooks.org/wiki/LaTeX/Mathematics
@@ -23,7 +46,7 @@ i
 
 
 
-DataSets
+@DataSets
 ========
 
 *refs*
@@ -41,8 +64,10 @@ http://stats.stackexchange.com/questions/31666/how-can-i-align-synchronize-two-s
 Purpose
 -------
 ### Alert Fatigue
+-----------------
 
 ### Machine Learning
+--------------------
 1. *what* is the data ? (unsupervised data)
 2. *why* learning these things? (feature seletion)
 3. *how* learning (optimization)
@@ -56,6 +81,11 @@ Machine learning is data and product dependent.  Successful, real-world applicat
   Evaluating classifier accuracy involves specifying how it will learn.  Optimizing an estimator of the model to unseen data occurs at both the model and data levels; this helps to prevent poor generalization.  For example, situations with limited data or unbalanced class labels can lead to overfitting.  Selecting subsets of training vs test data, such as K-fold cross validation, for the former, or Stratified-K-fold cross validation, in the latter case, can prevent this.  Bagging, generating similar data with varying weights, can be used for data with label uncertainty, where errors cancel out in an aggregated, majority model.  Ensemble classifiers effect both the data and model space.  Finally, direct limits to the hypothesis space of a model can be used.  For example, in building a decision tree, the attribute that maximizes the information gain at each node is selected.  If a random subset of attributes is used to split a tree node, then a ensemble of subset trees forms a random forest.  
 
 
+Curse of Dimensionality
+----------------------
+http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/
+The amount of training data needed to cover 20% of the feature range grows exponentially with the number of dimensions.
+
 The three phases(what, why, and how) of machine learning refer to:  1.labeling what the data is, 2.identifying important features, and 3.optimizing the learning method used.  For example, unsupervised learning helps to understand what the data is; feature selection involves how learningwhy involves data transformation, model building, and evaluation
 
 
@@ -63,6 +93,7 @@ or engineered features(HoG, histogram of oriented features)
 
   [//] # (
 Introduction:
+-------------
 Medical alerts have been shown to provide positive benefit: such as reduced blood sugar variability \cite{Mastro}, and improved prescribing safety \cite{Raebel}.  Currently, the extent of preventable medical error is estimated at 40,000 fatalities per year \cite{Muse}.  The need for improved medical alerts has been recognized in a recent Joint Commission and FDA statement.  The percentage of alerts currently being ignored, or alert fatigue, is estimated at 70-80\% \cite{Gouveia}.  The purpose of this study is to link model complexity with visual information for a clinically meaningful alert.  Recently, we were involved with a telehealth, at-home monitoring study, which recorded patient vital sign readings, twice daily, for an approximate several month interval.  A publicly available dataset is sampled as well for comparative analysis.  The dynamics of Adaboost weights have been shown to distinguish 'easy' from 'hard' classification points\cite{Capri2002}.  Data mining techniques are applied to handle features common to clinical data: high-dimensionality, variously scaled measures, group differences, and time series issues.  Three types of clinical alert are identified, static, sequential, and drifting.  Further, global monitoring over the combined feature space is achieved.  Finally, to address the issue of alert fatigue, results are graphically interpretable.  Decision tree, forest plot, and sequence logo are presented.
 
 
@@ -117,25 +148,68 @@ http://stats.stackexchange.com/questions/19715/why-does-a-time-series-have-to-be
 -->
 
 
-##Clinical Study Design
+## Clinical Study Design
+-----------------------
+
+  The gold standard of clinical study is double-blind, randoml controlled trial.  Post-study analysis, or sequential trial.  
+  anova, effect size
+
+
 Data Normalization
 pooling, missing data, alignment
 longitudinal, panel/cross-sectional
 rct, double-blind
 anova , effect size
 http://stats.stackexchange.com/questions/90668/bayesian-analysis-of-contingency-tables-how-to-describe-effect-size?rq=1
+http://nbviewer.ipython.org/github/dolaameng/tutorials/blob/master/sklearn-tutorials/PREPROCESSING%20-%20different%20data%20and%20methods.ipynb
+
+https://github.com/nphoff/saxpy
+http://fromstefanimportblog.blogspot.sg/2011/04/symbolic-aggregate-approximation-in.html
+alittlebookfortimeseriesinr.pdf
+http://www.stat.pitt.edu/stoffer/tsa3/  timseriesinr_yellowbook
+
+http://www.statisticsdonewrong.com/
+http://blog.mech.io/post/48631870585/using-cohort-analysis-to-make-your-funnels-more
+
+## SAX symbolic aggregate approXimation
+---------------------------------------
+SAX transforms time-series data into symbolic strings.  The most common transform of raw time series data is Z-normalization (\mu=0, \sigma=1); it often preserves original time series features.  However, there are cases where this introduces error; for example when the values are mostly constant, with minor noise at short intervals, normalization will over-amplify the noise to its maximum.  Another technique used is piecewise aggregate approximation (PAA), which divides the original time series into $ M $ equally sized segments.  The mean for each segment is calculated, and the sequence assembled from each segments mean is the PAA transformation of the original time series.  PAA provides a lower bound, for the difference between the segments, set to the original Euclidean distances.  Finally, the $n$ values are transformed into strings of length $w<<n$, using an alphabet of size > 2.  The symbols produced correspond to time-series features with equal probability.  Using a lookup table, equal-sized areas from the normal curve, which the z-normalization transforms to, are selected.          
+
+
+
+
 
 ## Time Series Analysis
-  **1. Clinical Study Design/Data Normalization
-  The gold standard of clinical study is double-blind, randoml controlled trial.  Post-study analysis, or sequential trial.  
-  anova, effect size
+-----------------------
+  **1. Preprocessing/Data Normalization
+  ---------------------------------------------
 
   Dealing with data from different trials of different duration, which may contain missing data, requires resampling and alignment.  A simple method for time normalization is the percent method, where each trial is normalized to a percent cycle from 0 to 100%.  Interpolation ensures a fixed number of equally spaced data are generated.   
  **2. Correlations**
+ -------------------
   Time series data refers to sequential observations ordered by time.  They may contain serial, periodic, or trend (daily,weekly) correlations.  Larger structural changes, such as mean-shift, mode-shift, or even a probability distribution change, are referred to as non-stationary.  If dependence between values are unaccounted for, this lead to overfitting of the data.  A stationary process is considered a stochastic process, whose joint probability distribution does not change when shifted in time.  Therefore, parameters such as mean and variance do not change over time or position; z-normalization of data (\mu =0, \sigma =1) is considered stationary.  An autocorrelation function tests for randomness at various lags for a timeseries; further the maximum lag can be determined to realign offset data.  A periodogram converts the autocorrelation from the time domain to frequency to determine cycle lengths.  
     
 	**3. Short vs Long**
 	 The use of short or long time ranges is dependent on model complexity, and vice versa.  Short data ranges refers to $\theta > observations$, and long data refers $observations >> \theta$.  To test a model, subsets of testing and training data are needed; for short data ranges there are not enough observations to allow a test subset.  Further, increases in the number of model parameters, noise, or randomness within the data itself, increase the size of data needed.  For short sample sizes, with increased model parameters or noise within the data, Akaike Information Criteria (AIC) is an in-sample measure for selecting models; however, it can only produce simple models with 1-2 parameters.  For intermediate series, when $obs > \theta$, parametric models may be appropriate.  Finally, for `obs >> 200`, differences between model and data are more apparent; non-parametric models, kernels based on time, or use of moving windows can be used.
+
+the other one from the notebook
+diff these two
+ **1. Correlations**
+ Time series data refers to sequential observations ordered by time.  They may contain serial, periodic, or trend (daily,weekly) correlations.  Larger structural changes, such as mean-shift, mode-shift, or even a probability distribution change, are referred to as non-stationary.  If dependencies are unaccounted for, they lead to overfitting of the data.  A stationary process is considered a stochastic process, whose joint probability distribution does not change when shifted in time.  Therefore, z-normalized data, with ( \mu =0, \sigma =1), is considered stationary.  
+   
+     **2. Short vs Long**
+	 The use of short or long time ranges is dependent on model complexity, and vice versa.  Short data ranges refers to $\theta > observations$, and long data refers $observations >> \theta$.  To test a model, subsets of testing and training data are needed; for short data ranges there are not enough observations to allow a test subset.  Further, increases in the number of model parameters, noise, or randomness within the data itself, increase the size of data needed.  For short sample sizes, with increased model parameters or noise within the data, Akaike Information Criteria (AIC) is an in-sample measure for selecting models; however, it can only produce simple models with 1-2 parameters.  For intermediate series, when $obs > \theta$, parametric models may be appropriate.  Finally, for `obs >> 200`, differences between model and data are more apparent; non-parametric models, kernels based on time, or use of moving windows can be used.
+
+
+Statistics
+----------
+extSdCard/medicalstatisticsStanford/
+liptstick contains lead ? etc.
+
+1. confounding factors: simpsons paradox, effect-size, group differences
+2. fdr
+3. frequentist vs bayesian
+
 
 
 DataMining
@@ -178,7 +252,7 @@ trends?
 
 
 
-ALERTS
+@ALERTS
 ======
 *univariate, input representation*
 
@@ -207,6 +281,9 @@ Signal and Outliers
 <!--
 what is noise
 what is normalization?
+https://courses.edx.org/courses/RiceX/ELEC301x/T1_2014/courseware/7347598989364c4f994a39b7f755dffa/ee23e686563040efae8904aaf05102d0/
+properties of signals
+test signals
 
 *occams razor, 
 https://probmods.org/occam%27s-razor.html
@@ -248,8 +325,9 @@ transforms
 http://stats.stackexchange.com/questions/10271/automatic-threshold-determination-for-anomaly-detection
 -->
 
+Signal, Noise, Randomness
+-------------------------
   A signal is a description of how one parameter varies with another parameter. For instance, voltage changing over time in an electronic circuit, or brightness varying with distance in an image. A system is any process that produces an output signal in response to an input signal.
-
 
 
 
@@ -347,8 +425,8 @@ use mixture model, assume outlir come from uniform, capture majority of trials
 
 
 
-BOOSTING
-===
+@BOOSTING
+=========
 
 *refs*
 http://bugra.github.io/work/notes/2014-05-16/entropy-perplexity-image-text/
@@ -371,18 +449,42 @@ model complexity
 #cost-sensitive learning p147 MLinAction
 
 
+autonlab > infogain11.pdf
 Entropy
 -------
+IG = H(Y) - H(Y|X)
+relative IG = IG / H(Y)
+use IG to determine how interesting a 2d-contingency table would be..
+ie predict if live past 80y/o:
+  ig(long life | smoker), ig(long life| gender), ...
+  what is contingency table ?
 
 
 Weights
 -------
 
 
-Disease Modeling
+sequential
+----------
+waldboost
+mab(kl-diverge, thompson sampling -> bayes control (causality)  )
+2005	The Max K- Armed Bandit: A New Model of Exploration Applied to Search Heuristic Selection	Vincent A. Cicirello, Drexel University
+Stephen F. Smith, Carnegie Mellon University
+reservoir sampling
+secretary problem
+
+
+
+
+
+
+
+
+
+@Disease Modeling
 ================
 sampling-optimization
---------
+---------------- -------- --------
 -(vowpal rabbit) linear model over all features
 -random forest
 #http://blog.echen.me/2011/03/14/laymans-introduction-to-random-forests/
@@ -392,6 +494,7 @@ http://www.analyticbridge.com/forum/topics/challenge-of-the-week-random-numbers
 #http://gregable.com/2007/10/reservoir-sampling.html
 -secretary problem
 (datagenetics)
+http://datagenetics.com/blog/december32012/index.html
 -thompson sampling !w
 -small sample method
 http://stats.stackexchange.com/questions/1856/application-of-machine-learning-techniques-in-small-sample-clinical-studies
@@ -408,7 +511,13 @@ wordle
 
 #dirchlet
 http://www.drbunsen.org/gambling-in-multiplayer-games/
+http://nbviewer.ipython.org/github/dolaameng/tutorials/blob/master/sklearn-tutorials/SAMPLING%20GMM%20v.s.%20Dirichlet%20Process.ipynb
 
+#graphical model
+http://nbviewer.ipython.org/github/dolaameng/tutorials/blob/master/sklearn-tutorials/PRACTICE%20-%20time%20series%20%2B%20covariance%20%2B%20clustering.ipynb
+GraphLassoCV
+http://unsupervisedlearning.wordpress.com/2014/08/04/topological-anomaly-detection/
+percolation clique
 
 #mab
 #http://blog.yhathq.com/posts/the-beer-bandit.html
@@ -430,17 +539,20 @@ sample size - funnel graph
 
 *refs*
 random choice:
+http://www.keithschwarz.com/darts-dice-coins/
 http://aeon.co/magazine/philosophy/is-the-most-rational-choice-the-random-one/
 http://bugra.github.io/work/notes/2014-04-06/graphs-databases-and-graphlab/
 http://sociograph.blogspot.com/
 http://unsupervisedlearning.wordpress.com/2014/08/04/topological-anomaly-detection/
 http://nbviewer.ipython.org/github/nicolasfauchereau/NIWA_Python_seminars/blob/master/4_Statistical_modelling.ipynb
-http://blog.echen.me/2011/03/14/laymans-introduction-to-measure-theory/
 
 measure theory
 --------------
 define metrics for health?
 volume of taco
+dynamic time warping: http://nbviewer.ipython.org/github/dolaameng/tutorials/blob/master/sklearn-tutorials/FEATURE%20-%20dynamic%20time%20warping%20for%20images.ipynb
+euclidean distance
+http://blog.echen.me/2011/03/14/laymans-introduction-to-measure-theory/
 
 curse of dim.
 simpsons paradox
@@ -468,7 +580,7 @@ semidefinite programming
 ------------------------
 
 
-Bayes
+@Bayes
 =====
 *refs*
 http://connor-johnson.com/2014/02/18/linear-regression-with-python/
@@ -518,17 +630,18 @@ http://twiecki.github.io/blog/2014/03/17/bayesian-glms-3/
 propensity model
 ---------------
 echen
-gwern
+gwern (berkson paradax)
+nielsen (judea perl, theorem of causality)
 
 
-References
+@References
 ----------
 A surge of p - values between 0.040 and 0.049 in recent decades ( but negative results are increasing rapidly too) Winter, Dodou, U of Delft
 Half of a coin: negative probabilities, Gabor Szekely
 
+searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping	Thanawin Rakthanmanon, University of California Riverside; et al.
 
-
-AppendixI: Math/algo Concepts
+@AppendixI: Math/algo Concepts
 ===
 1. Fast Fourier Transform 
 symmetric
@@ -536,7 +649,17 @@ jakevdp explains it
 2. decompose
 bugra gaussian process model
 3. limits of adaboost bound  : chernoff distribution
-4. random
+4. random (sample from cdf, dice)
+http://www.keithschwarz.com/darts-dice-coins/
+5. entropy (dice), youtube video
+6. german tank problem
+7. concat, merge, join, cartesian product
+   top5 searches that you used 
+   database joins
+On the complexity of division and set joins in the relational algebra	Dirk Leinders & Jan Van den Bussche, Limburgs Universitair Centrum
+Worst-case Optimal Join Algorithms	Hung Q. Ngo, University at Buffalo; et al.
+Efficient Dissection of Composite Problems, with Applications to Cryptanalysis, Knapsacks, and Combinatorial Search Problems Itai Dinur 1 , Orr Dunkelman Nathan Keller , and Adi Sham, 217.pdf
 
+8. dynamic bayesian binning
 ghost -> publish ideas blog
 https://ghost.org/
