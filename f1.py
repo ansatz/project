@@ -3,7 +3,7 @@ from __future__ import division
 #ipython notebook pylab=inline
 import tables
 import pprint
-from itertools import izip
+from itertools import izip,product
 from collections import defaultdict, namedtuple
 import datetime as dtt
 import traceback
@@ -22,6 +22,7 @@ from scipy import stats
 import statsmodels.api as sm
 import scipy  
 import scikits.bootstrap as bootstrap
+import scipy.stats as ss
 from math import log
 from scipy.stats import lognorm, norm
 import statsmodels.formula.api as smf
@@ -113,6 +114,7 @@ if os.path.exists( mimicfile ):
 hdr =['index','subject_id','sex','dob','dod','hospital_expire_flg', \
 	         'itemid', 'description', 'charttime', 'realtime', 'value1num',\
 	          'value1uom', 'value2num','value2uom']
+# ----  %LOAD 1 - 3 ----- #
 ##MCD##	
 tparse = lambda x: pd.to_datetime(x, format='%Y-%m-%d %H:%M:%S')
 #mc_data = pd.read_csv("./data/mimic2v26_1_6.csv", names=hdr, skiprows=1, sep='\t') #nrows=1000
@@ -183,6 +185,7 @@ def main():
 	#print '*****len-check****', len(thmi[ thmi['source']=='mimic'] ), len(mcd), len(mcm), len(mc_data)
 	return thmi
 thmi = main()
+# ----  %LOAD 2 - 3 ----- #
 # @dataset
 sns.set_context('notebook') #paper,notebook,poster
 sns.set_style("white")      # whitegrid, white, dark,
@@ -475,6 +478,7 @@ print r2_score(train_X.Ridership, model.predict(train_X ))
 print r2_score(test_X.Ridership, model.predict(test_X ))
 print 'hello'
 
+# ----  %LOAD 3 - 3 ----- #
 #durbin-watson statistic
 
 '''
@@ -590,6 +594,7 @@ tst20.plot( title=tle, legend=False, alpha=1.0, figsize=(11,9), ylim=[60,180], g
 # @ alerts
 # quote
 
+# ----  %LOAD2 1 - 3 ----- #
 #---vectorized alert counts 1-DIM---#
 def fft_vector(x):	
 	'''-- rolling_window or rolling_apply
@@ -1077,6 +1082,7 @@ def main_alerts(dt=alrt_data):
 
 d = main_alerts()
 print('d', d.head())
+# ----  %LOAD2 2 - 3 ----- #
 ###########################################################################
 # box plot of noise 'fpfn'(tp,fn) of alert_t (fft, bycp, krn)
 # get count over group object using agg (can set count col name as tuple to agg function
@@ -1117,6 +1123,7 @@ print dmain.head()
 # cdf plot of each bin is plot along three axis sharing the y-axis
 # the x-axis is non-overlapping, and marks off the bins
 # group object : keys are alert_t and variable .. used by kdeplot as tuple; values are the tavgf (interarrival time) and the bins
+###############################################################################
 '''
 for at in sorted(alrt): #['krn' 'bycp' 'fft']
     lbl=('first','second','third')
@@ -1145,9 +1152,8 @@ for at in sorted(alrt): #['krn' 'bycp' 'fft']
             pass
 plt.autoscale(tight=True)
 '''
-###############################################################################
 dd = d.copy(deep=True)
-print dd.head()
+pri('d', d.head())
 #non overlapping groupby
 q_nonoverlap = dd.groupby(['alert_t'])['tavgf']
 binstotal= { k:v.quantile([0.33,0.66]).values for k,v in q_nonoverlap }
@@ -1171,7 +1177,6 @@ vtl = dd['variable'].unique()
 alrt = dd['alert_t'].unique()
 print alrt
 
-
 ###################################################################################
 ### busiest time of kde overlaps
 # do a count over the interarrival times for each 'alrt' and label
@@ -1179,23 +1184,204 @@ print alrt
 # need the label separate out
 # take max of that
 
-#dict -> 'alrt' -> 'lbl'
-alrtd = defaultdict(dict)
-lbld = defaultdict(list)
+#take kde plot, get vals
+# get max of kde plot over kdes for each third-interval
+# plot as dashed vline -- busiest 
 
+#multi-index dict(list)
 lbl = ['first','second','third']
-
+lad = defaultdict(list)
 for a in sorted(alrt):
+    for l in lbl: 
         for k,v in alerttype_dict.items():
-                if k[0] == a :
-                        for l in lbl:
-                                d=v[0]; b=v[1];
-                                lbld[l].append( d[ b == l ])
-                        alrtd[a] = lbld
-for k,v in alrtd.items():
-        print k
-for a in sorted(alrt):
-        print a
+            if k[0] == a:
+                d=v[0]; b=v[1];
+                lad[(a,l)].append( d[ b==l ])
+
+#create histogram, get max
+def dal(d,a,l):
+    #get list, iterate
+    alst = d[a,l]
+    vv = []
+    for v in alst:
+        vv.extend(v)
+    #get histo
+    hst = np.histogram(vv, bins=10)
+    mx = np.max(hst[0]); amx = np.argmax( hst[0] )
+    hi = hst[1][amx]
+    return hi
+
+vh = [ dal(lad, a, l) for a in sorted(alrt) for l in lbl]
+print vh
+
+#plot vlines on axis
+#get_ylim()
+
+#------------
+#freq -> variance; between and within
+
+def cutbins(g):
+    #get alert_type, bin values
+    ky = g['alert_t'].unique()   
+    quantl = binstotal[ky[0]]
+    vmax = g['tavgf'].max()
+    if quantl[1] >= vmax:
+        vmax = quantl[1] + 1
+    bins = [0,quantl[0],quantl[1],vmax]
+    #cut returns labels for each index 
+    g['dcut'] = pd.cut(g['tavgf'], bins, labels=['first','second','third']) 
+    print g.head()
+    return g
+
+ddfv = d.copy(deep=True)
+# get bin values, non-overlapping
+q_nonoverlap = ddfv.groupby(['alert_t'])['tavgf']
+binstotal= { k:v.quantile([0.33,0.66]).values for k,v in q_nonoverlap }
+
+#pre filter groupby
+# - prefilter, add labels
+ddf3 = ddfv.reset_index(inplace=False,drop=True)#.copy(deep=True )
+ddf3 = ddf3[ddf3['alert_v']==1].groupby( ['source','subject_id','alert_t','variable'],as_index=False,group_keys=False).apply( lambda x: cutbins(x) )
+
+dm = pd.merge(ddfv,ddf3,how='outer')
+print dm.head()
+
+#zscore pivot -> mean/zscore -> filter alert_v==1 only
+zscore = lambda x: np.absolute((x- x.mean())/x.std() )
+dm['zscore'] = dm.groupby(['source','subject_id','alert_t','variable'],as_index=False,group_keys=False)['value'].transform(zscore)
+dmz= dm[['dcut','zscore','alert_t']]
+dmz=dmz.dropna()
+print dmz
+
+dzs = dzs.pivot_table('value',rows='tavgf', cols='alert_t', aggfunc=lambda x: zscore(x) ) 
+print dzs
+'''
+f, (ax1, ax2) = plt.subplots(1, 2)
+a1= sns.pointplot("dcut", "zscore", hue="alert_t", data=dmz, ax=ax1, dodge=0.2, ci=15)
+a2=sns.barplot("alert_t", "zscore", "dcut", data=dmz, ax=ax2, ci=15)
+a1.set(title='variance vs time_period')
+'''
+
+#violin plot values->distribution over all subjects, mean
+##dm2 = dm.copy(deep=True)
+##dvln = dm2[['variable','alert_t','value','dcut']]
+##dvg = dvln.groupby(['variable','alert_t'])
+##    f,lbl = plt.subplots(1,3, sharey=True,figsize=(10,2.4) )
+##vln = {}
+##for k,v in dvg:
+##    print v[['value','dcut']]
+##    print k
+##    vln[k] = v[['dcut','value']] #.dropna()
+#--dcut
+dm2 = dm.copy(deep=True)
+dvln = dm2[['variable','alert_t','value','dcut']]
+dvg = dvln.groupby(['variable','dcut'])
+vln = {}
+for k,v in dvg:
+    print v[['value','alert_t']]
+    print k
+    vln[k] = v[['alert_t','value']] #.dropna()
+
+'''
+# violin plots 1,2,3
+vr = sorted( dvln.variable.unique() )
+at = sorted( dvln.dcut.dropna().unique() ) 
+al = ('a0','a1','a2')
+for v in vr:
+    f = ''.join(['f',str(i)])
+    f,al = plt.subplots(1,3, sharey=False,figsize=(10,2.4) )
+    for i,a in enumerate(at):
+        try:
+            d = pd.DataFrame(vln[v,a]).dropna()
+            ab = sns.violinplot(d.value, d.alert_t, ax=al[i] )
+            ab.set_ylabel(v)
+            ab.set_xlabel(a)
+        except: #e as 'ValueError':
+            pass
+
+'''
+
+#cohens d-stat effect size between periods
+dc = dm.copy(deep =True)
+print dc.head()
+
+#coefficient of variation exponential/poisson
+
+#
+
+
+       
+#z-score
+def zscr(g):
+    #zscore
+    g['zscr'] = ss.zscore(g['value'],ddof=1)
+    print g['zscr'].head()
+    return g
+#get zscore over all points
+dzf = dzf.reset_index().groupby(['alert_t','dcut']).apply(lambda x: zscr(x) )
+print dzs.head()
+f, (ax1, ax2) = plt.subplots(1, 2)
+sns.pointplot("dcut", "zscr", "alert_t", data=dz, ax=ax1)
+
+
+
+
+
+t_period
+sns.pointplot("dcut","var","alert_t")
+
+
+
+#donito
+
+
+
+
+###
+###                        #print 'yo',lbld
+###                        ns = np.sum( lbld[l], axis=0)
+###                        print '-----------'
+###                        print ii
+###                        print len(lbld[l]), ' ', len(ns)
+###                        print ns
+###                        #print lbld[l]
+###                        #print ns
+###                exit(0)
+###
+###                try:
+###                    #hello
+###                    d=v[0]; b=v[1];
+###                    lbld[l].append( d[ b==l ])
+###                    print 'yo',lbld
+###                    alrtd[a] = lbld
+###                    #sum max 
+###                    #hello
+###                    nsum = np.sum( lbld[l], axis=0 ) 
+###                    nsmx = nsum.max()
+###                    print '**  SUM  ** ', nsum
+###                    print 'max', nsmx
+###                    
+###                    print nsum[-20:], len(nsum)
+###                    print len( lbld[l] )
+###                except ValueError as e:
+###                    print 'y1'
+###                    pass
+###                #exit(0)
+###                #break
+###
+###a=19
+###print a
+###
+###
+
+
+
+
+
+
+
+
+
 
                         
 
