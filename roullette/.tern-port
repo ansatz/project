@@ -1,1 +1,16 @@
-37777
+{
+	"libs": [
+    "browser",
+    "jquery"
+  ],
+  "loadEagerly": [
+    "roulette.js"
+  ],
+  "plugins": {
+    "requirejs": {
+      "baseURL": "./",
+      "paths": {}
+    }
+  }
+  
+

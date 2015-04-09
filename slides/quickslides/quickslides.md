@@ -54,6 +54,7 @@ nurse icu img
 <img src='./slidefigs/alrtspc.png' alt='img' width='300' height='300'>
 
 # outline
+<img src='./slidefigs/flowchart.jpg' alt='img' width='300' height='300'>
 -- data
 
 -- boosting
@@ -65,6 +66,18 @@ nurse icu img
 -- coefficient analysis
 
 -- hierarchical model
+pooled: linear regression model
+$r'alerthard_i,p = \alpha + \beta*interarrival + \epsilon'
+where estimate 1 intercept, 1 slope for each measurement_i over all pooled patients and alert_types. \theta represent $(\alpha,\beta)$ 
+
+unpooled: hierarchical(bayes-net) 
+3 states mortality, gender, alert_type
+estimate $\theta(\mu,\std)$ for each group
+$r'alerthard_i,m = \alpha_c*floor_i,c_ + \epsilon_c'$
+
+streak_montyhall_problem:
+
+
 
 -- bayes
 

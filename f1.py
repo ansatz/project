@@ -37,7 +37,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from statsmodels.graphics.gofplots import qqplot
-
+# -------------------------------------------------------------------------------------- #
 # Section 1 - data
 header = ['fname','lname', 'dt1', 'sys', 'dia', 'hr1', 'dt2', 'ox', 'hr2', 'dt3', 'wht']
 drcty = '/home/solver/project/data/load_data_th/reports2/'
@@ -138,6 +138,17 @@ if any( pd.isnull( mc_data) ):
 
 mc_data.reset_index(inplace=True)
 
+def mc_data_clean_csv(filename='merge_clean.csv'):
+    directory = '/home/solver/project/data/'
+    mimicfile = directory + filename
+    
+    if not os.path.exists( mimicfile ) :
+        print( 'merged/clean mimic+telehealth dataframe -> csv')
+        dt = mimicpostgresql()
+        dt.to_csv(mimicfile, sep='\t', encoding='utf-8')
+        
+    if os.path.exists( mimicfile ):
+        print '\nmerged datframe->csv file exists\n '
 
 def pri(msg, dt):
    output = StringIO()
@@ -227,11 +238,6 @@ observe it passively”
 Fred Mosteller and John Tukey, paraphrasing George Box
 '''
 
-##sns.set_context("poster")
-##sns.set_style("white")
-##tbl.plot(subplots=True,title=tle2, legend=True, alpha=1.0, grid=True, figsize=(11,9))
-##sns.set_style("dark")
-##tst20.plot( title=tle, legend=False, alpha=1.0, figsize=(11,9), ylim=[60,180], grid=False)
 
 # -- vitals avg, std boxplots
 br = thmi[['source','value','variable']]
@@ -777,6 +783,58 @@ def mainbayes_changepoint(dt=thmi):
 csvf = 'alert20Kmcd.csv'
 ##with new main_bycp function that discretize probs
 #csvf = 'alert1Kmcd_TEMP__TEMP_.csv' 
+
+###########################################################################
+# want to get the weights, for each alogrithm
+# so only run once
+## write to csv, then load to dataframe
+'''PIPELINE BEGIN''' #@rufus
+'''
+1. states 
+2. flag interrupt 
+3. 
+'''
+## @orignate thmi file
+
+## STAGE 1 ALERTS HAS 3 DISTINCT TASKS 
+@transform(start, suffix('.csv'), '.fft')
+def fft_stage1(infile, outfile):
+        # write thmi to file ->load to stage 1
+        inf = open(infile)
+        # mainfft()
+        oo = open(outfile, 'w')
+
+@transform(start, suffix('.csv'), '.krn')
+def krn_stage1(infile, outfile):
+        pass
+@transform(start, suffix('.csv'), '.bycp')
+def bycp_stage1(infile, outfile):
+        pass
+## STAGE 2 BOOST 1 TASK
+@transform([*stage1], regex(r"(fft)(krn)(bycp)$", '.boost')
+def boost_stage2(infile, outfile):
+        '''
+        ** module issues:
+           cd ~/project/scikit-learn-master/ as
+           python -m sklearn.ensemble.sdbw2.py
+           have to set dd , col-headers in data file
+        ** 
+        ?? which one, boosting writes weights
+        -> ?? boosting.py (baseclass wrapped, weight.pkl written)
+        -> ??sdbw2.py (calls boosting.py, entropy(bayesblock) pickled ) 
+           bwb=AdaBoostClassifier()
+           fit(bwb,patData,patTarg)
+        -> dont need this file -> score.py class (loads the weights, entropy -> plots)
+        -> otter.py loads score.py -> gets weights
+        '''
+        #override the patData, patTarg
+        pass
+
+## STAGE3 BAYES 1 TASK
+@transform(boost_stage2, suffix('.boost'), '.bayes')
+def bayes_stage3(infile, outfile):
+        pass
+
 if(0):
 	fltr = thmi[thmi['source']=='mimic'] 
 	smp = fltr
@@ -1307,7 +1365,26 @@ print dc.head()
 
 #coefficient of variation exponential/poisson
 
-#
+#fit distribution
+#toy
+tr = np.random.randn(2,5)
+fd = dict(a=tr[0] , b=tr[1] )
+atst = ['a']*5
+print atst
+
+
+def CohenEffectSize(group1, group2):
+    diff = group1.mean() - group2.mean()
+
+    var1 = group1.var()
+    var2 = group2.var()
+    n1, n2 = len(group1), len(group2)
+
+    pooled_var = (n1 * var1 + n2 * var2) / (n1 + n2)
+    d = diff / math.sqrt(pooled_var)
+    return d
+
+
 
 
        
@@ -1335,44 +1412,117 @@ sns.pointplot("dcut","var","alert_t")
 #donito
 
 
+#ruffus pipeline
+'''
+write dataframe to fft.csv, krn.csv, bayes.csv
+ruffus- checkpointing
+fft.csv,krn.csv, bycp.csv -> [boost] -> fft_boost.csv, krn_boost.csv, bycp_boost.csv -> [bayes] -> fft_bayes.csv, krn_bayes.csv, bycp_boost.csv
+'''
 
 
-###
-###                        #print 'yo',lbld
-###                        ns = np.sum( lbld[l], axis=0)
-###                        print '-----------'
-###                        print ii
-###                        print len(lbld[l]), ' ', len(ns)
-###                        print ns
-###                        #print lbld[l]
-###                        #print ns
-###                exit(0)
-###
-###                try:
-###                    #hello
-###                    d=v[0]; b=v[1];
-###                    lbld[l].append( d[ b==l ])
-###                    print 'yo',lbld
-###                    alrtd[a] = lbld
-###                    #sum max 
-###                    #hello
-###                    nsum = np.sum( lbld[l], axis=0 ) 
-###                    nsmx = nsum.max()
-###                    print '**  SUM  ** ', nsum
-###                    print 'max', nsmx
-###                    
-###                    print nsum[-20:], len(nsum)
-###                    print len( lbld[l] )
-###                except ValueError as e:
-###                    print 'y1'
-###                    pass
-###                #exit(0)
-###                #break
-###
-###a=19
-###print a
-###
-###
+#-------------------------------------------------#
+# boosting #
+
+# wts  I/C  H/E  variable
+
+def bin_weight(dt=wt):
+        #1 bayes-block
+        #wt_bayes = bayes_block(wt) 
+
+        #2
+        lbl = ['I', 'II', 'III', 'IV']
+        lbld = { i:l for l,i in enumerate(lbl) }
+        b = [lbld[w] for w in len(wt_bayes) ]
+        cut_col = pd.cut(wt, bins=wt_bayes, labels=b)
+        dd = dict(wts=wt, cuts=cut_col)
+
+        #3
+        d = pd.DataFrame(dd)
+        df = d[ d['cuts' == 'I'] || d['cuts' =='II'] || d[cuts=='III'] ]
+
+        #4
+        gs = plt.GridSpec(3,1)
+        plt.subplot(gs[:2])
+        ax1 = sns.pointplot( df["cuts"], df["wts"], label='d', color='0.3')
+        ax1.set(xticks = [], xlabel = '')
+        plt.subplot(gs[-1])
+        ax2 = sns.barplot( df['cuts'], color='0.5')
+        ax1.set_xlim(ax2.get_xlim() )
+        sns.despine(left=True, bottom=True)
+
+
+def hard_easy(d):
+        #1
+        he = lambda x: x>threshold and 'H' or 'E'
+        d['HE'] = d[wts].apply(he)
+        #2 heatmap
+        dh = d[ d['wts','variable'] ]
+        dh = dh.unstack('variable')
+        sns.heatmap(dh, ax=ax2)
+        #3 plot
+        f, (ax1,ax2) = plt.subplots(1,2)
+        sns.pointplot('IC', data=d, ax=ax1)
+
+def INROW123(d):
+        #1 window for 1-2-3
+        dc = range(10)
+        d4 = d[dc].stack(name= '123ROW')
+        #2
+        gs = plt.Gridspec(3,2)
+        plt.subplot(gs[:2])
+        ax1 = sns.pointplot(dopt['123ROW'], dopt['he'],
+                label = 'd', color='0.3')
+        ax1.set(xticks=[], xlabel='')
+        plt.subplot(gs[-2] )
+        ax2.sns.barplot(dopt['123ROW'], color='0.05')
+        ax1.set_xlim(ax2.get_xlim() )
+        plt.subplot( gs[-1] )
+        sns.despine(lefrt=True, bottom=True)
+        ax3 = sns.pointplot(['win-len'], data=d4, color='blue')
+
+#bayes -- hierarchical model --likelihood function, estimation(german tank)
+def bayes_hmdl(pool, ):
+        '''
+       -- graph:
+        how?picture of nurse MIMIC
+        kruske diagram or bayes net
+
+       1.linear regression model
+       2.hierarchical model 3 states (mortality, gender, alert_type)
+       featurematrix(mortal,gender,geo) + alert_type
+       bayes-net
+       3.streak (monty_hall) 
+       3a.sequential sprt wald-boost
+       4.hashing kernel
+       5.percolation
+       6.intprogram_constraints
+       7.expert_priors(cardiologist, mturk, watson)
+       '''
+       #alerthard_i,p = alpha + beta*interarrival + err
+        
+
+
+        
+
+
+def bayes_decision: pass
+        '''
+        2.simulation
+        2aa. norvig simulation model
+        2a. generative, explain the data
+        2b. mixture model- chinese buffet
+        2c. ternary tree
+        2d. resolution limit problem
+        2e. darknet
+        3.estimation (forward)
+        number of alerts, time to alert, 
+        4.visualization
+        1.likelihood (inverse)
+        2.causation
+        '''
+        
+
+
 
 
 
@@ -1398,136 +1548,3 @@ sns.pointplot("dcut","var","alert_t")
 
 
 
-#print alrt
-#for k,v in alerttype_dict.items():
-#    print 'keys ' ,k
-#    print k[0]
-#    print 'vals ', v[0], v[1]
-#
-#    sns.kdeplot(
-#
-#for g,q,ax in zip(qg,qtl.reshape(3,2),range(3)): 
-#    for v in vtl:
-#        sns.kdeplot(
-#
-##    ###print '*** bycp3', d[d.alert_t == 'bycp'].head()
-##    #print 'd len', len(d['subject_id'].unique() ), d['subject_id']
-##    ###print dcatt.info()
-##    pri('catt', dcatt.head() )
-##    ###print 'sid unq', len( dcatt['subject_id'].unique() )
-##    #c= c.unstack()
-##    #pri('cmplte', c.head() )
-##    c = d.copy()
-##    ###print '*** bycp4', c[c.alert_t == 'bycp'].head()
-##    c.reset_index(inplace=True,drop=True)
-##    cp = c.pivot_table(rows=['subject_id','alert_t'],
-##    				   cols=['fpfn'],
-##    				   values=['alert_v'],
-##    				   aggfunc=lambda x: x.count() ) 
-##    ###print ('cp alert type', c['alert_t'].unique() )
-##    ###print('cp',cp.head(15) )
-##    ###print cp.info()
-##    #b = sns.FacetGrid(d, col='alert_t',palette="husl",margin_titles=True)
-##    #b.map(sns.boxplot,c)
-##    sns.boxplot(cp)
-##    
-##    
-##    # -- rugplot
-##    #(c1, c2, c3, c4, c5 ) = sns.color_palette("husl", 6)[:5]
-##    g = sns.FacetGrid(d, col='alert_t', row='variable',size=1, aspect=3, palette="husl",margin_titles=True)
-##    g.map(sns.rugplot,'tavgf') #,height=.5)
-##    ###print sns.axes_style()
-##    sns.despine(left='False')
-##    g.fig.subplots_adjust(wspace=1.2, hspace=.3);
-##    g.set_axis_labels(['time diff']);
-##    g.set(yticks = [])
-##    
-##    # -- cdf plot
-##    # http://nbviewer.ipython.org/github/nicolasfauchereau/NIWA_Python_seminars/blob/master/4_Statistical_modelling.ipynb
-##    #pd.tslib.repr_timedelta64(np.timedelta64(180487000000000,'ns'))
-##    ###print 'tavgf ## ', type(d['tavgf']) , d['tavgf'].dtype
-##    ###print('##@@d',d.head() )
-##    c = sns.FacetGrid(d, col="alert_t")	
-##    c.map(  sns.distplot, 
-##    		"cumtf", 
-##    		kde=True, 
-##    		kde_kws={'cumulative':'True'},
-##    		fit=stats.expon )
-##    #loop subplots over alert_t
-##    
-##    #c.map( sns.kdeplot, "cumtf", cumulative=True )
-##    c.set_axis_labels(['time diff']);
-##    
-##    # - kde plot of freq(1/a, 1/b, 1/c) <- cdf
-##    # http://stackoverflow.com/questions/6298105/precision-of-cdf-in-scipy-stats
-##    # -- get slope
-##    a1 = c.facet_axis(0,0)
-##    #print 'a1 ', a1.get_children()
-##    mx = a1.get_children()[2]._x
-##    my = a1.get_children()[2]._y	
-##    #print 'm\n', mx, my
-##    maxm =0
-##    minm =1
-##    slopes = [(x,y) for x,y in zip(mx,my) if y/x-0.2<0 or y/x+0.2>0 ]
-##    #print 'slopes ', slopes[:2]
-##    
-##    # box plots
-##    # -- binned frequency
-##    # max time
-##    # avg_time
-##    at = d.copy()
-##	#boxat = at.pivot_table(rows=['subject_id','alert_t'],
-##	#				   	values=['tavg'],
-##	#				   	aggfunc=lambda x: x.mean() ) 
-##	#pri('boxplot avgT', boxat.head() )
-##
-##	# diff assumptions (Weibull, k=2)
-##	# violin plot of interarrival times
-##
-##	# overlap kde for each variable
-##	# busiest time
-##
-##	#time by alert-types (top 3) 
-##
-##	#time by alert-size (top3)
-##
-##	###**** plt.show()
-##
-##	# clean up time column
-##	#http://stackoverflow.com/questions/19350806/how-to-convert-columns-into-one-datetime-column-in-pandas
-##	#http://stackoverflow.com/questions/17688155/complicated-for-me-reshaping-from-wide-to-long-in-pandas
-##'''
-##
-##	# alert_type 
-##	#http://nbviewer.ipython.org/github/amplab/datascience-sp14/blob/master/lab4/joins.ipynb
-##	print('dt',dt.head() )
-##	s = dt.stack(['bycp']) #['fft','krn','bycp'])
-##	print('stack',s[:25] )
-##	#create empty dataframe of size ['values'][alert_type][alert_value]
-##* len of dt
-##	alt['alert_value'] = dt['fft'].map(lambda x: x)
-##	alt['alert_value'] = dt['krn'].map(lambda x: x)
-##	alt['alert_value'] = dt['bycp'].map(lambda x: x)
-##	alt['alert_type'].apply(lambda x: 
-##
-##	# facet plot
-##	# rugplots , rows='variable', cols='alert_type'
-##
-##	# cdf of time to alert
-##
-##	# 
-##	# count up the alerts
-##	# time to alerts
-##	# rug plot on bottom
-##	#countalerts(dt)
-##
-##	#boots(th_data, dtv)
-##	##pltframe = percent_method2(dtv)
-##	##ttestboost(dtv)
-##	#boostpercentplot( pltframe )
-##
-##	#ci = percent_method(empirical_distribution)
-##	#toyplotpm(ci)
-##'''
-##aa = 12
-##print aa;
